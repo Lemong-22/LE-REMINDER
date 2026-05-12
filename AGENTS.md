@@ -40,6 +40,9 @@ When a task matches a skill below, load that skill's `SKILL.md` before acting an
 | `${gh-cli}` | GitHub CLI workflows |
 | `${impeccable}` | Frontend design, UX, UI polish, accessibility, visual refinement |
 | `${shadcn}` | shadcn/ui components, registry use, composition, forms, styling, icons |
+| `${ddd-hexagonal-ts}` | Hexagonal Architecture setup, domain isolation, ports/adapters wiring |
+| `${drizzle-turso-edge}` | Drizzle ORM schema, Turso edge client, SQLite migrations |
+| `${vector-pinecone-capture}` | Pinecone vector ops, metadata structure, semantic search |
 | `${sync-local-skills}` | Discovering repo-local skills and updating AGENTS.md with Local Skills trigger rules |
 | `${vercel-react-best-practices}` | React and Next.js performance-sensitive work |
 
@@ -282,3 +285,4 @@ For Phase 1 implementation:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-05-12 | Lead Developer | Initial constitution |
+| 1.1 | 2026-05-12 | Lead Developer | Add local skills: ddd-hexagonal-ts, drizzle-turso-edge, vector-pinecone-capture |

@@ -1,0 +1,3 @@
+{
+	"extends": "@LE-REMINDER/config/tsconfig.base.json"
+}

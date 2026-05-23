@@ -1,0 +1,41 @@
+node_modules
+.next
+dist
+build
+*.log
+
+# Data (local database)
+data
+*.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# TypeScript
+*.tsbuildinfo
+
+# Turso
+.turso
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml

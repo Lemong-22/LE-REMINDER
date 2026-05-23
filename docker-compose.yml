@@ -1,0 +1,58 @@
+name: LE-REMINDER
+version: 1.0.0
+
+services:
+  # Web Application (Next.js)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:./data/local.db
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - ./data:/app/data
+    depends_on:
+      - db
+    networks:
+      - le-reminder-network
+
+  # Local SQLite Database (Turso compatible)
+  db:
+    image: ghcr.io/tursotrust/turso:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - TURSO_DATABASE_URL=libsql://local.db
+    volumes:
+      - ./data:/var/lib/turso
+    networks:
+      - le-reminder-network
+
+  # Development tools
+  db-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    entrypoint: ["bun", "run", "db:studio"]
+    working_dir: /app
+    environment:
+      - DATABASE_URL=file:./data/local.db
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - ./data:/app/data
+    depends_on:
+      - db
+    networks:
+      - le-reminder-network
+
+networks:
+  le-reminder-network:
+    driver: bridge

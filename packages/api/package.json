@@ -1,0 +1,27 @@
+{
+	"name": "@LE-REMINDER/api",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"type": "module",
+	"scripts": {},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@LE-REMINDER/config": "workspace:*"
+	},
+	"dependencies": {
+		"dotenv": "catalog:",
+		"zod": "catalog:",
+		"@LE-REMINDER/env": "workspace:*",
+		"@LE-REMINDER/auth": "workspace:*",
+		"@LE-REMINDER/db": "workspace:*",
+		"@trpc/server": "catalog:",
+		"@trpc/client": "catalog:",
+		"next": "catalog:"
+	}
+}

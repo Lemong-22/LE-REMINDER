@@ -19,6 +19,7 @@
 		"zod": "catalog:",
 		"@LE-REMINDER/env": "workspace:*",
 		"@LE-REMINDER/db": "workspace:*",
+		"@LE-REMINDER/core": "workspace:*",
 		"@trpc/server": "catalog:",
 		"@trpc/client": "catalog:"
 	}

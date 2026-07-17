@@ -67,6 +67,7 @@
     "packages/api": {
       "name": "@LE-REMINDER/api",
       "dependencies": {
+        "@LE-REMINDER/core": "workspace:*",
         "@LE-REMINDER/db": "workspace:*",
         "@LE-REMINDER/env": "workspace:*",
         "@trpc/client": "catalog:",

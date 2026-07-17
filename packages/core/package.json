@@ -18,10 +18,12 @@
 		}
 	},
 	"scripts": {
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"test": "bun test"
 	},
 	"devDependencies": {
 		"typescript": "catalog:",
-		"@LE-REMINDER/config": "workspace:*"
+		"@LE-REMINDER/config": "workspace:*",
+		"@types/bun": "^1.3.0"
 	}
 }

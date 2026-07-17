@@ -59,31 +59,33 @@ This is a **greenfield project**; there is **no legacy MVC code**. Do NOT use MV
 
 ### Directory Structure
 
+This is a Bun workspace monorepo (`apps/*`, `packages/*`). The DDD/Hexagonal `src/` layout lives in its own dedicated package, `packages/core`, rather than at the repo root — this keeps the domain a zero-dependency package that a CLI adapter or any other consumer can import without pulling in Next.js/tRPC:
+
 ```
-src/
-├── domain/           # Pure domain logic, entities, value objects, ports
+packages/core/src/
+├── domain/           # Pure domain logic, entities, value objects, ports — zero dependencies
 ├── application/      # Use cases, command handlers, query handlers
 ├── infrastructure/   # Adapters: Turso, Pinecone, QStash, GitHub, OpenAI
-├── interface/        # UI components, pages, tRPC routers
 └── lib/              # Shared utilities, type definitions
 ```
 
+There is no `interface/` folder inside `packages/core` — that layer is the existing workspace split: tRPC routers live in `packages/api`, UI lives in `apps/web`.
+
 ### Import Aliases
 
-Use **absolute imports** only:
+Consuming packages depend on `@LE-REMINDER/core` as a workspace dependency and import via its package export map — no `@/*` tsconfig path aliases:
 
 ```typescript
-import { Capture } from '@/domain/capture';
-import { CreateKnowledgeUseCase } from '@/application/knowledge';
-import { TursoKnowledgeAdapter } from '@/infrastructure/adapters/turso';
+import { Capture } from '@LE-REMINDER/core/domain/capture';
+import { CreateKnowledgeUseCase } from '@LE-REMINDER/core/application/knowledge';
+import { TursoKnowledgeAdapter } from '@LE-REMINDER/core/infrastructure/adapters/turso';
 ```
 
-Configured in `tsconfig.json`:
-- `@/domain` → `src/domain`
-- `@/application` → `src/application`
-- `@/infrastructure` → `src/infrastructure`
-- `@/interface` → `src/interface`
-- `@/lib` → `src/lib`
+Configured in `packages/core/package.json` `exports`:
+- `./domain/*` → `src/domain/*.ts`
+- `./application/*` → `src/application/*.ts`
+- `./infrastructure/*` → `src/infrastructure/*.ts`
+- `./lib/*` → `src/lib/*.ts`
 
 ---
 
@@ -286,3 +288,4 @@ For Phase 0 implementation:
 |---------|------|--------|---------|
 | 1.0 | 2026-05-12 | Lead Developer | Initial constitution |
 | 1.1 | 2026-05-12 | Lead Developer | Add local skills: ddd-hexagonal-ts, drizzle-turso-edge, vector-pinecone-capture |
+| 1.2 | 2026-07-17 | Lemong | Step 4: domain layout lives in `packages/core`, not root `src/`; removed Better Auth (Phase 0 is no-auth) |

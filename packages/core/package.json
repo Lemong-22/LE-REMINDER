@@ -1,0 +1,27 @@
+{
+	"name": "@LE-REMINDER/core",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./domain/*": {
+			"default": "./src/domain/*.ts"
+		},
+		"./application/*": {
+			"default": "./src/application/*.ts"
+		},
+		"./infrastructure/*": {
+			"default": "./src/infrastructure/*.ts"
+		},
+		"./lib/*": {
+			"default": "./src/lib/*.ts"
+		}
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@LE-REMINDER/config": "workspace:*"
+	}
+}

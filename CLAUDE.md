@@ -1,4 +1,4 @@
-# AGENTS.md — LE-REMINDER
+# CLAUDE.md — LE-REMINDER Constitution
 
 This file is the **strict constitutional contract** for the LE-REMINDER repository. All AI agents operating in this codebase MUST read and follow this document.
 
@@ -17,11 +17,10 @@ The following technologies are used in this project. When relevant, load the cor
 | TanStack Query | `${vercel-react-best-practices}` | `npx skills add vercel-labs/agent-skills/vercel-react-best-practices` |
 | Shadcn/UI | `${shadcn}` | `npx skills add shadcn/ui/shadcn` |
 | tRPC | `${trpc}` | Use Next.js best practices |
-| Better Auth | `${better-auth-best-practices}` | `npx skills add better-auth/better-auth-best-practices` |
 | Drizzle ORM | `${drizzle}` | Use SQL best practices |
 | Turso | — | Edge SQLite documentation |
-| Pinecone | — | Vector DB documentation |
-| Upstash QStash | — | Serverless cron documentation |
+
+> Phase 0 is single-user with no auth and no notification-delivery engine (see Phase 0 Constraints below). Better Auth, Pinecone, and Upstash QStash are not part of this repo's dependency set — re-add explicitly if a future phase requires auth, semantic search, or in-repo scheduled delivery.
 
 ### Skill Loading Instructions
 
@@ -258,14 +257,14 @@ Git commits happen **ONLY** on:
 
 ---
 
-## Phase 1 Constraints
+## Phase 0 Constraints
 
-For Phase 1 implementation:
+For Phase 0 implementation:
 
-- **Single-user only** (no multi-tenancy)
-- **Text input only** (no voice/screenshots)
-- **In-app notifications only** (no push/email)
-- **Human approval required** for all AI outputs
+- **Single-user only** (no auth, no multi-tenancy)
+- **No AI/LLM in the domain** — state computation is a deterministic pure function, never inferred
+- **No notification/reminder delivery in this repo** — LE-REMINDER only computes and exposes state (`Due`/`Overdue`/`Done`); an external system, HERMES-AGENT, owns all alerting
+- **No history/streak UI** — `CompletionEvent`s are recorded from day one, but Phase 0 only displays derived current state
 
 ---
 
@@ -273,10 +272,11 @@ For Phase 1 implementation:
 
 | Document | Path |
 |----------|------|
-| PRD | `/CONTEXT/PRD-le-reminder.md` |
-| Architecture | `/CONTEXT/architecture.md` |
-| Roadmap | `/CONTEXT/Roadmap.md` |
-| This File | `/AGENTS.md` |
+| PRD | `/CONTEXT/PRD.md` |
+| SPEC | `/CONTEXT/SPEC.md` (Step 2) |
+| Roadmap | `/CONTEXT/ROADMAP.md` (Step 3) |
+| Archived (abandoned scope) | `/CONTEXT/_archive/` |
+| Constitution | `/CLAUDE.md` |
 
 ---
 

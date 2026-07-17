@@ -38,6 +38,7 @@ export class GetRoutine implements GetRoutineUseCase {
 				routine.isPaused,
 				latestCompletion,
 				now,
+				routine.createdAt,
 			),
 			lastCompletedAt: latestCompletion?.completedAt ?? null,
 		};

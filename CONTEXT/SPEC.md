@@ -135,10 +135,13 @@ function computeRoutineStatus(
   isPaused: boolean,
   latestCompletion: CompletionEvent | null,
   now: Date,
+  createdAt: Date,
 ): RoutineStatus;
 ```
 
 Signature only — implementation belongs to Phase 1.2 (Domain Entities). Must remain a pure function: identical inputs always yield the identical output, with `now` as the only external input (injected via the `Clock` port, Section 3.2, never read directly via `new Date()` inside domain code).
+
+`createdAt` (amended post-Step 5 review, discovered while building the Step 9 CLI demo): for a mandatory `FixedCalendar` schedule, `Overdue` must persist across subsequent occurrence boundaries until explicitly completed (PRD §6) — which requires checking whether the *previous* occurrence, not just the current one, was satisfied. Without `createdAt` as a floor, that lookback would flag a freshly-created routine `Overdue` for occurrences that happened before it existed. `createdAt` is still a plain, deterministic data input — the function remains pure.
 
 ---
 

@@ -43,6 +43,7 @@ export class ListRoutines implements ListRoutinesUseCase {
 						routine.isPaused,
 						latestCompletion,
 						now,
+						routine.createdAt,
 					),
 					lastCompletedAt: latestCompletion?.completedAt ?? null,
 				};

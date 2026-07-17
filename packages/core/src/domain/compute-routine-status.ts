@@ -1,6 +1,11 @@
 import { addDuration } from "../lib/duration";
 import type { CompletionEvent } from "./completion-event";
-import { getMostRecentScheduledDate, isSameDay } from "./fixed-calendar-slot";
+import {
+	getMostRecentScheduledDate,
+	getPreviousScheduledDate,
+	isSameDay,
+	startOfDay,
+} from "./fixed-calendar-slot";
 import type { RoutineStatus } from "./routine-status";
 import type {
 	FixedCalendarSchedule,
@@ -29,23 +34,55 @@ function computeFixedCalendarStatus(
 	schedule: FixedCalendarSchedule,
 	latestCompletion: CompletionEvent | null,
 	now: Date,
+	createdAt: Date,
 ): RoutineStatus {
-	const mostRecentScheduledDate = getMostRecentScheduledDate(
+	const today = startOfDay(now);
+	const creationDay = startOfDay(createdAt);
+
+	const referenceOccurrence = getMostRecentScheduledDate(
 		schedule.recurrence,
 		now,
 	);
-
-	const completedSinceScheduledDate =
-		latestCompletion !== null &&
-		latestCompletion.completedAt.getTime() >= mostRecentScheduledDate.getTime();
-
-	if (completedSinceScheduledDate) {
-		return "Done";
-	}
-	if (isSameDay(mostRecentScheduledDate, now)) {
+	// No occurrence has happened yet since this routine was created — nothing
+	// to be Due or Overdue about.
+	if (referenceOccurrence.getTime() < creationDay.getTime()) {
 		return "Due";
 	}
-	return schedule.isMandatory ? "Overdue" : "Due";
+
+	const completedAtOrAfterReference =
+		latestCompletion !== null &&
+		latestCompletion.completedAt.getTime() >= referenceOccurrence.getTime();
+
+	if (completedAtOrAfterReference) {
+		return "Done";
+	}
+
+	if (!isSameDay(referenceOccurrence, today)) {
+		// referenceOccurrence already elapsed (it's a past date, not today) and
+		// was never satisfied.
+		return schedule.isMandatory ? "Overdue" : "Due";
+	}
+
+	// Today's own occurrence is still open. A mandatory Overdue must persist
+	// across the boundary into a new occurrence day rather than silently
+	// reset — so check whether the *previous* occurrence (if it happened
+	// since this routine was created) is still unsatisfied.
+	const priorOccurrence = getPreviousScheduledDate(schedule.recurrence, today);
+	const priorOccurrenceExists =
+		priorOccurrence.getTime() >= creationDay.getTime();
+	const completedAtOrAfterPrior =
+		latestCompletion !== null &&
+		latestCompletion.completedAt.getTime() >= priorOccurrence.getTime();
+
+	if (
+		priorOccurrenceExists &&
+		!completedAtOrAfterPrior &&
+		schedule.isMandatory
+	) {
+		return "Overdue";
+	}
+
+	return "Due";
 }
 
 function computeRollingIntervalStatus(
@@ -65,6 +102,7 @@ export function computeRoutineStatus(
 	isPaused: boolean,
 	latestCompletion: CompletionEvent | null,
 	now: Date,
+	createdAt: Date,
 ): RoutineStatus {
 	if (isPaused) {
 		return "Paused";
@@ -75,6 +113,11 @@ export function computeRoutineStatus(
 	}
 
 	return taskType.schedule.type === "FixedCalendar"
-		? computeFixedCalendarStatus(taskType.schedule, latestCompletion, now)
+		? computeFixedCalendarStatus(
+				taskType.schedule,
+				latestCompletion,
+				now,
+				createdAt,
+			)
 		: computeRollingIntervalStatus(taskType.schedule, latestCompletion, now);
 }

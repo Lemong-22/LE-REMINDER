@@ -75,3 +75,16 @@ export function getMostRecentScheduledDate(
 		}
 	}
 }
+
+// Returns the most recent occurrence strictly before `today` — i.e. the
+// occurrence immediately preceding whatever getMostRecentScheduledDate would
+// return for `today` itself. Used to detect a still-unsatisfied past
+// occurrence even once a new occurrence day has arrived (mandatory Overdue
+// must persist across that boundary rather than silently reset).
+export function getPreviousScheduledDate(
+	pattern: RecurrencePattern,
+	today: Date,
+): Date {
+	const dayBefore = new Date(startOfDay(today).getTime() - 1);
+	return getMostRecentScheduledDate(pattern, dayBefore);
+}

@@ -45,6 +45,7 @@ export class CompleteRoutine implements CompleteRoutineUseCase {
 			routine.isPaused,
 			latestCompletion,
 			now,
+			routine.createdAt,
 		);
 		if (currentStatus === "Finished") {
 			throw new RoutineAlreadyFinishedError(routine.id);

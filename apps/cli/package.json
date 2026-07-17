@@ -1,0 +1,17 @@
+{
+	"name": "cli",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "bun run src/index.ts"
+	},
+	"dependencies": {
+		"@LE-REMINDER/core": "workspace:*"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@LE-REMINDER/config": "workspace:*",
+		"@types/node": "^22.13.14"
+	}
+}

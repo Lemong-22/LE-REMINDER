@@ -27,7 +27,7 @@ The following technologies are used in this project. When relevant, load the cor
 When a task matches a skill below, load that skill's `SKILL.md` before acting and follow only the relevant referenced material:
 
 ```
-"AGENTS.md reference" : ${skill-token}
+"CLAUDE.md reference" : ${skill-token}
 ```
 
 | Skill | Trigger |
@@ -42,7 +42,7 @@ When a task matches a skill below, load that skill's `SKILL.md` before acting an
 | `${ddd-hexagonal-ts}` | Hexagonal Architecture setup, domain isolation, ports/adapters wiring |
 | `${drizzle-turso-edge}` | Drizzle ORM schema, Turso edge client, SQLite migrations |
 | `${vector-pinecone-capture}` | Pinecone vector ops, metadata structure, semantic search |
-| `${sync-local-skills}` | Discovering repo-local skills and updating AGENTS.md with Local Skills trigger rules |
+| `${sync-local-skills}` | Discovering repo-local skills and updating CLAUDE.md with Local Skills trigger rules |
 | `${vercel-react-best-practices}` | React and Next.js performance-sensitive work |
 
 **Local Skills Directory**: `.agents/skills/<name>` — Use as canonical skill tokens.
@@ -273,8 +273,8 @@ For Phase 0 implementation:
 | Document | Path |
 |----------|------|
 | PRD | `/CONTEXT/PRD.md` |
-| SPEC | `/CONTEXT/SPEC.md` (Step 2) |
-| Roadmap | `/CONTEXT/ROADMAP.md` (Step 3) |
+| SPEC | `/SPEC.md` |
+| Roadmap | `/ROADMAP.md` (Step 3) |
 | Archived (abandoned scope) | `/CONTEXT/_archive/` |
 | Constitution | `/CLAUDE.md` |
 

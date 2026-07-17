@@ -73,8 +73,8 @@ Every completion action emits an immutable, append-only `CompletionEvent(routine
 
 - **Determinism**: state computation is a pure function of (schedule config, mandatoriness, last completion timestamp, current time) — no randomness, no AI inference, fully reproducible given the same inputs.
 - **Single-user, no auth**: no login system, no per-user data partitioning required in Phase 0.
-- **Stack**: Bun, TypeScript (strict, no `any`), Next.js, React, tRPC, Drizzle ORM, Turso (edge SQLite), Shadcn/UI, TanStack Query — per `AGENTS.md`. No Pinecone, no Upstash QStash, no Better Auth in Phase 0.
-- **Architecture**: strict DDD + Hexagonal Architecture per `AGENTS.md` — domain layer has zero framework imports, ports define boundaries, adapters are replaceable.
+- **Stack**: Bun, TypeScript (strict, no `any`), Next.js, React, tRPC, Drizzle ORM, Turso (edge SQLite), Shadcn/UI, TanStack Query — per `CLAUDE.md`. No Pinecone, no Upstash QStash, no Better Auth in Phase 0.
+- **Architecture**: strict DDD + Hexagonal Architecture per `CLAUDE.md` — domain layer has zero framework imports, ports define boundaries, adapters are replaceable.
 - **Externally readable**: the persisted/queryable state must be structured so an external consumer (HERMES-AGENT) can read due/overdue state without coupling to LE-REMINDER's internals.
 
 ## 9. User Flows
@@ -88,7 +88,7 @@ Every completion action emits an immutable, append-only `CompletionEvent(routine
 ## 10. Constraints
 
 - **HERMES-AGENT boundary**: notification/reminder delivery is explicitly out of scope for this repository. A separate external system, HERMES-AGENT, will read LE-REMINDER's computed state (via DB or API) and own all actual alerting. LE-REMINDER must not build or assume any push/email/cron delivery mechanism.
-- **Constitution**: all implementation must strictly follow `AGENTS.md` (DDD, Hexagonal Architecture, TS strict mode, absolute imports, no MVC).
+- **Constitution**: all implementation must strictly follow `CLAUDE.md` (DDD, Hexagonal Architecture, TS strict mode, absolute imports, no MVC).
 - **No AI in the domain**: state computation must never depend on an LLM or external inference call — it must remain a deterministic pure function.
 
 ## 11. Risks

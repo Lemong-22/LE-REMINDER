@@ -7,6 +7,11 @@ dist
 *.tgz
 /prisma/generated
 
+# transient local test SQLite files (see src/adapters/turso-adapters.test.ts)
+local-test.db
+local-test.db-wal
+local-test.db-shm
+
 # code coverage
 coverage
 *.lcov

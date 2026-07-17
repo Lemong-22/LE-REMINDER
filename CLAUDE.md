@@ -273,8 +273,8 @@ For Phase 0 implementation:
 | Document | Path |
 |----------|------|
 | PRD | `/CONTEXT/PRD.md` |
-| SPEC | `/SPEC.md` |
-| Roadmap | `/ROADMAP.md` (Step 3) |
+| SPEC | `/CONTEXT/SPEC.md` |
+| Roadmap | `/CONTEXT/ROADMAP.md` |
 | Archived (abandoned scope) | `/CONTEXT/_archive/` |
 | Constitution | `/CLAUDE.md` |
 

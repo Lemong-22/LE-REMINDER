@@ -1,0 +1,147 @@
+"use client";
+
+import { Badge } from "@LE-REMINDER/ui/components/badge";
+import { Button } from "@LE-REMINDER/ui/components/button";
+import { cn } from "@LE-REMINDER/ui/lib/utils";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import type { DashboardRoutine } from "@/lib/dashboard-routine";
+import { describeTaskType } from "@/lib/describe-task-type";
+import { formatLastCompleted } from "@/lib/format-last-completed";
+import { STATUS_TEXT } from "@/lib/status-visual";
+import { StatusShape } from "./status-shape";
+
+function isMandatory(routine: DashboardRoutine): boolean {
+	return (
+		routine.taskType.kind === "Recurring" &&
+		routine.taskType.schedule.type === "FixedCalendar" &&
+		routine.taskType.schedule.isMandatory
+	);
+}
+
+const CARD_ENTRANCE = {
+	hidden: { opacity: 0, y: 10 },
+	visible: { opacity: 1, y: 0 },
+};
+
+export function RoutineCard({
+	routine,
+	onComplete,
+	onEdit,
+	onTogglePause,
+}: {
+	routine: DashboardRoutine;
+	onComplete: () => void;
+	onEdit: () => void;
+	onTogglePause: () => void;
+}) {
+	const [flipping, setFlipping] = useState(false);
+
+	const isFinished = routine.status === "Finished";
+	const isPaused = routine.status === "Paused";
+	const showComplete = routine.status === "Overdue" || routine.status === "Due";
+	const showPauseResume = !isFinished;
+	const showMandatoryDot =
+		routine.taskType.kind === "Recurring" &&
+		routine.taskType.schedule.type === "FixedCalendar";
+
+	function handleComplete() {
+		setFlipping(true);
+		setTimeout(() => {
+			setFlipping(false);
+			onComplete();
+		}, 400);
+	}
+
+	return (
+		<motion.div
+			layout
+			variants={CARD_ENTRANCE}
+			whileHover={{ y: -2 }}
+			transition={{ type: "spring", stiffness: 400, damping: 32 }}
+			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
+		>
+			{flipping && (
+				<div
+					aria-hidden
+					className="absolute inset-0 origin-left animate-[sweep-flip_0.4s_ease_forwards] bg-emerald-400/[0.14]"
+				/>
+			)}
+
+			<div className="flex items-center justify-between gap-2">
+				<div className="flex items-center gap-[7px]">
+					<StatusShape status={routine.status} />
+					<div
+						className="font-mono font-semibold text-[10.5px]"
+						style={{ color: STATUS_TEXT[routine.status] }}
+					>
+						{routine.status}
+					</div>
+				</div>
+				<Badge
+					variant="secondary"
+					className="rounded-full border border-[#e7e5e4] bg-[#f5f4f0]/60 px-[9px] py-0.5 font-bold font-mono text-[#57534e] text-[10px] uppercase tracking-[0.08em]"
+				>
+					{routine.category}
+				</Badge>
+			</div>
+
+			<div
+				className={cn(
+					"font-bold text-[15px] transition-colors",
+					isFinished ? "text-[#78716c] line-through" : "text-[#292524]",
+				)}
+			>
+				{routine.name}
+			</div>
+
+			<div className="flex items-center gap-1.5 font-mono text-[#57534e] text-[11.5px]">
+				{showMandatoryDot && (
+					<span
+						aria-hidden
+						className={cn(
+							"size-1.5 shrink-0 rounded-full",
+							isMandatory(routine)
+								? "bg-[#44403c]"
+								: "border border-[#a8a29e] bg-transparent",
+						)}
+					/>
+				)}
+				<span>{describeTaskType(routine.taskType, routine.status)}</span>
+			</div>
+			<div className="font-mono text-[#57534e] text-[11px]">
+				Last done · {formatLastCompleted(routine.lastCompletedAt)}
+			</div>
+
+			<div className="flex gap-1.5 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+				{showComplete && (
+					<Button
+						size="sm"
+						onClick={handleComplete}
+						className="h-auto rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-[11px] text-emerald-700 shadow-none hover:bg-emerald-100"
+					>
+						Complete
+					</Button>
+				)}
+				{showPauseResume && (
+					<Button
+						size="sm"
+						variant="outline"
+						onClick={onTogglePause}
+						className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
+					>
+						{isPaused ? "Resume" : "Pause"}
+					</Button>
+				)}
+				<Button
+					size="sm"
+					variant="outline"
+					onClick={onEdit}
+					className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
+				>
+					Edit
+				</Button>
+			</div>
+		</motion.div>
+	);
+}

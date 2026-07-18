@@ -15,12 +15,13 @@
 		"@LE-REMINDER/config": "workspace:*"
 	},
 	"dependencies": {
-		"dotenv": "catalog:",
-		"zod": "catalog:",
-		"@LE-REMINDER/env": "workspace:*",
-		"@LE-REMINDER/db": "workspace:*",
 		"@LE-REMINDER/core": "workspace:*",
+		"@LE-REMINDER/db": "workspace:*",
+		"@LE-REMINDER/env": "workspace:*",
+		"@trpc/client": "catalog:",
 		"@trpc/server": "catalog:",
-		"@trpc/client": "catalog:"
+		"dotenv": "catalog:",
+		"superjson": "^2.2.6",
+		"zod": "catalog:"
 	}
 }

@@ -14,7 +14,10 @@ const dayOfWeekSchema = z.enum([
 ]);
 
 const durationSchema = z.object({
-	value: z.number().int().positive(),
+	// Upper-bounded so a malicious/malformed interval (e.g. Number.MAX_SAFE_INTEGER
+	// days) can't overflow the Date arithmetic in computeRoutineStatus. 3650
+	// (10 years) is far beyond any legitimate routine interval.
+	value: z.number().int().positive().max(3650),
 	unit: z.enum(["days", "weeks", "months"]),
 });
 
@@ -22,7 +25,12 @@ const recurrencePatternSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("Daily") }),
 	z.object({
 		kind: z.literal("Weekly"),
-		daysOfWeek: z.array(dayOfWeekSchema).min(1),
+		// .readonly() so the inferred TS type matches RecurrencePattern's
+		// `readonly DayOfWeek[]` exactly — callers holding a domain TaskType
+		// value can pass it straight through without an array-variance error.
+		// .max(7): there are only 7 distinct weekdays, so anything beyond
+		// that is a payload-size attack, not a legitimate schedule.
+		daysOfWeek: z.array(dayOfWeekSchema).min(1).max(7).readonly(),
 	}),
 	z.object({
 		kind: z.literal("Monthly"),
@@ -47,19 +55,21 @@ const taskTypeSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("OneOff"), dueDate: z.coerce.date().nullable() }),
 ]);
 
-const routineIdSchema = z.string().min(1);
+// Real ids are ~36-char UUIDs (CryptoIdGenerator) — 100 is a generous cap
+// that still rejects a payload-size attack disguised as a lookup key.
+const routineIdSchema = z.string().min(1).max(100);
 
 export const createRoutineInputSchema = z.object({
-	name: z.string().min(1),
+	name: z.string().min(1).max(255),
 	taskType: taskTypeSchema,
-	category: z.string().min(1).optional(),
+	category: z.string().min(1).max(100).optional(),
 });
 
 export const editRoutineInputSchema = z.object({
 	routineId: routineIdSchema,
-	name: z.string().min(1).optional(),
+	name: z.string().min(1).max(255).optional(),
 	taskType: taskTypeSchema.optional(),
-	category: z.string().min(1).optional(),
+	category: z.string().min(1).max(100).optional(),
 });
 
 export const deleteRoutineInputSchema = z.object({
@@ -77,7 +87,7 @@ export const completeRoutineInputSchema = z.object({
 });
 
 export const listRoutinesInputSchema = z.object({
-	category: z.string().min(1).optional(),
+	category: z.string().min(1).max(100).optional(),
 });
 
 export const getRoutineInputSchema = z.object({

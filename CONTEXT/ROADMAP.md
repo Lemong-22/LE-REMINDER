@@ -4,12 +4,23 @@
 
 ## Completed
 
-| Step | Phase | Output |
-|------|-------|--------|
-| 0 | Git Strategy | Commit-per-vertical-slice, established and in effect |
-| 1 | PRD Definition | `CONTEXT/PRD.md` |
-| 2 | Technical Spec | `CONTEXT/SPEC.md` |
-| 3 | Roadmap Sequencing | This document |
+| Step | Phase | Output | Commit |
+|------|-------|--------|--------|
+| 0 | Git Strategy | Commit-per-vertical-slice, established and in effect | — |
+| 1 | PRD Definition | `CONTEXT/PRD.md` | `aa11f7d` |
+| 2 | Technical Spec | `CONTEXT/SPEC.md` | `a161561` |
+| 3 | Roadmap Sequencing | This document | `b9c96e5` |
+| 4 | Foundation Scaffolding | `packages/core` scaffolded (domain/application/infrastructure/lib), Better Auth fully removed (Phase 0 is no-auth) | `05ebb7e` |
+| 5 | Domain Entities + VOs | `Routine`, `TaskType`, `Schedule`, `CompletionEvent`, `RoutineStatus`, `computeRoutineStatus` | `cb30b5d` |
+| 6 | Ports | Outbound ports in `domain/` (`RoutineRepository`, `CompletionEventRepository`, `Clock`, `IdGenerator`), inbound ports in `application/` (7 use-case interfaces + `RoutineView`) | `537ca9e` |
+| 7 | Use Cases | All 7 use cases as pure orchestration; `CompleteRoutine` rejects re-completing a Finished `OneOff` via `RoutineAlreadyFinishedError` | `f10cc8a` |
+| 8 | Mock Adapter | `InMemoryRoutineRepository`, `InMemoryCompletionEventRepository`, `SystemClock`/`FixedClock`, `CryptoIdGenerator` | `05e763b` |
+| — | **Bug fix** | `computeRoutineStatus` gained a 5th `createdAt` param — mandatory `FixedCalendar` Overdue now persists across occurrence boundaries instead of silently resetting; SPEC.md §2.8 amended to match. Found while building Step 9's CLI demo. | `ee4f933` |
+| 9 | CLI Adapter | Interactive REPL in `apps/cli` (create/list/complete/pause/resume/advance/demo) wired to Step 8 mocks, plus a `SteerableClock` for the mandatory-vs-rolling "Truth Test" | `113fb99` |
+| 10 | Domain Tests | 92 tests (64 domain + 28 use-case) via `bun test`, including boundary-instant and leap-year cases | `b659a83` |
+| 11 | DB Adapter | Drizzle schema (`routines`/`completion_events`, JSON `schedule_config`) + `TursoRoutineAdapter`/`TursoCompletionEventAdapter` in `packages/db` (not `packages/core`, to keep core dependency-free); validated against a real local SQLite file | `a21c6bc` |
+| 12 | Interface Adapter | tRPC `routineRouter` in `packages/api` (Zod-validated, thin wrapper only); composition root wires Turso adapters into the use cases | `07c5e4b` |
+| 13 | UI Mock | Dashboard in `apps/web` against fixture data (no tRPC yet) — status dots, hover-reveal row actions, Overdue-first sort, create/edit dialog. **Not yet committed** — implemented, then revised once per Lemong's direct visual feedback (card container, badge tags, brighter secondary text); awaiting his call on whether the revision folds into the Step 13 commit or becomes its own. | uncommitted |
 
 ---
 

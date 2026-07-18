@@ -4,7 +4,7 @@ import type { RoutineRepository } from "@LE-REMINDER/core/domain/routine-reposit
 import { eq } from "drizzle-orm";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import type * as schema from "../schema";
-import { routines } from "../schema/routine";
+import { completionEvents, routines } from "../schema/routine";
 import {
 	deserializeTaskType,
 	serializeTaskType,
@@ -55,7 +55,15 @@ export class TursoRoutineAdapter implements RoutineRepository {
 	}
 
 	async delete(id: RoutineId): Promise<void> {
-		await this.db.delete(routines).where(eq(routines.id, id));
+		// completion_events.routine_id has no ON DELETE CASCADE (see schema/
+		// routine.ts) — clear the routine's history first, in the same
+		// transaction, so deleting a completed routine doesn't 500 on the FK.
+		await this.db.transaction(async (tx) => {
+			await tx
+				.delete(completionEvents)
+				.where(eq(completionEvents.routineId, id));
+			await tx.delete(routines).where(eq(routines.id, id));
+		});
 	}
 }
 

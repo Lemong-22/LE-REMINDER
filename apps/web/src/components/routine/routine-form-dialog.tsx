@@ -1,0 +1,546 @@
+"use client";
+
+import type { DayOfWeek } from "@LE-REMINDER/core/domain/schedule";
+import type { TaskType } from "@LE-REMINDER/core/domain/task-type";
+import { Button } from "@LE-REMINDER/ui/components/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@LE-REMINDER/ui/components/dialog";
+import { Input } from "@LE-REMINDER/ui/components/input";
+import { Label } from "@LE-REMINDER/ui/components/label";
+import { Switch } from "@LE-REMINDER/ui/components/switch";
+import { cn } from "@LE-REMINDER/ui/lib/utils";
+import { useEffect, useState } from "react";
+import type { DashboardRoutine } from "@/lib/dashboard-routine";
+
+const ALL_DAYS: DayOfWeek[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const CATEGORY_SUGGESTIONS = ["Tech", "Health", "Finance", "Home"];
+const ACCENT = "#C2410C";
+
+interface FormState {
+	name: string;
+	category: string;
+	kind: "OneOff" | "Recurring";
+	dueDate: string;
+	scheduleType: "FixedCalendar" | "RollingInterval";
+	recurrenceKind: "Daily" | "Weekly" | "Monthly";
+	daysOfWeek: DayOfWeek[];
+	dayOfMonth: number;
+	isMandatory: boolean;
+	intervalValue: number;
+	intervalUnit: "days" | "weeks" | "months";
+}
+
+function toFormState(routine: DashboardRoutine | null): FormState {
+	const base: FormState = {
+		name: routine?.name ?? "",
+		category: routine?.category ?? "",
+		kind: "Recurring",
+		dueDate: "",
+		scheduleType: "FixedCalendar",
+		recurrenceKind: "Daily",
+		daysOfWeek: ["Mon"],
+		dayOfMonth: 1,
+		isMandatory: true,
+		intervalValue: 7,
+		intervalUnit: "days",
+	};
+
+	if (!routine) return base;
+
+	if (routine.taskType.kind === "OneOff") {
+		return {
+			...base,
+			kind: "OneOff",
+			dueDate: routine.taskType.dueDate
+				? routine.taskType.dueDate.toISOString().slice(0, 10)
+				: "",
+		};
+	}
+
+	const schedule = routine.taskType.schedule;
+	if (schedule.type === "RollingInterval") {
+		return {
+			...base,
+			kind: "Recurring",
+			scheduleType: "RollingInterval",
+			intervalValue: schedule.interval.value,
+			intervalUnit: schedule.interval.unit,
+		};
+	}
+
+	return {
+		...base,
+		kind: "Recurring",
+		scheduleType: "FixedCalendar",
+		recurrenceKind: schedule.recurrence.kind,
+		daysOfWeek:
+			schedule.recurrence.kind === "Weekly"
+				? [...schedule.recurrence.daysOfWeek]
+				: ["Mon"],
+		dayOfMonth:
+			schedule.recurrence.kind === "Monthly"
+				? schedule.recurrence.dayOfMonth
+				: 1,
+		isMandatory: schedule.isMandatory,
+	};
+}
+
+function toTaskType(state: FormState): TaskType {
+	if (state.kind === "OneOff") {
+		return {
+			kind: "OneOff",
+			dueDate: state.dueDate ? new Date(state.dueDate) : null,
+		};
+	}
+
+	if (state.scheduleType === "RollingInterval") {
+		return {
+			kind: "Recurring",
+			schedule: {
+				type: "RollingInterval",
+				interval: { value: state.intervalValue, unit: state.intervalUnit },
+			},
+		};
+	}
+
+	const recurrence =
+		state.recurrenceKind === "Daily"
+			? ({ kind: "Daily" } as const)
+			: state.recurrenceKind === "Weekly"
+				? ({ kind: "Weekly", daysOfWeek: state.daysOfWeek } as const)
+				: ({ kind: "Monthly", dayOfMonth: state.dayOfMonth } as const);
+
+	return {
+		kind: "Recurring",
+		schedule: {
+			type: "FixedCalendar",
+			recurrence,
+			isMandatory: state.isMandatory,
+		},
+	};
+}
+
+function TaskTypeCard({
+	selected,
+	glyph,
+	label,
+	description,
+	onClick,
+}: {
+	selected: boolean;
+	glyph: React.ReactNode;
+	label: string;
+	description: string;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={cn(
+				"flex min-w-[150px] flex-1 flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all",
+				selected
+					? "border-[#C2410C] bg-[#C2410C]/[0.08]"
+					: "border-[#d6d3d1] bg-white",
+			)}
+		>
+			{glyph}
+			<div className="font-semibold text-[#292524] text-[13.5px]">{label}</div>
+			<div className="text-[#57534e] text-[11.5px] leading-[1.4]">
+				{description}
+			</div>
+		</button>
+	);
+}
+
+function Pill({
+	selected,
+	onClick,
+	children,
+}: {
+	selected: boolean;
+	onClick: () => void;
+	children: React.ReactNode;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={cn(
+				"cursor-pointer rounded-full border px-3.5 py-1.5 font-mono text-[12px] transition-all",
+				selected
+					? "border-[#C2410C] bg-[#C2410C]/10 font-semibold text-[#C2410C]"
+					: "border-[#d6d3d1] bg-white font-normal text-[#57534e]",
+			)}
+		>
+			{children}
+		</button>
+	);
+}
+
+export function RoutineFormDialog({
+	open,
+	onOpenChange,
+	routine,
+	onSubmit,
+	onDelete,
+}: {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	routine: DashboardRoutine | null;
+	onSubmit: (values: {
+		name: string;
+		category: string;
+		taskType: TaskType;
+	}) => void;
+	onDelete?: (routine: DashboardRoutine) => void;
+}) {
+	const [state, setState] = useState<FormState>(() => toFormState(routine));
+
+	useEffect(() => {
+		if (open) setState(toFormState(routine));
+	}, [open, routine]);
+
+	function toggleDay(day: DayOfWeek) {
+		setState((prev) => ({
+			...prev,
+			daysOfWeek: prev.daysOfWeek.includes(day)
+				? prev.daysOfWeek.filter((d) => d !== day)
+				: [...prev.daysOfWeek, day],
+		}));
+	}
+
+	function handleSubmit() {
+		if (!state.name.trim()) return;
+		onSubmit({
+			name: state.name.trim(),
+			category: state.category.trim() || "General",
+			taskType: toTaskType(state),
+		});
+		onOpenChange(false);
+	}
+
+	const saveEnabled = state.name.trim().length > 0;
+	const hasDeadline = state.dueDate !== "";
+
+	function handleDelete() {
+		if (!routine) return;
+		onDelete?.(routine);
+		onOpenChange(false);
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent className="border-stone-200 bg-white text-stone-800 sm:max-w-lg">
+				<DialogHeader>
+					<DialogTitle>{routine ? "Edit Routine" : "New Task"}</DialogTitle>
+				</DialogHeader>
+
+				<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-1.5">
+						<Label
+							htmlFor="routine-name"
+							className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]"
+						>
+							Name
+						</Label>
+						<Input
+							id="routine-name"
+							value={state.name}
+							onChange={(e) =>
+								setState((prev) => ({ ...prev, name: e.target.value }))
+							}
+							placeholder="e.g. Server Data Backup"
+						/>
+					</div>
+
+					<div className="flex flex-col gap-1.5">
+						<Label
+							htmlFor="routine-category"
+							className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]"
+						>
+							Category
+						</Label>
+						<Input
+							id="routine-category"
+							value={state.category}
+							onChange={(e) =>
+								setState((prev) => ({ ...prev, category: e.target.value }))
+							}
+							placeholder="e.g. Tech"
+						/>
+						<div className="flex flex-wrap gap-1.5">
+							{CATEGORY_SUGGESTIONS.map((chip) => (
+								<Pill
+									key={chip}
+									selected={state.category === chip}
+									onClick={() =>
+										setState((prev) => ({ ...prev, category: chip }))
+									}
+								>
+									{chip}
+								</Pill>
+							))}
+						</div>
+					</div>
+
+					<div className="flex flex-col gap-2">
+						<Label className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]">
+							Task Type
+						</Label>
+						<div className="flex flex-wrap gap-2.5">
+							<TaskTypeCard
+								selected={
+									state.kind === "Recurring" &&
+									state.scheduleType === "FixedCalendar"
+								}
+								glyph={
+									<div
+										className="size-4 rounded-[3px]"
+										style={{ background: ACCENT }}
+									/>
+								}
+								label="Fixed Calendar"
+								description="Repeats on a schedule — daily, weekly, or a day of month."
+								onClick={() =>
+									setState((prev) => ({
+										...prev,
+										kind: "Recurring",
+										scheduleType: "FixedCalendar",
+									}))
+								}
+							/>
+							<TaskTypeCard
+								selected={
+									state.kind === "Recurring" &&
+									state.scheduleType === "RollingInterval"
+								}
+								glyph={
+									<div
+										className="size-4 rounded-full"
+										style={{ background: ACCENT }}
+									/>
+								}
+								label="Rolling Interval"
+								description="Due a fixed number of days/weeks/months after last done."
+								onClick={() =>
+									setState((prev) => ({
+										...prev,
+										kind: "Recurring",
+										scheduleType: "RollingInterval",
+									}))
+								}
+							/>
+							<TaskTypeCard
+								selected={state.kind === "OneOff"}
+								glyph={
+									<div
+										className="size-3.5 rotate-45"
+										style={{ background: ACCENT }}
+									/>
+								}
+								label="One-off"
+								description="Happens once — with or without a deadline."
+								onClick={() =>
+									setState((prev) => ({ ...prev, kind: "OneOff" }))
+								}
+							/>
+						</div>
+					</div>
+
+					{state.kind === "Recurring" &&
+						state.scheduleType === "FixedCalendar" && (
+							<div className="flex flex-col gap-3 rounded-[10px] bg-[#fafaf9] p-[15px]">
+								<div className="flex gap-2">
+									<Pill
+										selected={state.recurrenceKind === "Daily"}
+										onClick={() =>
+											setState((prev) => ({ ...prev, recurrenceKind: "Daily" }))
+										}
+									>
+										Daily
+									</Pill>
+									<Pill
+										selected={state.recurrenceKind === "Weekly"}
+										onClick={() =>
+											setState((prev) => ({
+												...prev,
+												recurrenceKind: "Weekly",
+											}))
+										}
+									>
+										Weekly
+									</Pill>
+									<Pill
+										selected={state.recurrenceKind === "Monthly"}
+										onClick={() =>
+											setState((prev) => ({
+												...prev,
+												recurrenceKind: "Monthly",
+											}))
+										}
+									>
+										Monthly
+									</Pill>
+								</div>
+
+								{state.recurrenceKind === "Weekly" && (
+									<div className="flex flex-wrap gap-1.5">
+										{ALL_DAYS.map((day) => (
+											<Pill
+												key={day}
+												selected={state.daysOfWeek.includes(day)}
+												onClick={() => toggleDay(day)}
+											>
+												{day}
+											</Pill>
+										))}
+									</div>
+								)}
+
+								{state.recurrenceKind === "Monthly" && (
+									<div className="flex items-center gap-2.5">
+										<span className="text-[#57534e] text-[12.5px]">
+											Day of month
+										</span>
+										<Input
+											type="number"
+											min={1}
+											max={31}
+											value={state.dayOfMonth}
+											onChange={(e) =>
+												setState((prev) => ({
+													...prev,
+													dayOfMonth: Number(e.target.value) || 1,
+												}))
+											}
+											className="w-16 font-mono"
+										/>
+									</div>
+								)}
+
+								<div className="flex items-center justify-between border-[#e7e5e4] border-t pt-2.5">
+									<div className="flex flex-col gap-0.5">
+										<span className="font-semibold text-[#292524] text-[13px]">
+											Mandatory
+										</span>
+										<span className="text-[#57534e] text-[11.5px]">
+											Missed occurrences stay Overdue until completed.
+										</span>
+									</div>
+									<Switch
+										checked={state.isMandatory}
+										onCheckedChange={(checked) =>
+											setState((prev) => ({ ...prev, isMandatory: checked }))
+										}
+										className="data-checked:bg-[#C2410C]"
+									/>
+								</div>
+							</div>
+						)}
+
+					{state.kind === "Recurring" &&
+						state.scheduleType === "RollingInterval" && (
+							<div className="flex items-center gap-2.5 rounded-[10px] bg-[#fafaf9] p-[15px]">
+								<span className="text-[#44403c] text-[13px]">Every</span>
+								<Input
+									type="number"
+									min={1}
+									value={state.intervalValue}
+									onChange={(e) =>
+										setState((prev) => ({
+											...prev,
+											intervalValue: Number(e.target.value) || 1,
+										}))
+									}
+									className="w-16 font-mono"
+								/>
+								<select
+									value={state.intervalUnit}
+									onChange={(e) =>
+										setState((prev) => ({
+											...prev,
+											intervalUnit: e.target.value as FormState["intervalUnit"],
+										}))
+									}
+									className="rounded-lg border border-[#d6d3d1] bg-white px-2.5 py-1.5 text-[#292524] text-[13px]"
+								>
+									<option value="days">days</option>
+									<option value="weeks">weeks</option>
+									<option value="months">months</option>
+								</select>
+							</div>
+						)}
+
+					{state.kind === "OneOff" && (
+						<div className="flex flex-col gap-3 rounded-[10px] bg-[#fafaf9] p-[15px]">
+							<div className="flex items-center justify-between">
+								<span className="text-[#44403c] text-[13px]">
+									Has a deadline
+								</span>
+								<Switch
+									checked={hasDeadline}
+									onCheckedChange={(checked) =>
+										setState((prev) => ({
+											...prev,
+											dueDate: checked
+												? (prev.dueDate ??
+													new Date().toISOString().slice(0, 10))
+												: "",
+										}))
+									}
+									className="data-checked:bg-[#C2410C]"
+								/>
+							</div>
+							{hasDeadline && (
+								<Input
+									type="date"
+									value={state.dueDate}
+									onChange={(e) =>
+										setState((prev) => ({ ...prev, dueDate: e.target.value }))
+									}
+									className="w-fit font-mono"
+								/>
+							)}
+						</div>
+					)}
+				</div>
+
+				<DialogFooter className="sm:justify-between">
+					{routine ? (
+						<Button
+							variant="ghost"
+							onClick={handleDelete}
+							className="text-red-500 hover:bg-red-50 hover:text-red-600"
+						>
+							Delete Routine
+						</Button>
+					) : (
+						<div />
+					)}
+					<div className="flex gap-2">
+						<Button variant="outline" onClick={() => onOpenChange(false)}>
+							Cancel
+						</Button>
+						<Button
+							onClick={handleSubmit}
+							disabled={!saveEnabled}
+							style={
+								saveEnabled
+									? { background: ACCENT, borderColor: ACCENT }
+									: undefined
+							}
+						>
+							Save Routine
+						</Button>
+					</div>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}

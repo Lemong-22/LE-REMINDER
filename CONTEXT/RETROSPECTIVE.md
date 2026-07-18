@@ -25,6 +25,7 @@ least useful thing this document could do.
 | `96ac486` | Track the generated migration for the auth/todo tables | Repo hygiene — production was already fixed by hand; this just makes the repo match reality |
 | `4c6e3eb` | `GET` on both agent routes, optimistic updates for routine complete/delete/pause | Requested after using the write-only agent API and feeling the mutation latency |
 | *(unlabeled, this doc)* | 8-angle audit pass: 6 real bugs fixed, 3 documented as deliberate boundaries | See §4 |
+| `8b072f7`, `003bc6f`, `a6fd388` | Mobile UX follow-up: hero animation replaced and made mobile-cheap, routine cards tap-to-reveal, 5s cross-device polling | Same day, after the audit — see §7 |
 
 ---
 
@@ -299,7 +300,221 @@ component ever gets a second, more dynamic use.
 
 ---
 
-## 6. If a future phase adds a second user
+## 6. Security posture, consolidated
+
+Every individual piece of this is already documented where it was decided
+(§2.2, §2.4, §4, §5.1–5.3) — this section exists so the whole picture is
+readable in one place instead of assembled from cross-references.
+
+**Authentication.** GitHub OAuth is the only sign-in path — no
+email/password, no self-registration. The whitelist
+(`databaseHooks.user.create.before` in `packages/auth/src/auth.ts`) runs
+server-side at account-creation time, comparing lowercased emails (Better
+Auth lowercases the incoming GitHub email before the hook runs, so the env
+var is lowercased to match — see §4, finding 1). It cannot be bypassed by calling
+`/api/auth/callback/github` directly, because the check isn't a UI
+affordance, it's inside the account-creation path itself.
+
+**Session handling.** `apps/web/src/proxy.ts` is deliberately shallow: it
+only checks that a session cookie is *present* (via
+`getSessionCookie`, no DB call — this runs at the edge), and redirects to
+`/login` if not. The real check is `protectedProcedure`
+(`packages/api/src/index.ts`), which calls `auth.api.getSession()` and
+throws `UNAUTHORIZED` for anything forged or expired. `session.cookieCache`
+(300s) sits between these two — it lets `protectedProcedure` skip the DB
+round trip for repeat calls within that window without weakening the
+proxy/protectedProcedure split (a forged cookie still fails the real
+lookup once the cache expires, or immediately if the signature itself is
+invalid).
+
+**Authorization.** Every routine/todo procedure in `packages/api` is
+`protectedProcedure`, not `publicProcedure` — "someone is logged in" is
+enforced everywhere. What's *not* enforced is per-row ownership (§5.2):
+harmless today because exactly one account can ever exist, structural risk
+the moment that stops being true.
+
+**The Agent API's auth is intentionally not Better Auth.** VIN is a
+non-interactive caller — there's no browser to hold a session cookie. So
+`apps/web/src/lib/agent-auth.ts` implements a separate scheme: a static
+bearer secret (`VIN_SECRET_KEY`), SHA-256-hashed on both sides and compared
+with `timingSafeEqual`, not `===`. A naive string comparison
+short-circuits on the first mismatched byte, which leaks the secret's
+length and prefix through response timing over enough requests; hashing
+first and using a constant-time comparison closes that side channel. The
+hash is computed once at module load (§4, finding 9), not per-request.
+`AGENT_USER_ID` is a second, independent check — an intent-confirmation
+value, not a permissions scope (§2.4) — so a leaked bearer secret alone
+still isn't sufficient without also knowing that string.
+
+**Injection surface.** All database access goes through Drizzle's
+query builder (`packages/db`) — no raw SQL string concatenation anywhere
+in the app layer, so standard parameterized-query protection applies by
+construction, not by discipline.
+
+**Secrets.** `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_SECRET`,
+`VIN_SECRET_KEY`, and the Turso auth token are all environment variables,
+validated at boot by a shared env schema (`@LE-REMINDER/env`) that throws
+on missing/malformed values rather than falling back to `undefined` and
+failing confusingly later — this is exactly what made `bun run build`
+fail loudly and immediately (a Zod validation error naming every missing
+variable) when run locally without production env vars during §7's work,
+instead of building successfully and then breaking in some harder-to-trace
+way at runtime. None of these four are checked into the repo;
+CLAUDE.md's "no modifying secrets/configs without approval" rule governs
+all of them.
+
+**What's explicitly not hardened** (unchanged from §5.3, restated here so
+it isn't missed): no rate limiting on the Agent API, no key rotation, no
+audit log of agent-originated writes. Reasonable for a single-operator
+personal tool; would need real work before this pattern is reused for
+anything with more than one trusted caller.
+
+---
+
+## 7. Mobile UX + power/battery efficiency pass
+
+Prompted by actually opening the dashboard on a phone: the hero animation
+was hover-dependent in one place, tap-inaccessible in another, and the
+data layer had no story at all for "I changed something on my phone, why
+doesn't my laptop tab show it." Three independent fixes, one session,
+commits `8b072f7`/`003bc6f`/`a6fd388` (3 files touched across the whole
+pass: `nexus-animation.tsx`, `routine-card.tsx`, `trpc.ts`).
+
+### 7.1 Hover-only controls don't exist on a touchscreen
+
+`routine-card.tsx`'s Complete/Pause/Edit row was revealed by
+`group-hover`/`group-focus-within` only. Touch devices never fire
+`:hover` at all, so on a phone those buttons were reachable only by
+accident (`:focus-within` firing from some other input path) — a real
+functional gap, not a cosmetic one.
+
+Fixed by adding a `revealed` boolean toggled by tapping the card, with a
+`pointerdown` listener on `document` that collapses it again on an
+outside tap. The existing hover/focus-within classes were kept rather
+than replaced, so desktop behavior is bit-for-bit unchanged; the tap
+state just ORs into the same `opacity`/`pointer-events` classes. Each
+button's own `onClick` calls `stopPropagation()` before running its real
+handler — this was the second iteration; the first put `onClick` directly
+on the action-row `<div>`, which correctly stopped the re-toggle bug but
+tripped Biome's `useKeyWithClickEvents` and `noStaticElementInteractions`
+a11y rules (a `<div>` with a click handler needs a role and keyboard
+handling it was never going to get). Moving the `stopPropagation()` call
+into each button removed the div's interactivity entirely instead of
+suppressing the lint — the buttons were always the real interactive
+elements; the div just needed to stop being one too.
+
+### 7.2 Same visual effect, roughly half the compositor cost on small screens
+
+`NexusAnimation` (the hero sphere — see its own file header for what it
+depicts) renders 30 independently-animated stars and 3 comets (4 trail
+dots each) by design; that's fine on a laptop GPU and unnecessary weight
+on a phone's. Below the `sm` Tailwind breakpoint, only the first 14 stars
+and 2 of the 3 comets render — `hidden sm:block` applied directly to each
+element's own root node.
+
+The direct-node approach was chosen over the more obvious "wrap the extra
+elements in one `<div className="hidden sm:contents">`" — `display:
+contents` makes a wrapper invisible to layout while keeping its children
+in the normal tree, which would have meant touching one line instead of
+N. It wasn't used because the comets live inside a `transform-style:
+preserve-3d` ancestor (the tumbling sphere container), and Safari has
+shipped versions where `display: contents` breaks 3D transform
+preservation for descendants of a `preserve-3d` context — a real risk
+given iOS Safari is the mobile browser this pass exists for. Applying the
+class per-node costs a few more characters and has no such interaction
+with 3D transform contexts.
+
+Every animated layer already had `motion-reduce:animate-none` from the
+original build (this pass didn't add reduced-motion support — it already
+existed and is called out here only because it's the other half of the
+same "don't burn a low-power device's battery on a decoration" story).
+
+### 7.3 Cross-device sync: polling, chosen over standing up push infra
+
+Before this pass, `queryClient`'s defaults were tuned for a single
+always-on tablet: 5-minute `staleTime`, refetch on window focus,
+`refetchInterval: false` — reasonable for one device, wrong the moment
+the same account is open on a phone *and* that tablet at once, since nothing
+told the second tab a mutation had happened on the first.
+
+Two real options existed: a push-based realtime layer (WebSocket/SSE via
+a hosted pub/sub service like Pusher/Ably/Upstash) or short-interval
+polling. Asked directly rather than decided silently, because it's a
+real architecture/cost trade-off, not a style choice — see the "AI Safety
+& Operational Constraints" table in CLAUDE.md, which requires approval
+before modifying secrets/configs, and any push service means new
+secrets. Polling won: `staleTime` and `refetchInterval` both dropped to
+5s, `refetchOnWindowFocus` stayed `true`. No new dependency, no new
+secret, no new adapter package — just two numbers in
+`apps/web/src/utils/trpc.ts`.
+
+The reason this is safe to leave unbounded rather than gated behind
+"only poll if the tab is visible": TanStack Query's `refetchInterval`
+already stops firing in a backgrounded tab (`refetchIntervalInBackground`
+defaults to `false`), so a phone with the dashboard open but screen
+locked, or a laptop tab sitting behind other windows, does zero network
+work until it's brought back to the foreground — which is also exactly
+when `refetchOnWindowFocus` fires a catch-up request anyway. The two
+settings cover each other: polling handles "tab open and visible right
+now," focus-refetch handles "tab was backgrounded, now it's not."
+
+A side effect worth flagging explicitly: `packages/auth/src/auth.ts`'s
+`session.cookieCache` comment used to say its 300s duration "matches the
+staleTime... cadence used elsewhere" — that stopped being true the moment
+`staleTime` dropped to 5s for this pass. The comment was corrected rather
+than left stale (it now says it matches the idle-dimmer's timeout
+instead, which is still true) — a small thing, but exactly the kind of
+comment-drift that CLAUDE.md's "why, not what" comment rule is supposed
+to prevent from accumulating silently.
+
+If a future device makes 5s polling feel slow (large screen showing a
+shared status board, say), the push-based option described above is
+still the honest next step — not a shorter polling interval, which just
+trades bandwidth for marginally less latency without solving the
+underlying "no one told the other tab" problem.
+
+### 7.4 The power-management story end to end
+
+No single "power mode" flag exists — battery/CPU cost is kept down by
+several independent, narrow decisions stacking rather than one system
+governing all of them. Worth reading as one list, since no single commit
+message captures it:
+
+1. **The idle dimmer** (`apps/web/src/components/ui/idle-dimmer.tsx`,
+   built in the original Phase 0.5 arc, unrelated to this session) dims
+   the screen after 5 minutes of no mouse/touch/keyboard activity — built
+   for the always-on tablet kiosk case, but it helps a phone screen left
+   open on a desk too.
+2. **`motion-reduce:animate-none`** on every layer of `NexusAnimation`
+   respects the OS-level "reduce motion" accessibility setting — a user
+   who has already told their phone to minimize animation gets a fully
+   static hero instead of paying for it regardless.
+3. **Fewer animated layers below `sm`** (§7.2) — roughly half the
+   star/comet count, independent of the reduce-motion setting, because
+   most phones simply have weaker GPUs than the desktop this was
+   originally designed against, reduce-motion or not.
+4. **Polling pauses when backgrounded** (§7.3) — no network radio wake-up
+   for a screen-locked phone or a tab sitting behind other windows.
+5. **No polyfills, no JS animation loop.** Every animated element in
+   `NexusAnimation` is a CSS `@keyframes` animation, not a
+   `requestAnimationFrame` loop — the compositor thread handles it
+   independently of the JS main thread, which is both cheaper and means a
+   busy JS thread (e.g. a query refetch resolving) can't cause the
+   animation to stutter or, conversely, the animation can't block a
+   pending state update.
+
+None of these five required a new dependency or a new abstraction layer —
+each is a small, local decision (a CSS media query, a library default,
+using CSS animation instead of JS) rather than a "power management
+system" in the sense of a central controller. That's a deliberate reading
+of CLAUDE.md's "don't design for hypothetical future requirements" rule:
+if a future phase needs something more coordinated (e.g. detecting
+`navigator.connection.saveData` or battery level directly), that's a real
+addition to design then, not something to speculatively build now.
+
+---
+
+## 8. If a future phase adds a second user
 
 Read §5.2 again first. The concrete list, in dependency order:
 

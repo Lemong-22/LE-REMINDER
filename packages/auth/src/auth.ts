@@ -37,8 +37,9 @@ export const auth = betterAuth({
 	// Avoids a DB round trip to validate the session on every single
 	// protectedProcedure call — the session is instead read from a signed,
 	// short-lived cookie and only re-verified against the DB after it
-	// expires. 300s matches the staleTime/idle-dimmer cadence used
-	// elsewhere in apps/web.
+	// expires. 300s matches the idle-dimmer's timeout in apps/web (not the
+	// query staleTime, which moved to 5s once routine/todo data started
+	// polling for cross-device sync — see apps/web/src/utils/trpc.ts).
 	session: {
 		cookieCache: {
 			enabled: true,

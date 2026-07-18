@@ -4,8 +4,10 @@ import type { RoutineView } from "@LE-REMINDER/core/application/routine-view";
 import type { RoutineId } from "@LE-REMINDER/core/domain/identity";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
 import { Github } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { HeroPanel } from "@/components/routine/hero-panel";
 import { RoutineFormDialog } from "@/components/routine/routine-form-dialog";
 import { RoutineList } from "@/components/routine/routine-list";
@@ -81,11 +83,28 @@ function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 // todo-sidebar.tsx. The hero's Daily Task checklist is still a local-only
 // scratchpad by design — see hero-panel.tsx.
 export default function Home() {
+	const router = useRouter();
 	const listQueryOptions = trpc.routine.list.queryOptions({});
 	const routinesQuery = useQuery(listQueryOptions);
 	const routines: DashboardRoutine[] = (routinesQuery.data ?? []).map(
 		toDashboardRoutine,
 	);
+
+	// proxy.ts only checks that a session cookie is present, not that it's
+	// still valid — an expired/revoked session reaches this page and the
+	// first protectedProcedure call throws UNAUTHORIZED. Without this, that
+	// showed as "Couldn't load routines from the database" with a Retry
+	// button that would fail forever, instead of sending the user back to
+	// where they can actually fix it.
+	useEffect(() => {
+		const error = routinesQuery.error;
+		if (
+			error instanceof TRPCClientError &&
+			error.data?.code === "UNAUTHORIZED"
+		) {
+			router.replace("/login");
+		}
+	}, [routinesQuery.error, router]);
 
 	const [activeTab, setActiveTab] = useState<Tab>("home");
 	const [dialogOpen, setDialogOpen] = useState(false);

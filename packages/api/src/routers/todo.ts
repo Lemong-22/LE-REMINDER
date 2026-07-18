@@ -1,7 +1,7 @@
 import { db } from "@LE-REMINDER/db";
 import { todos } from "@LE-REMINDER/db/schema/todo";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { protectedProcedure, router } from "../index";
 import {
 	addTodoInputSchema,
@@ -41,20 +41,23 @@ export const todoRouter = router({
 	toggle: protectedProcedure
 		.input(toggleTodoInputSchema)
 		.mutation(async ({ ctx, input }) => {
-			const existing = await db.query.todos.findFirst({
-				where: and(
-					eq(todos.id, input.todoId),
-					eq(todos.userId, ctx.session.user.id),
-				),
-			});
-			if (!existing) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+			// A single atomic flip, scoped by userId in the same WHERE that
+			// does the write — not a separate read-then-write, which had
+			// left the write itself unscoped (delete already got this
+			// right; toggle didn't).
 			const [updated] = await db
 				.update(todos)
-				.set({ done: !existing.done })
-				.where(eq(todos.id, input.todoId))
+				.set({ done: sql`not ${todos.done}` })
+				.where(
+					and(
+						eq(todos.id, input.todoId),
+						eq(todos.userId, ctx.session.user.id),
+					),
+				)
 				.returning();
+			if (!updated) {
+				throw new TRPCError({ code: "NOT_FOUND" });
+			}
 			return updated;
 		}),
 

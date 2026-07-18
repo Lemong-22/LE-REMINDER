@@ -8,7 +8,7 @@ import {
 } from "@LE-REMINDER/api/routers/routine-schemas";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAgentAuthorized, isAgentUserId } from "@/lib/agent-auth";
+import { authorizeAgentRequest } from "@/lib/agent-auth";
 
 export const runtime = "nodejs";
 
@@ -20,17 +20,13 @@ export const runtime = "nodejs";
 // through apps/web/src/proxy.ts (matcher is "/" only) or packages/api's
 // protectedProcedure; this route is its own inbound adapter, wired
 // straight into the same use cases the tRPC router uses, so no business
-// logic is duplicated. See apps/web/src/lib/agent-auth.ts for the two
-// checks every request goes through (bearer secret + userId).
+// logic is duplicated. See apps/web/src/lib/agent-auth.ts for the check
+// every request goes through (bearer secret + userId).
 const agentCreateRoutineInputSchema = createRoutineInputSchema.extend({
 	userId: z.string().min(1),
 });
 
 export async function POST(request: NextRequest) {
-	if (!isAgentAuthorized(request)) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
 	const body = await request.json().catch(() => null);
 	const parsed = agentCreateRoutineInputSchema.safeParse(body);
 	if (!parsed.success) {
@@ -40,26 +36,27 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	if (!isAgentUserId(parsed.data.userId)) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
+	const authError = authorizeAgentRequest(request, parsed.data.userId);
+	if (authError) return authError;
 
-	const { userId: _userId, ...command } = parsed.data;
-	const routine = await createRoutineUseCase.execute(command);
-	return NextResponse.json(routine, { status: 201 });
+	try {
+		const { userId: _userId, ...command } = parsed.data;
+		const routine = await createRoutineUseCase.execute(command);
+		return NextResponse.json(routine, { status: 201 });
+	} catch {
+		return NextResponse.json({ error: "Internal error" }, { status: 500 });
+	}
 }
 
 // Read-only counterpart: GET /api/agent/routines?userId=<AGENT_USER_ID>
 // (&category=<optional>). userId travels as a query param here since GET
 // requests don't conventionally carry a JSON body.
 export async function GET(request: NextRequest) {
-	if (!isAgentAuthorized(request)) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	if (!isAgentUserId(request.nextUrl.searchParams.get("userId"))) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
+	const authError = authorizeAgentRequest(
+		request,
+		request.nextUrl.searchParams.get("userId"),
+	);
+	if (authError) return authError;
 
 	const parsed = listRoutinesInputSchema.safeParse({
 		category: request.nextUrl.searchParams.get("category") ?? undefined,
@@ -71,6 +68,10 @@ export async function GET(request: NextRequest) {
 		);
 	}
 
-	const routines = await listRoutinesUseCase.execute(parsed.data);
-	return NextResponse.json(routines, { status: 200 });
+	try {
+		const routines = await listRoutinesUseCase.execute(parsed.data);
+		return NextResponse.json(routines, { status: 200 });
+	} catch {
+		return NextResponse.json({ error: "Internal error" }, { status: 500 });
+	}
 }

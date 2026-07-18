@@ -14,6 +14,13 @@ import { APIError } from "better-auth/api";
 // ALLOWED_EMAIL is rejected before a user row is ever created. This runs
 // at account-creation time (databaseHooks), not as a UI-level check, so it
 // can't be bypassed by hitting /api/auth/callback/github directly.
+//
+// The comparison is lowercased on both sides — Better Auth's internal
+// adapter lowercases the incoming email before this hook ever sees it, so
+// a mixed-case ALLOWED_EMAIL in an env var would otherwise permanently
+// lock out the one account this whitelist exists to admit.
+const allowedEmail = env.ALLOWED_EMAIL.toLowerCase();
+
 export const auth = betterAuth({
 	baseURL: env.BETTER_AUTH_URL,
 	secret: env.BETTER_AUTH_SECRET,
@@ -27,11 +34,22 @@ export const auth = betterAuth({
 			clientSecret: env.GITHUB_CLIENT_SECRET,
 		},
 	},
+	// Avoids a DB round trip to validate the session on every single
+	// protectedProcedure call — the session is instead read from a signed,
+	// short-lived cookie and only re-verified against the DB after it
+	// expires. 300s matches the staleTime/idle-dimmer cadence used
+	// elsewhere in apps/web.
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 300,
+		},
+	},
 	databaseHooks: {
 		user: {
 			create: {
 				before: async (user) => {
-					if (user.email !== env.ALLOWED_EMAIL) {
+					if (user.email.toLowerCase() !== allowedEmail) {
 						throw new APIError("FORBIDDEN", {
 							message: "This GitHub account is not authorized for LE-REMINDER.",
 						});

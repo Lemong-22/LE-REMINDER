@@ -133,6 +133,14 @@ Enforce **strictly**:
    - Captures, drafts, schedules, embeddings references
    - Sync state and execution state
    - NOT content (that goes in Markdown)
+   - **Explicit exception**: the Phase 0.5 `todos` table (Today's To-Do —
+     `packages/db/src/schema/todo.ts`) stores its plain-text content
+     directly in Turso, with no Markdown counterpart. It is deliberately
+     not a `Knowledge` object — Rules 1-3's Capture/Knowledge/Vector-DB
+     pipeline predates the Phase 0 reset and doesn't describe the current
+     Routine/CompletionEvent/Todo domain — so this rule doesn't apply to
+     it. If a future phase adds real `Knowledge` content, Rule 1 governs
+     that, not this table.
 
 3. **Vector DB stores embeddings and semantic indexes only**
    - Semantic retrieval via similarity search
@@ -290,6 +298,8 @@ Phase 0.5 locks the deployed dashboard down to a single authorized person. It do
 | PRD | `/CONTEXT/PRD.md` |
 | SPEC | `/CONTEXT/SPEC.md` |
 | Roadmap | `/CONTEXT/ROADMAP.md` |
+| Phase 0.5 Retrospective | `/CONTEXT/RETROSPECTIVE.md` |
+| Deployment playbook | `/DEPLOY.md` |
 | Archived (abandoned scope) | `/CONTEXT/_archive/` |
 | Constitution | `/CLAUDE.md` |
 

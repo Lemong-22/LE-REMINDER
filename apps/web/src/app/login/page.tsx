@@ -4,6 +4,7 @@ import { Github } from "lucide-react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { SoftAurora } from "@/components/soft-aurora";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -20,10 +21,21 @@ export default function LoginPage() {
 
 	async function handleGithubSignIn() {
 		setSigningIn(true);
-		await authClient.signIn.social({
-			provider: "github",
-			callbackURL: "/auth/loading",
-		});
+		try {
+			// On success this redirects the whole page to GitHub, so
+			// setSigningIn(false) never runs — the disabled state persists
+			// naturally through the navigation. It only needs resetting if
+			// the redirect itself fails to happen.
+			await authClient.signIn.social({
+				provider: "github",
+				callbackURL: "/auth/loading",
+			});
+		} catch {
+			toast.error(
+				"Couldn't reach GitHub — check your connection and try again.",
+			);
+			setSigningIn(false);
+		}
 	}
 
 	return (

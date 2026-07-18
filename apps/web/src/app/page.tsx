@@ -69,10 +69,10 @@ function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 	);
 }
 
-// Step 14: real tRPC + Turso backend. Routines are server state (useQuery +
-// mutations, invalidated on every write). Today's To-Do and the hero's Daily
-// Task checklist stay local-only scratchpads by design — see hero-panel.tsx
-// and todo-sidebar.tsx.
+// Step 14: real tRPC + Turso backend. Routines and Today's To-Do are both
+// server state now (useQuery + mutations, invalidated on writes) — see
+// todo-sidebar.tsx. The hero's Daily Task checklist is still a local-only
+// scratchpad by design — see hero-panel.tsx.
 export default function Home() {
 	const routinesQuery = useQuery(trpc.routine.list.queryOptions({}));
 	const routines: DashboardRoutine[] = (routinesQuery.data ?? []).map(

@@ -1,5 +1,5 @@
 import type { RoutineId } from "@LE-REMINDER/core/domain/identity";
-import { publicProcedure, router } from "../index";
+import { protectedProcedure, router } from "../index";
 import {
 	completeRoutineUseCase,
 	createRoutineUseCase,
@@ -24,18 +24,18 @@ import {
 // as-is. No business logic, no status computation — that all already
 // happened inside the Step 7 use cases.
 export const routineRouter = router({
-	create: publicProcedure
+	create: protectedProcedure
 		.input(createRoutineInputSchema)
 		.mutation(({ input }) => createRoutineUseCase.execute(input)),
 
-	edit: publicProcedure.input(editRoutineInputSchema).mutation(({ input }) =>
+	edit: protectedProcedure.input(editRoutineInputSchema).mutation(({ input }) =>
 		editRoutineUseCase.execute({
 			...input,
 			routineId: input.routineId as RoutineId,
 		}),
 	),
 
-	delete: publicProcedure
+	delete: protectedProcedure
 		.input(deleteRoutineInputSchema)
 		.mutation(({ input }) =>
 			deleteRoutineUseCase.execute({
@@ -43,7 +43,7 @@ export const routineRouter = router({
 			}),
 		),
 
-	setPaused: publicProcedure
+	setPaused: protectedProcedure
 		.input(setRoutinePausedInputSchema)
 		.mutation(({ input }) =>
 			setRoutinePausedUseCase.execute({
@@ -52,7 +52,7 @@ export const routineRouter = router({
 			}),
 		),
 
-	complete: publicProcedure
+	complete: protectedProcedure
 		.input(completeRoutineInputSchema)
 		.mutation(({ input }) =>
 			completeRoutineUseCase.execute({
@@ -61,11 +61,11 @@ export const routineRouter = router({
 			}),
 		),
 
-	list: publicProcedure
+	list: protectedProcedure
 		.input(listRoutinesInputSchema)
 		.query(({ input }) => listRoutinesUseCase.execute(input)),
 
-	get: publicProcedure
+	get: protectedProcedure
 		.input(getRoutineInputSchema)
 		.query(({ input }) =>
 			getRoutineUseCase.execute({ routineId: input.routineId as RoutineId }),

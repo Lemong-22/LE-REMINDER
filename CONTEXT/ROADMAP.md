@@ -22,6 +22,7 @@
 | 12 | Interface Adapter | tRPC `routineRouter` in `packages/api` (Zod-validated, thin wrapper only); composition root wires Turso adapters into the use cases | `07c5e4b` |
 | 13 | UI Implementation | Dashboard in `apps/web` — warm-light-paper redesign (Inter + IBM Plex Mono), status-coded routine cards with Framer Motion, hero progress panel, All Tasks / Analytics tabs, local Today's To-Do scratchpad, guided create/edit dialog. Folded the Step 13 visual-feedback revisions into this commit rather than splitting them out. | `1ab1091` |
 | 14 | Interface Wiring | Dashboard wired to the real tRPC + Turso backend from Step 12 (`useQuery`/`useMutation`, cache invalidation on every write, superjson transformer for Date fields). Includes a pre-launch security pass: transactional cascade delete for the completion_events FK, and upper-bounded Zod input schemas. | `1ab1091` |
+| 0.5 | Lockdown | Better Auth re-added as `packages/auth` (GitHub OAuth, server-side email whitelist via `databaseHooks.user.create.before`); Drizzle `user`/`session`/`account`/`verification` tables in `packages/db`; `protectedProcedure` gates every `routine`/`todo` tRPC procedure; Next.js middleware protects `/`; `/login` (SoftAurora glass card) and `/auth/loading` (post-OAuth transition) pages; Today's To-Do moved from localStorage to a Turso-backed `todos` table. Pending: user creates the GitHub OAuth app, sets env vars, and pushes the schema to production Turso — not done by AI per `CLAUDE.md`'s AI Safety constraints. | pending push |
 
 ---
 

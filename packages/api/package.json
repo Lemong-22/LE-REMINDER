@@ -15,12 +15,14 @@
 		"@LE-REMINDER/config": "workspace:*"
 	},
 	"dependencies": {
+		"@LE-REMINDER/auth": "workspace:*",
 		"@LE-REMINDER/core": "workspace:*",
 		"@LE-REMINDER/db": "workspace:*",
 		"@LE-REMINDER/env": "workspace:*",
 		"@trpc/client": "catalog:",
 		"@trpc/server": "catalog:",
 		"dotenv": "catalog:",
+		"drizzle-orm": "^0.45.1",
 		"superjson": "^2.2.6",
 		"zod": "catalog:"
 	}

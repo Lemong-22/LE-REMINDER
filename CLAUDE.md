@@ -12,6 +12,7 @@ The following technologies are used in this project. When relevant, load the cor
 |------------|-------------|-----------------|
 | Bun | `${bun}` | `npx skills add bun` |
 | TypeScript | `${typescript}` | Built-in |
+| Better Auth | `${better-auth-best-practices}` | Re-added Phase 0.5 — see `packages/auth` |
 | Next.js | `${vercel-react-best-practices}` | `npx skills add vercel-labs/agent-skills/vercel-react-best-practices` |
 | React | `${vercel-react-best-practices}` | `npx skills add vercel-labs/agent-skills/vercel-react-best-practices` |
 | TanStack Query | `${vercel-react-best-practices}` | `npx skills add vercel-labs/agent-skills/vercel-react-best-practices` |
@@ -20,7 +21,7 @@ The following technologies are used in this project. When relevant, load the cor
 | Drizzle ORM | `${drizzle}` | Use SQL best practices |
 | Turso | — | Edge SQLite documentation |
 
-> Phase 0 is single-user with no auth and no notification-delivery engine (see Phase 0 Constraints below). Better Auth, Pinecone, and Upstash QStash are not part of this repo's dependency set — re-add explicitly if a future phase requires auth, semantic search, or in-repo scheduled delivery.
+> Phase 0.5 added Better Auth back (GitHub OAuth, single whitelisted email — see `packages/auth` and Phase 0.5 Constraints below). Pinecone and Upstash QStash are still not part of this repo's dependency set — re-add explicitly if a future phase requires semantic search or in-repo scheduled delivery.
 
 ### Skill Loading Instructions
 
@@ -65,11 +66,11 @@ This is a Bun workspace monorepo (`apps/*`, `packages/*`). The DDD/Hexagonal `sr
 packages/core/src/
 ├── domain/           # Pure domain logic, entities, value objects, ports — zero dependencies
 ├── application/      # Use cases, command handlers, query handlers
-├── infrastructure/   # Adapters: Turso, Pinecone, QStash, GitHub, OpenAI
+├── infrastructure/   # In-memory/pure adapters only (system clock, id generator, in-memory repos) — used by tests and the mock CLI path
 └── lib/              # Shared utilities, type definitions
 ```
 
-There is no `interface/` folder inside `packages/core` — that layer is the existing workspace split: tRPC routers live in `packages/api`, UI lives in `apps/web`.
+There is no `interface/` folder inside `packages/core` — that layer is the existing workspace split: tRPC routers live in `packages/api`, UI lives in `apps/web`. Real infrastructure adapters live in their own sibling packages, not inside `packages/core/infrastructure`: Turso/Drizzle in `packages/db`, Better Auth's server instance + Drizzle adapter in `packages/auth` (Phase 0.5). Both are framework/domain-agnostic and depend on `packages/core` only for domain types where needed — `packages/core` never depends on them.
 
 ### Import Aliases
 
@@ -263,10 +264,22 @@ Git commits happen **ONLY** on:
 
 For Phase 0 implementation:
 
-- **Single-user only** (no auth, no multi-tenancy)
+- ~~Single-user only (no auth, no multi-tenancy)~~ — superseded by Phase 0.5 below
 - **No AI/LLM in the domain** — state computation is a deterministic pure function, never inferred
 - **No notification/reminder delivery in this repo** — LE-REMINDER only computes and exposes state (`Due`/`Overdue`/`Done`); an external system, HERMES-AGENT, owns all alerting
 - **No history/streak UI** — `CompletionEvent`s are recorded from day one, but Phase 0 only displays derived current state
+
+---
+
+## Phase 0.5 Constraints
+
+Phase 0.5 locks the deployed dashboard down to a single authorized person. It does **not** make this a multi-tenant app.
+
+- **Still single-user** — the change is *authenticated* single-user, not multi-user. Auth exists to keep everyone except the app owner out, not to onboard a second account.
+- **GitHub OAuth only, no self-registration, no email/password** — `packages/auth` configures exactly one social provider.
+- **Email whitelist enforced server-side, not in the UI** — `databaseHooks.user.create.before` in `packages/auth/src/auth.ts` rejects account creation for any email other than `ALLOWED_EMAIL`. A UI-only check would be bypassable by calling `/api/auth/callback/github` directly.
+- **`packages/core`'s domain stays auth-free** — Better Auth is infrastructure (`packages/auth`, a sibling to `packages/db`), never imported by `domain/` or `application/`. Sessions are a `packages/api` context concern, not a domain concept.
+- **`/` is the only route Next.js middleware protects** — `apps/web/src/middleware.ts` matches `/`. Backend defense-in-depth is `protectedProcedure` in `packages/api`, which every routine/todo procedure now goes through.
 
 ---
 
@@ -289,3 +302,4 @@ For Phase 0 implementation:
 | 1.0 | 2026-05-12 | Lead Developer | Initial constitution |
 | 1.1 | 2026-05-12 | Lead Developer | Add local skills: ddd-hexagonal-ts, drizzle-turso-edge, vector-pinecone-capture |
 | 1.2 | 2026-07-17 | Lemong | Step 4: domain layout lives in `packages/core`, not root `src/`; removed Better Auth (Phase 0 is no-auth) |
+| 1.3 | 2026-07-18 | Lemong | Phase 0.5: re-add Better Auth as a new `packages/auth` infra package (GitHub OAuth + server-side email whitelist), `protectedProcedure` in `packages/api`, `/login` + `/auth/loading` pages, Today's To-Do moved from localStorage to a Turso-backed `todos` table |

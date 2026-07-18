@@ -9,6 +9,7 @@
 	},
 	"dependencies": {
 		"@LE-REMINDER/api": "workspace:*",
+		"@LE-REMINDER/auth": "workspace:*",
 		"@LE-REMINDER/core": "workspace:*",
 		"@LE-REMINDER/env": "workspace:*",
 		"@LE-REMINDER/ui": "workspace:*",
@@ -19,6 +20,7 @@
 		"@trpc/server": "catalog:",
 		"@trpc/tanstack-react-query": "^11.16.0",
 		"babel-plugin-react-compiler": "^1.0.0",
+		"better-auth": "^1.4.4",
 		"dotenv": "catalog:",
 		"framer-motion": "^12.42.2",
 		"libsql": "catalog:",
@@ -26,6 +28,7 @@
 		"motion": "^12.42.2",
 		"next": "catalog:",
 		"next-themes": "catalog:",
+		"ogl": "^1.0.11",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"sonner": "catalog:",

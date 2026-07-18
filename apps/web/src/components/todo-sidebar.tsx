@@ -2,75 +2,65 @@
 
 import { Checkbox } from "@LE-REMINDER/ui/components/checkbox";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatedItem } from "@/components/ui/animated-list";
+import { queryClient, trpc } from "@/utils/trpc";
 
-interface Todo {
-	id: string;
-	text: string;
-	done: boolean;
-}
-
-const STORAGE_KEY = "le-reminder:todo-sidebar";
-
-const INITIAL_TODOS: Todo[] = [
-	{ id: "t1", text: "Daily Vitamins", done: false },
-	{ id: "t2", text: "Replace Water Filter", done: false },
-	{ id: "t3", text: "Water the Plants", done: false },
-];
-
-function loadStoredTodos(): Todo[] {
-	try {
-		const raw = window.localStorage.getItem(STORAGE_KEY);
-		if (!raw) return INITIAL_TODOS;
-		const parsed = JSON.parse(raw);
-		return Array.isArray(parsed) ? parsed : INITIAL_TODOS;
-	} catch {
-		return INITIAL_TODOS;
-	}
-}
-
-// Ephemeral scratchpad — deliberately not a Routine. Has no schedule, no
-// status, and stays entirely outside computeRoutineStatus / tRPC. Persisted
-// to localStorage only (not the backend), so a refresh doesn't lose it but
-// it never touches the database.
+// Synced via tRPC/Turso (packages/api/src/routers/todo.ts), scoped to the
+// signed-in account, so it's the same list across devices/sessions —
+// still deliberately not a Routine: plain text, no schedule, no
+// computeRoutineStatus involvement (see packages/db/src/schema/todo.ts).
 export function TodoSidebar() {
-	const [todos, setTodos] = useState<Todo[]>([]);
-	const [mounted, setMounted] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 	const [newText, setNewText] = useState("");
 
-	// Reads localStorage only after mount (never during render/SSR), then
-	// gates the list render on `mounted` — server and the pre-mount client
-	// render both show nothing here, so there's no hydration mismatch.
-	useEffect(() => {
-		setTodos(loadStoredTodos());
-		setMounted(true);
-	}, []);
+	const listQueryOptions = trpc.todo.list.queryOptions();
+	const todosQuery = useQuery(listQueryOptions);
+	const todos = todosQuery.data ?? [];
 
-	useEffect(() => {
-		if (!mounted) return;
-		window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-	}, [todos, mounted]);
-
-	function toggleTodo(id: string) {
-		setTodos((prev) =>
-			prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
-		);
+	function invalidate() {
+		queryClient.invalidateQueries(trpc.todo.pathFilter());
 	}
 
-	function removeTodo(id: string) {
-		setTodos((prev) => prev.filter((t) => t.id !== id));
-	}
+	const addMutation = useMutation(
+		trpc.todo.add.mutationOptions({ onSuccess: invalidate }),
+	);
+
+	// Toggling is the most frequent interaction, so it gets an optimistic
+	// flip instead of waiting on the Turso round-trip; add/delete stay
+	// invalidate-on-success since they're infrequent and the skeleton/list
+	// reflow is cheap either way.
+	const toggleMutation = useMutation(
+		trpc.todo.toggle.mutationOptions({
+			onMutate: async ({ todoId }) => {
+				await queryClient.cancelQueries(listQueryOptions);
+				const previous = queryClient.getQueryData(listQueryOptions.queryKey);
+				queryClient.setQueryData(listQueryOptions.queryKey, (old) =>
+					old?.map((todo) =>
+						todo.id === todoId ? { ...todo, done: !todo.done } : todo,
+					),
+				);
+				return { previous };
+			},
+			onError: (_error, _vars, context) => {
+				if (context?.previous) {
+					queryClient.setQueryData(listQueryOptions.queryKey, context.previous);
+				}
+			},
+			onSettled: invalidate,
+		}),
+	);
+
+	const deleteMutation = useMutation(
+		trpc.todo.delete.mutationOptions({ onSuccess: invalidate }),
+	);
 
 	function addTodo() {
 		const text = newText.trim();
 		if (!text) return;
-		setTodos((prev) => [
-			...prev,
-			{ id: crypto.randomUUID(), text, done: false },
-		]);
+		addMutation.mutate({ text });
 		setNewText("");
 	}
 
@@ -90,24 +80,26 @@ export function TodoSidebar() {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				{mounted && todos.length === 0 && (
+				{!todosQuery.isLoading && todos.length === 0 && (
 					<div className="text-[#57534e] text-[12.5px]">
 						Nothing on your scratchpad.
 					</div>
 				)}
 				<AnimatePresence>
-					{mounted &&
+					{!todosQuery.isLoading &&
 						todos.map((todo, index) => (
 							<AnimatedItem key={todo.id} index={index}>
 								<div className="flex items-center gap-2.5">
 									<Checkbox
 										checked={todo.done}
-										onCheckedChange={() => toggleTodo(todo.id)}
+										onCheckedChange={() =>
+											toggleMutation.mutate({ todoId: todo.id })
+										}
 										className="size-4 rounded data-checked:border-[#292524] data-checked:bg-[#292524]"
 									/>
 									<button
 										type="button"
-										onClick={() => toggleTodo(todo.id)}
+										onClick={() => toggleMutation.mutate({ todoId: todo.id })}
 										className={cn(
 											"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
 											todo.done
@@ -120,7 +112,7 @@ export function TodoSidebar() {
 									{editMode && (
 										<button
 											type="button"
-											onClick={() => removeTodo(todo.id)}
+											onClick={() => deleteMutation.mutate({ todoId: todo.id })}
 											aria-label={`Remove ${todo.text}`}
 											className="cursor-pointer bg-transparent px-0.5 text-[#a8a29e] text-sm"
 										>

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const IDLE_TIMEOUT_MS = 300_000;
@@ -25,9 +25,10 @@ const PHONE_QUERY = "(pointer: coarse) and (max-width: 639px)";
 // mount). Skipped entirely on a phone — leaving the tab/app and coming
 // back after the timeout would otherwise show a jarring dark flash for a
 // device that was never at risk of screen burn-in in the first place.
-// The dim fades in, but clearing it on the next touch is deliberately
-// instant rather than animated — an idle screen waking up should feel
-// immediate, not like it's still catching up.
+// Fades both in and out (AnimatePresence handles the exit transition on
+// unmount) — an earlier version cleared it instantly on the theory that
+// waking up should feel immediate, but in practice an instant vanish
+// read as a glitch rather than a deliberate state change.
 export function IdleDimmer({ children }: { children: React.ReactNode }) {
 	const [idle, setIdle] = useState(false);
 	const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -57,15 +58,18 @@ export function IdleDimmer({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			{children}
-			{idle && (
-				<motion.div
-					aria-hidden
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.6, ease: "easeInOut" }}
-					className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm"
-				/>
-			)}
+			<AnimatePresence>
+				{idle && (
+					<motion.div
+						aria-hidden
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.6, ease: "easeInOut" }}
+						className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm"
+					/>
+				)}
+			</AnimatePresence>
 		</>
 	);
 }

@@ -13,6 +13,7 @@ import { RoutineFormDialog } from "@/components/routine/routine-form-dialog";
 import { RoutineList } from "@/components/routine/routine-list";
 import { RoutineListRow } from "@/components/routine/routine-list-row";
 import { TodoSidebar } from "@/components/todo-sidebar";
+import { buildCategorySuggestions } from "@/lib/category-suggestions";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import {
 	withCompleted,
@@ -323,6 +324,7 @@ export default function Home() {
 				open={dialogOpen}
 				onOpenChange={setDialogOpen}
 				routine={editingRoutine}
+				categorySuggestions={buildCategorySuggestions(routines)}
 				onSubmit={handleSubmit}
 				onDelete={handleDelete}
 			/>

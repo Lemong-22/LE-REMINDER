@@ -18,7 +18,6 @@ import { useEffect, useState } from "react";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 
 const ALL_DAYS: DayOfWeek[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const CATEGORY_SUGGESTIONS = ["Tech", "Health", "Finance", "Home"];
 const ACCENT = "#C2410C";
 
 interface FormState {
@@ -187,12 +186,21 @@ export function RoutineFormDialog({
 	open,
 	onOpenChange,
 	routine,
+	categorySuggestions,
 	onSubmit,
 	onDelete,
 }: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	routine: DashboardRoutine | null;
+	// Categories are a free-text field (packages/core/src/domain/category.ts
+	// — an open string, not a closed enum), so this list is only ever a set
+	// of one-tap suggestions, never a validation constraint. Callers derive
+	// it from whatever categories already exist across saved routines, so
+	// anything the user types once becomes a suggestion the next time they
+	// create or edit a routine — no separate "manage categories" screen or
+	// table needed for that to work.
+	categorySuggestions: string[];
 	onSubmit: (values: {
 		name: string;
 		category: string;
@@ -275,7 +283,7 @@ export function RoutineFormDialog({
 							placeholder="e.g. Tech"
 						/>
 						<div className="flex flex-wrap gap-1.5">
-							{CATEGORY_SUGGESTIONS.map((chip) => (
+							{categorySuggestions.map((chip) => (
 								<Pill
 									key={chip}
 									selected={state.category === chip}

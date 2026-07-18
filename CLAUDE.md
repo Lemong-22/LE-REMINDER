@@ -300,6 +300,7 @@ Phase 0.5 locks the deployed dashboard down to a single authorized person. It do
 | Roadmap | `/CONTEXT/ROADMAP.md` |
 | Phase 0.5 Retrospective | `/CONTEXT/RETROSPECTIVE.md` |
 | Deployment playbook | `/DEPLOY.md` |
+| User manual (how to use the deployed app) | `/MANUAL.md` |
 | Archived (abandoned scope) | `/CONTEXT/_archive/` |
 | Constitution | `/CLAUDE.md` |
 
@@ -313,3 +314,4 @@ Phase 0.5 locks the deployed dashboard down to a single authorized person. It do
 | 1.1 | 2026-05-12 | Lead Developer | Add local skills: ddd-hexagonal-ts, drizzle-turso-edge, vector-pinecone-capture |
 | 1.2 | 2026-07-17 | Lemong | Step 4: domain layout lives in `packages/core`, not root `src/`; removed Better Auth (Phase 0 is no-auth) |
 | 1.3 | 2026-07-18 | Lemong | Phase 0.5: re-add Better Auth as a new `packages/auth` infra package (GitHub OAuth + server-side email whitelist), `protectedProcedure` in `packages/api`, `/login` + `/auth/loading` pages, Today's To-Do moved from localStorage to a Turso-backed `todos` table |
+| 1.4 | 2026-07-18 | Lemong | Add `/MANUAL.md` (end-user guide for the deployed app, distinct from PRD/SPEC/ROADMAP's dev-facing planning docs) |

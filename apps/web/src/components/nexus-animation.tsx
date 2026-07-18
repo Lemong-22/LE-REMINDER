@@ -1,3 +1,5 @@
+import { cn } from "@LE-REMINDER/ui/lib/utils";
+
 const ACCENT = "#C2410C";
 
 const MERIDIAN_ANGLES = [0, 60, 120];
@@ -37,19 +39,57 @@ const STARS = Array.from({ length: 30 }, (_, i) => ({
 	accent: i % 5 === 0,
 }));
 
+// Below the sm breakpoint the first 14 stars render unconditionally; the
+// remaining 16 (plus the third Comet below) get `hidden sm:block` on their
+// own root — mobile GPUs get roughly half the independently animated
+// layers of desktop, since every star/comet-trail dot is its own
+// compositor layer regardless of how small it is. This hides via CSS on
+// each element's own node rather than an extra `display:contents`
+// wrapper, since Safari has had bugs combining `display:contents` with a
+// `transform-style:preserve-3d` ancestor (relevant for the comets).
+const CORE_STAR_COUNT = 14;
+
+function Star({
+	s,
+	className,
+}: {
+	s: (typeof STARS)[number];
+	className?: string;
+}) {
+	return (
+		<div
+			className={cn("nexus-star absolute rounded-full", className)}
+			style={
+				{
+					left: `${s.left}%`,
+					top: `${s.top}%`,
+					width: s.size,
+					height: s.size,
+					background: s.accent ? ACCENT : "#a8a29e",
+					boxShadow: s.accent ? "0 0 4px 1px rgba(194,65,12,0.5)" : "none",
+					"--star-duration": `${s.duration}s`,
+					"--star-delay": `${s.delay}s`,
+				} as React.CSSProperties
+			}
+		/>
+	);
+}
+
 // A spark orbiting inside one ring plane of the sphere. The trail is the
 // same spinner several times with a negative animation-delay, which reads
 // as an angular offset behind the head — a comet tail for free.
 function Comet({
 	planeTransform,
 	animation,
+	className,
 }: {
 	planeTransform: string;
 	animation: string;
+	className?: string;
 }) {
 	return (
 		<div
-			className="absolute inset-1"
+			className={cn("absolute inset-1", className)}
 			style={{ transform: planeTransform, transformStyle: "preserve-3d" }}
 		>
 			{COMET_TRAIL.map((t) => (
@@ -88,25 +128,11 @@ export function NexusAnimation() {
 			style={{ perspective: "600px" }}
 		>
 			<div className="absolute -inset-6 animate-[spin-cw_150s_linear_infinite] motion-reduce:animate-none">
-				{STARS.map((s) => (
-					<div
-						key={`${s.left}-${s.top}`}
-						className="nexus-star absolute rounded-full"
-						style={
-							{
-								left: `${s.left}%`,
-								top: `${s.top}%`,
-								width: s.size,
-								height: s.size,
-								background: s.accent ? ACCENT : "#a8a29e",
-								boxShadow: s.accent
-									? "0 0 4px 1px rgba(194,65,12,0.5)"
-									: "none",
-								"--star-duration": `${s.duration}s`,
-								"--star-delay": `${s.delay}s`,
-							} as React.CSSProperties
-						}
-					/>
+				{STARS.slice(0, CORE_STAR_COUNT).map((s) => (
+					<Star key={`${s.left}-${s.top}`} s={s} />
+				))}
+				{STARS.slice(CORE_STAR_COUNT).map((s) => (
+					<Star key={`${s.left}-${s.top}`} s={s} className="hidden sm:block" />
 				))}
 			</div>
 			<div
@@ -142,6 +168,7 @@ export function NexusAnimation() {
 				<Comet
 					planeTransform="rotateY(120deg)"
 					animation="animate-[spin-cw_8.5s_linear_infinite]"
+					className="hidden sm:block"
 				/>
 			</div>
 			<div

@@ -4,7 +4,7 @@ import { Badge } from "@LE-REMINDER/ui/components/badge";
 import { Button } from "@LE-REMINDER/ui/components/button";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { describeTaskType } from "@/lib/describe-task-type";
 import { formatLastCompleted } from "@/lib/format-last-completed";
@@ -36,6 +36,24 @@ export function RoutineCard({
 	onTogglePause: () => void;
 }) {
 	const [flipping, setFlipping] = useState(false);
+	const [revealed, setRevealed] = useState(false);
+	const cardRef = useRef<HTMLDivElement>(null);
+
+	// Hover reveals the action row on desktop, but touch devices have no
+	// hover state — tapping the card reveals it instead, and tapping
+	// anywhere outside collapses it back, mirroring the tap-to-reveal
+	// pattern of mobile task apps rather than showing actions permanently
+	// on every card in a dense grid.
+	useEffect(() => {
+		if (!revealed) return;
+		function handlePointerDown(event: PointerEvent) {
+			if (!cardRef.current?.contains(event.target as Node)) {
+				setRevealed(false);
+			}
+		}
+		document.addEventListener("pointerdown", handlePointerDown);
+		return () => document.removeEventListener("pointerdown", handlePointerDown);
+	}, [revealed]);
 
 	const isFinished = routine.status === "Finished";
 	const isPaused = routine.status === "Paused";
@@ -55,10 +73,12 @@ export function RoutineCard({
 
 	return (
 		<motion.div
+			ref={cardRef}
 			layout
 			variants={CARD_ENTRANCE}
 			whileHover={{ y: -2 }}
 			transition={{ type: "spring", stiffness: 400, damping: 32 }}
+			onClick={() => setRevealed((v) => !v)}
 			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
 		>
 			{flipping && (
@@ -113,11 +133,19 @@ export function RoutineCard({
 				Last done · {formatLastCompleted(routine.lastCompletedAt)}
 			</div>
 
-			<div className="flex gap-1.5 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+			<div
+				className={cn(
+					"pointer-events-none flex gap-1.5 opacity-0 transition-opacity group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100",
+					revealed && "pointer-events-auto opacity-100",
+				)}
+			>
 				{showComplete && (
 					<Button
 						size="sm"
-						onClick={handleComplete}
+						onClick={(e) => {
+							e.stopPropagation();
+							handleComplete();
+						}}
 						className="h-auto rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-[11px] text-emerald-700 shadow-none hover:bg-emerald-100"
 					>
 						Complete
@@ -127,7 +155,10 @@ export function RoutineCard({
 					<Button
 						size="sm"
 						variant="outline"
-						onClick={onTogglePause}
+						onClick={(e) => {
+							e.stopPropagation();
+							onTogglePause();
+						}}
 						className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
 					>
 						{isPaused ? "Resume" : "Pause"}
@@ -136,7 +167,10 @@ export function RoutineCard({
 				<Button
 					size="sm"
 					variant="outline"
-					onClick={onEdit}
+					onClick={(e) => {
+						e.stopPropagation();
+						onEdit();
+					}}
 					className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
 				>
 					Edit

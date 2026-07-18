@@ -18,14 +18,17 @@ export const queryClient = new QueryClient({
 	}),
 	defaultOptions: {
 		queries: {
-			// Tuned for an always-on tablet display, not a typical multi-tab
-			// browsing session: data is fresh for 5 minutes (matches the idle
-			// dimmer's timeout) so routine/todo mutations already invalidate
-			// the cache explicitly on success, refocusing the tab re-syncs
-			// once, and nothing polls in the background.
-			staleTime: 300_000,
+			// Same account is routinely open on more than one device at once
+			// (phone + the always-on tablet display), so a plain
+			// invalidate-on-mutation model leaves other open tabs stale until
+			// they're refocused. Poll every 5s instead — cheap for a handful
+			// of small JSON payloads, and TanStack Query already pauses the
+			// interval when the tab is backgrounded
+			// (refetchIntervalInBackground defaults to false), so it costs
+			// nothing on a phone sitting in a pocket.
+			staleTime: 5_000,
 			refetchOnWindowFocus: true,
-			refetchInterval: false,
+			refetchInterval: 5_000,
 		},
 	},
 });

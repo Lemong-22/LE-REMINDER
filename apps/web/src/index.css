@@ -30,6 +30,30 @@
 	}
 }
 
+@keyframes nexus-tumble {
+	0% {
+		transform: rotateX(-18deg) rotateY(0deg);
+	}
+	50% {
+		transform: rotateX(18deg) rotateY(180deg);
+	}
+	100% {
+		transform: rotateX(-18deg) rotateY(360deg);
+	}
+}
+
+@keyframes nexus-glow {
+	0%,
+	100% {
+		opacity: 0.45;
+		transform: scale(0.88);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.08);
+	}
+}
+
 @keyframes sweep-flip {
 	from {
 		transform: scaleX(0);

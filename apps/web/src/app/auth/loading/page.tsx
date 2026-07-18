@@ -3,7 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SoftAurora } from "@/components/soft-aurora";
 import { useSession } from "@/lib/auth-client";
 
@@ -20,13 +20,21 @@ export default function AuthLoadingPage() {
 	const router = useRouter();
 	const { data: session, isPending } = useSession();
 	const [phase, setPhase] = useState<Phase>("waiting");
+	const startedRef = useRef(false);
 
+	// Deliberately depends on `isPending` only, not `phase` — this effect
+	// itself calls setPhase("shown"), and if `phase` were a dependency too,
+	// that state update would re-run the effect, whose cleanup would clear
+	// the timer it had just scheduled a moment earlier. Net effect: phase
+	// gets stuck on "shown" forever and the page never advances past
+	// /auth/loading. startedRef guards against running twice.
 	useEffect(() => {
-		if (isPending || phase !== "waiting") return;
-		const timer = setTimeout(() => setPhase("exiting"), SHOWN_DURATION_MS);
+		if (isPending || startedRef.current) return;
+		startedRef.current = true;
 		setPhase("shown");
+		const timer = setTimeout(() => setPhase("exiting"), SHOWN_DURATION_MS);
 		return () => clearTimeout(timer);
-	}, [isPending, phase]);
+	}, [isPending]);
 
 	useEffect(() => {
 		if (phase !== "exiting") return;

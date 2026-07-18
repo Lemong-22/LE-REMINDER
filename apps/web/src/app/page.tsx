@@ -1,5 +1,7 @@
 "use client";
 
+import type { RoutineView } from "@LE-REMINDER/core/application/routine-view";
+import type { RoutineId } from "@LE-REMINDER/core/domain/identity";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Github } from "lucide-react";
@@ -10,6 +12,11 @@ import { RoutineList } from "@/components/routine/routine-list";
 import { RoutineListRow } from "@/components/routine/routine-list-row";
 import { TodoSidebar } from "@/components/todo-sidebar";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
+import {
+	withCompleted,
+	withPaused,
+	withRemoved,
+} from "@/lib/optimistic-routines";
 import { sortByStatus } from "@/lib/sort-routines";
 import { toDashboardRoutine } from "@/lib/to-dashboard-routine";
 import { queryClient, trpc } from "@/utils/trpc";
@@ -74,7 +81,8 @@ function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 // todo-sidebar.tsx. The hero's Daily Task checklist is still a local-only
 // scratchpad by design — see hero-panel.tsx.
 export default function Home() {
-	const routinesQuery = useQuery(trpc.routine.list.queryOptions({}));
+	const listQueryOptions = trpc.routine.list.queryOptions({});
+	const routinesQuery = useQuery(listQueryOptions);
 	const routines: DashboardRoutine[] = (routinesQuery.data ?? []).map(
 		toDashboardRoutine,
 	);
@@ -89,20 +97,71 @@ export default function Home() {
 		queryClient.invalidateQueries(trpc.routine.pathFilter());
 	}
 
+	// Shared onMutate/onError plumbing for the three highest-frequency
+	// actions (complete/pause/delete are single taps on the main grid —
+	// waiting on a Turso round-trip before anything visibly happens reads
+	// as broken). create/edit stay invalidate-only: they're dialog-based,
+	// lower-frequency, and a temp-id insert isn't worth the complexity.
+	async function cancelAndSnapshot() {
+		await queryClient.cancelQueries(listQueryOptions);
+		return queryClient.getQueryData(listQueryOptions.queryKey);
+	}
+
+	function rollback(previous: RoutineView[] | undefined) {
+		if (previous) {
+			queryClient.setQueryData(listQueryOptions.queryKey, previous);
+		}
+	}
+
 	const createMutation = useMutation(
 		trpc.routine.create.mutationOptions({ onSuccess: invalidateRoutines }),
 	);
 	const editMutation = useMutation(
 		trpc.routine.edit.mutationOptions({ onSuccess: invalidateRoutines }),
 	);
+
 	const deleteMutation = useMutation(
-		trpc.routine.delete.mutationOptions({ onSuccess: invalidateRoutines }),
+		trpc.routine.delete.mutationOptions({
+			onMutate: async ({ routineId }) => {
+				const previous = await cancelAndSnapshot();
+				queryClient.setQueryData(listQueryOptions.queryKey, (old) =>
+					old ? withRemoved(old, routineId as RoutineId) : old,
+				);
+				return { previous };
+			},
+			onError: (_error, _vars, context) => rollback(context?.previous),
+			onSettled: invalidateRoutines,
+		}),
 	);
+
 	const setPausedMutation = useMutation(
-		trpc.routine.setPaused.mutationOptions({ onSuccess: invalidateRoutines }),
+		trpc.routine.setPaused.mutationOptions({
+			onMutate: async ({ routineId, isPaused }) => {
+				const previous = await cancelAndSnapshot();
+				queryClient.setQueryData(listQueryOptions.queryKey, (old) =>
+					old
+						? withPaused(old, routineId as RoutineId, isPaused, new Date())
+						: old,
+				);
+				return { previous };
+			},
+			onError: (_error, _vars, context) => rollback(context?.previous),
+			onSettled: invalidateRoutines,
+		}),
 	);
+
 	const completeMutation = useMutation(
-		trpc.routine.complete.mutationOptions({ onSuccess: invalidateRoutines }),
+		trpc.routine.complete.mutationOptions({
+			onMutate: async ({ routineId }) => {
+				const previous = await cancelAndSnapshot();
+				queryClient.setQueryData(listQueryOptions.queryKey, (old) =>
+					old ? withCompleted(old, routineId as RoutineId, new Date()) : old,
+				);
+				return { previous };
+			},
+			onError: (_error, _vars, context) => rollback(context?.previous),
+			onSettled: invalidateRoutines,
+		}),
 	);
 
 	function handleComplete(routine: DashboardRoutine) {

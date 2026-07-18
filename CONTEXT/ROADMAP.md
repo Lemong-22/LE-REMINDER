@@ -20,7 +20,8 @@
 | 10 | Domain Tests | 92 tests (64 domain + 28 use-case) via `bun test`, including boundary-instant and leap-year cases | `b659a83` |
 | 11 | DB Adapter | Drizzle schema (`routines`/`completion_events`, JSON `schedule_config`) + `TursoRoutineAdapter`/`TursoCompletionEventAdapter` in `packages/db` (not `packages/core`, to keep core dependency-free); validated against a real local SQLite file | `a21c6bc` |
 | 12 | Interface Adapter | tRPC `routineRouter` in `packages/api` (Zod-validated, thin wrapper only); composition root wires Turso adapters into the use cases | `07c5e4b` |
-| 13 | UI Mock | Dashboard in `apps/web` against fixture data (no tRPC yet) — status dots, hover-reveal row actions, Overdue-first sort, create/edit dialog. **Not yet committed** — implemented, then revised once per Lemong's direct visual feedback (card container, badge tags, brighter secondary text); awaiting his call on whether the revision folds into the Step 13 commit or becomes its own. | uncommitted |
+| 13 | UI Implementation | Dashboard in `apps/web` — warm-light-paper redesign (Inter + IBM Plex Mono), status-coded routine cards with Framer Motion, hero progress panel, All Tasks / Analytics tabs, local Today's To-Do scratchpad, guided create/edit dialog. Folded the Step 13 visual-feedback revisions into this commit rather than splitting them out. | `1ab1091` |
+| 14 | Interface Wiring | Dashboard wired to the real tRPC + Turso backend from Step 12 (`useQuery`/`useMutation`, cache invalidation on every write, superjson transformer for Date fields). Includes a pre-launch security pass: transactional cascade delete for the completion_events FK, and upper-bounded Zod input schemas. | `1ab1091` |
 
 ---
 

@@ -27,7 +27,8 @@
 			"!**/wrangler.jsonc",
 			"!**/.source",
 			"!**/convex/_generated",
-			"!.agents/skills"
+			"!.agents/skills",
+			"!CONTEXT/**/*.html"
 		]
 	},
 	"formatter": {

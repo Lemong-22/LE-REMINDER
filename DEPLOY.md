@@ -85,10 +85,13 @@ You already have a GitHub OAuth App for local dev (`http://localhost:3001` callb
 | `GITHUB_CLIENT_ID` | From Step 2 |
 | `GITHUB_CLIENT_SECRET` | From Step 2 |
 | `ALLOWED_EMAIL` | The one GitHub account email allowed to sign in |
+| `VIN_SECRET_KEY` | A fresh secret — `openssl rand -base64 32`. Bearer credential for VIN's `POST /api/agent/routines`. **Do not reuse your local dev value.** |
+| `AGENT_USER_ID` | Any stable non-secret identifier (e.g. `vin-agent`) — not a real user id, see `apps/web/src/app/api/agent/routines/route.ts`'s comment. VIN must send this exact value back in its request body. |
 
 **Deploy**, then verify:
-- Visiting the production URL redirects to `/login` (middleware working).
+- Visiting the production URL redirects to `/login` (proxy gating working — see `apps/web/src/proxy.ts`).
 - "Continue with GitHub" completes the OAuth round-trip and lands on `/` (whitelist + session working).
 - A GitHub account other than `ALLOWED_EMAIL` is rejected at sign-in (test this once, from a second account if you have one — it's the whole point of this phase).
+- `POST /api/agent/routines` with the right `Authorization: Bearer <VIN_SECRET_KEY>` and matching `userId` in the body creates a routine; wrong bearer, wrong `userId`, or a missing/invalid body all get rejected (401/400) without touching the database.
 
 **One thing the CI workflow does *not* do by itself**: `.github/workflows/ci.yml` failing doesn't automatically stop Vercel from deploying — GitHub Actions and Vercel's Git integration are separate systems. To actually make broken code block production, add a GitHub branch protection rule on `main` (Settings → Branches → Branch protection rules) requiring the `Type Check` and `Lint & Format` checks to pass before merging. Vercel's production deploy is normally tied to pushes on `main`, so gating merges to `main` is what gates production.

@@ -279,7 +279,7 @@ Phase 0.5 locks the deployed dashboard down to a single authorized person. It do
 - **GitHub OAuth only, no self-registration, no email/password** — `packages/auth` configures exactly one social provider.
 - **Email whitelist enforced server-side, not in the UI** — `databaseHooks.user.create.before` in `packages/auth/src/auth.ts` rejects account creation for any email other than `ALLOWED_EMAIL`. A UI-only check would be bypassable by calling `/api/auth/callback/github` directly.
 - **`packages/core`'s domain stays auth-free** — Better Auth is infrastructure (`packages/auth`, a sibling to `packages/db`), never imported by `domain/` or `application/`. Sessions are a `packages/api` context concern, not a domain concept.
-- **`/` is the only route Next.js middleware protects** — `apps/web/src/middleware.ts` matches `/`. Backend defense-in-depth is `protectedProcedure` in `packages/api`, which every routine/todo procedure now goes through.
+- **`/` is the only route the Next.js proxy protects** — `apps/web/src/proxy.ts` (Next.js 16's renamed middleware convention) matches `/`. Backend defense-in-depth is `protectedProcedure` in `packages/api`, which every routine/todo procedure now goes through.
 
 ---
 

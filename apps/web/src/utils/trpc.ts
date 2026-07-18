@@ -16,6 +16,18 @@ export const queryClient = new QueryClient({
 			});
 		},
 	}),
+	defaultOptions: {
+		queries: {
+			// Tuned for an always-on tablet display, not a typical multi-tab
+			// browsing session: data is fresh for 5 minutes (matches the idle
+			// dimmer's timeout) so routine/todo mutations already invalidate
+			// the cache explicitly on success, refocusing the tab re-syncs
+			// once, and nothing polls in the background.
+			staleTime: 300_000,
+			refetchOnWindowFocus: true,
+			refetchInterval: false,
+		},
+	},
 });
 
 const trpcClient = createTRPCClient<AppRouter>({

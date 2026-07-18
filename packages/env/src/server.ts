@@ -22,6 +22,18 @@ export const env = createEnv({
 		// not a UI-level check, so it can't be bypassed by calling the
 		// OAuth callback directly.
 		ALLOWED_EMAIL: z.string().email(),
+
+		// M2M credential for VIN (the owner's automation agent) to POST new
+		// routines via apps/web/src/app/api/agent/routines/route.ts — a
+		// route deliberately outside Better Auth's session-cookie model.
+		// Same strength floor as BETTER_AUTH_SECRET since it's the only
+		// thing standing between that endpoint and the public internet.
+		VIN_SECRET_KEY: z.string().min(32),
+		// Not a DB column — routines has no per-user ownership (Phase 0.5
+		// is still single-tenant). This is an intent-confirmation value the
+		// agent must echo back in its request body, checked alongside the
+		// bearer secret; see the route's comment for why.
+		AGENT_USER_ID: z.string().min(1),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

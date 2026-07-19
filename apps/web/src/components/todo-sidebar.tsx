@@ -7,6 +7,9 @@ import {
 	closestCenter,
 	DndContext,
 	type DragEndEvent,
+	type DragOverEvent,
+	DragOverlay,
+	type DragStartEvent,
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
@@ -25,25 +28,98 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { GripVertical } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { queryClient, trpc } from "@/utils/trpc";
 
 type Todo = inferRouterOutputs<AppRouter>["todo"]["list"][number];
 
-// One sortable, animated row — dnd-kit owns the transform for drag/drop
-// reordering, framer-motion owns opacity/y purely for mount/unmount
-// (deliberately no `layout` prop here: framer-motion's own FLIP-based
-// position animation would fight with dnd-kit's transform on the same
-// node during a drag). The grip handle carries dnd-kit's listeners, not
-// the whole row, so dragging can't be triggered by tapping the checkbox,
-// the text, or the delete button.
-function SortableTodoRow({
+const ACCENT = "#C2410C";
+
+// The row's inner markup, shared by the in-list sortable row and the
+// DragOverlay copy so the picked-up item is pixel-identical to the one it
+// detached from. The grip is passed in as a node because only the sortable
+// row has real drag listeners to attach — the overlay's grip is decorative.
+function TodoRowContent({
 	todo,
 	editMode,
+	grip,
 	onToggle,
 	onDelete,
 }: {
 	todo: Todo;
 	editMode: boolean;
+	grip: React.ReactNode;
+	onToggle?: () => void;
+	onDelete?: () => void;
+}) {
+	return (
+		<div className="flex items-center gap-2">
+			{grip}
+			<Checkbox
+				checked={todo.done}
+				onCheckedChange={onToggle}
+				className="size-4 rounded data-checked:border-[#292524] data-checked:bg-[#292524]"
+			/>
+			<button
+				type="button"
+				onClick={onToggle}
+				className={cn(
+					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
+					todo.done ? "text-[#a8a29e] line-through" : "text-[#292524]",
+				)}
+			>
+				{todo.text}
+			</button>
+			{editMode && (
+				<button
+					type="button"
+					onClick={onDelete}
+					aria-label={`Remove ${todo.text}`}
+					className="cursor-pointer bg-transparent px-0.5 text-[#a8a29e] text-sm"
+				>
+					×
+				</button>
+			)}
+		</div>
+	);
+}
+
+function GripHandle({
+	label,
+	...props
+}: { label: string } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+	return (
+		<button
+			type="button"
+			aria-label={`Reorder ${label}`}
+			className="cursor-grab touch-none bg-transparent text-[#d6d3d1] active:cursor-grabbing"
+			{...props}
+		>
+			<GripVertical className="size-3.5" />
+		</button>
+	);
+}
+
+// One sortable, animated row. dnd-kit's transform/transition make the
+// non-dragged rows slide out of the way smoothly; the dragged row itself
+// stays in the list as a low-opacity ghost while the fully-opaque
+// DragOverlay copy follows the cursor. framer-motion owns opacity/y purely
+// for mount/unmount (deliberately no `layout` prop: framer-motion's own
+// FLIP-based position animation would fight with dnd-kit's transform on
+// the same node during a drag). `indicator` draws an accent line in the
+// gap above/below the row currently hovered as the drop target — absolutely
+// positioned into the list's 10px gap rather than a conditional border, so
+// it never shifts layout by its own height.
+function SortableTodoRow({
+	todo,
+	editMode,
+	indicator,
+	onToggle,
+	onDelete,
+}: {
+	todo: Todo;
+	editMode: boolean;
+	indicator: "above" | "below" | null;
 	onToggle: () => void;
 	onDelete: () => void;
 }) {
@@ -60,53 +136,32 @@ function SortableTodoRow({
 		<motion.div
 			ref={setNodeRef}
 			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: 1, y: 0 }}
+			animate={{ opacity: isDragging ? 0.3 : 1, y: 0 }}
 			exit={{ opacity: 0, scale: 0.9 }}
 			transition={{ duration: 0.2 }}
 			style={{
 				transform: CSS.Transform.toString(transform),
 				transition,
 				position: "relative",
-				zIndex: isDragging ? 10 : undefined,
 			}}
-			className={cn(isDragging && "opacity-60")}
 		>
-			<div className="flex items-center gap-2">
-				<button
-					type="button"
-					{...attributes}
-					{...listeners}
-					aria-label={`Reorder ${todo.text}`}
-					className="cursor-grab touch-none bg-transparent text-[#d6d3d1] active:cursor-grabbing"
-				>
-					<GripVertical className="size-3.5" />
-				</button>
-				<Checkbox
-					checked={todo.done}
-					onCheckedChange={onToggle}
-					className="size-4 rounded data-checked:border-[#292524] data-checked:bg-[#292524]"
-				/>
-				<button
-					type="button"
-					onClick={onToggle}
+			{indicator && (
+				<span
+					aria-hidden
 					className={cn(
-						"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
-						todo.done ? "text-[#a8a29e] line-through" : "text-[#292524]",
+						"absolute inset-x-0 h-[2px] rounded-full",
+						indicator === "above" ? "-top-[6px]" : "-bottom-[6px]",
 					)}
-				>
-					{todo.text}
-				</button>
-				{editMode && (
-					<button
-						type="button"
-						onClick={onDelete}
-						aria-label={`Remove ${todo.text}`}
-						className="cursor-pointer bg-transparent px-0.5 text-[#a8a29e] text-sm"
-					>
-						×
-					</button>
-				)}
-			</div>
+					style={{ background: ACCENT }}
+				/>
+			)}
+			<TodoRowContent
+				todo={todo}
+				editMode={editMode}
+				grip={<GripHandle label={todo.text} {...attributes} {...listeners} />}
+				onToggle={onToggle}
+				onDelete={onDelete}
+			/>
 		</motion.div>
 	);
 }
@@ -118,6 +173,8 @@ function SortableTodoRow({
 export function TodoSidebar() {
 	const [editMode, setEditMode] = useState(false);
 	const [newText, setNewText] = useState("");
+	const [activeId, setActiveId] = useState<string | null>(null);
+	const [overId, setOverId] = useState<string | null>(null);
 
 	const listQueryOptions = trpc.todo.list.queryOptions();
 	const todosQuery = useQuery(listQueryOptions);
@@ -197,7 +254,18 @@ export function TodoSidebar() {
 		setNewText("");
 	}
 
+	function handleDragStart(event: DragStartEvent) {
+		setActiveId(String(event.active.id));
+	}
+
+	function handleDragOver(event: DragOverEvent) {
+		setOverId(event.over ? String(event.over.id) : null);
+	}
+
 	function handleDragEnd(event: DragEndEvent) {
+		setActiveId(null);
+		setOverId(null);
+
 		const { active, over } = event;
 		if (!over || active.id === over.id) return;
 
@@ -208,6 +276,25 @@ export function TodoSidebar() {
 		const reordered = arrayMove(todos, oldIndex, newIndex);
 		reorderMutation.mutate({ todoIds: reordered.map((todo) => todo.id) });
 	}
+
+	function handleDragCancel() {
+		setActiveId(null);
+		setOverId(null);
+	}
+
+	// The drop line goes below the hovered row when dragging downward and
+	// above it when dragging upward — matching where arrayMove will actually
+	// insert the item on drop.
+	function indicatorFor(todoId: string): "above" | "below" | null {
+		if (!activeId || !overId || overId === activeId || todoId !== overId) {
+			return null;
+		}
+		const activeIndex = todos.findIndex((todo) => todo.id === activeId);
+		const overIndex = todos.findIndex((todo) => todo.id === overId);
+		return overIndex > activeIndex ? "below" : "above";
+	}
+
+	const activeTodo = todos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
 		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
@@ -233,7 +320,10 @@ export function TodoSidebar() {
 				<DndContext
 					sensors={sensors}
 					collisionDetection={closestCenter}
+					onDragStart={handleDragStart}
+					onDragOver={handleDragOver}
 					onDragEnd={handleDragEnd}
+					onDragCancel={handleDragCancel}
 				>
 					<SortableContext
 						items={todos.map((todo) => todo.id)}
@@ -246,12 +336,33 @@ export function TodoSidebar() {
 										key={todo.id}
 										todo={todo}
 										editMode={editMode}
+										indicator={indicatorFor(todo.id)}
 										onToggle={() => toggleMutation.mutate({ todoId: todo.id })}
 										onDelete={() => deleteMutation.mutate({ todoId: todo.id })}
 									/>
 								))}
 						</AnimatePresence>
 					</SortableContext>
+					{/* Portaled to <body>: the sidebar is overflow-y-auto, which
+					    would clip an in-place overlay the moment the drag leaves
+					    the panel. The overlay copy is the "picked up" item —
+					    fully opaque, slightly scaled and shadowed — while the
+					    original stays in the list as the 30%-opacity ghost. */}
+					{typeof document !== "undefined" &&
+						createPortal(
+							<DragOverlay>
+								{activeTodo && (
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#e7e5e4] bg-white px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
+										<TodoRowContent
+											todo={activeTodo}
+											editMode={editMode}
+											grip={<GripHandle label={activeTodo.text} />}
+										/>
+									</div>
+								)}
+							</DragOverlay>,
+							document.body,
+						)}
 				</DndContext>
 			</div>
 

@@ -6,6 +6,7 @@ import { protectedProcedure, router } from "../index";
 import {
 	addTodoInputSchema,
 	deleteTodoInputSchema,
+	reorderTodosInputSchema,
 	toggleTodoInputSchema,
 } from "./todo-schemas";
 
@@ -18,13 +19,22 @@ export const todoRouter = router({
 	list: protectedProcedure.query(({ ctx }) =>
 		db.query.todos.findMany({
 			where: eq(todos.userId, ctx.session.user.id),
-			orderBy: (t, { asc }) => [asc(t.createdAt)],
+			orderBy: (t, { asc }) => [asc(t.position), asc(t.createdAt)],
 		}),
 	),
 
 	add: protectedProcedure
 		.input(addTodoInputSchema)
 		.mutation(async ({ ctx, input }) => {
+			// New items go to the end of the user's current order, not
+			// position 0 — max+1 rather than a row count so a gap left by a
+			// prior delete can't cause two todos to collide on the same
+			// position.
+			const [maxRow] = await db
+				.select({ maxPosition: sql<number | null>`max(${todos.position})` })
+				.from(todos)
+				.where(eq(todos.userId, ctx.session.user.id));
+
 			const [created] = await db
 				.insert(todos)
 				.values({
@@ -32,10 +42,30 @@ export const todoRouter = router({
 					userId: ctx.session.user.id,
 					text: input.text,
 					done: false,
+					position: (maxRow?.maxPosition ?? -1) + 1,
 					createdAt: new Date(),
 				})
 				.returning();
 			return created;
+		}),
+
+	// Bulk rewrite of position from the full post-drag order dnd-kit's
+	// arrayMove already produces client-side — simpler than a single
+	// {todoId, newPosition} pair, which would still need every other
+	// affected row's position shifted server-side anyway.
+	reorder: protectedProcedure
+		.input(reorderTodosInputSchema)
+		.mutation(async ({ ctx, input }) => {
+			await db.transaction(async (tx) => {
+				for (const [index, todoId] of input.todoIds.entries()) {
+					await tx
+						.update(todos)
+						.set({ position: index })
+						.where(
+							and(eq(todos.id, todoId), eq(todos.userId, ctx.session.user.id)),
+						);
+				}
+			});
 		}),
 
 	toggle: protectedProcedure

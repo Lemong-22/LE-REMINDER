@@ -24,7 +24,7 @@ export function AuroraGlow() {
 			/>
 			<motion.div
 				className="absolute right-[-10%] bottom-[-50%] size-[320px] rounded-full blur-[90px]"
-				style={{ background: "#7C3AED26" }}
+				style={{ background: "#4A5D3A2E" }}
 				animate={{
 					x: [0, -30, 20, 0],
 					y: [0, -20, 10, 0],

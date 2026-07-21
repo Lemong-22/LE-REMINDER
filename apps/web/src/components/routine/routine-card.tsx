@@ -79,7 +79,7 @@ export function RoutineCard({
 			whileHover={{ y: -2 }}
 			transition={{ type: "spring", stiffness: 400, damping: 32 }}
 			onClick={() => setRevealed((v) => !v)}
-			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
+			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
 		>
 			{flipping && (
 				<div
@@ -100,7 +100,7 @@ export function RoutineCard({
 				</div>
 				<Badge
 					variant="secondary"
-					className="rounded-full border border-[#e7e5e4] bg-[#f5f4f0]/60 px-[9px] py-0.5 font-bold font-mono text-[#57534e] text-[10px] uppercase tracking-[0.08em]"
+					className="rounded-full border border-[#D6C9B2] bg-[#E3D8C4]/60 px-[9px] py-0.5 font-bold font-mono text-[#5F4F3D] text-[10px] uppercase tracking-[0.08em]"
 				>
 					{routine.category}
 				</Badge>
@@ -109,27 +109,27 @@ export function RoutineCard({
 			<div
 				className={cn(
 					"font-bold text-[15px] transition-colors",
-					isFinished ? "text-[#78716c] line-through" : "text-[#292524]",
+					isFinished ? "text-[#83705A] line-through" : "text-[#2E2318]",
 				)}
 			>
 				{routine.name}
 			</div>
 
-			<div className="flex items-center gap-1.5 font-mono text-[#57534e] text-[11.5px]">
+			<div className="flex items-center gap-1.5 font-mono text-[#5F4F3D] text-[11.5px]">
 				{showMandatoryDot && (
 					<span
 						aria-hidden
 						className={cn(
 							"size-1.5 shrink-0 rounded-full",
 							isMandatory(routine)
-								? "bg-[#44403c]"
-								: "border border-[#a8a29e] bg-transparent",
+								? "bg-[#493B2C]"
+								: "border border-[#A8967E] bg-transparent",
 						)}
 					/>
 				)}
 				<span>{describeTaskType(routine.taskType, routine.status)}</span>
 			</div>
-			<div className="font-mono text-[#57534e] text-[11px]">
+			<div className="font-mono text-[#5F4F3D] text-[11px]">
 				Last done · {formatLastCompleted(routine.lastCompletedAt)}
 			</div>
 
@@ -159,7 +159,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
+						className="h-auto rounded-md border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#EDE4D4]"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -171,7 +171,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#d6d3d1] bg-white px-2.5 py-1 font-normal text-[#44403c] text-[11px] shadow-none hover:bg-[#fafaf9]"
+					className="h-auto rounded-md border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#EDE4D4]"
 				>
 					Edit
 				</Button>

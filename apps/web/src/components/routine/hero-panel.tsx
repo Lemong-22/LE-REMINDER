@@ -53,12 +53,12 @@ export function HeroPanel({
 	);
 
 	return (
-		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
 			<AuroraGlow />
-			<div className="flex min-w-[150px] flex-1 flex-col gap-3 border-[#e7e5e4]/60 border-r p-5">
+			<div className="flex min-w-[150px] flex-1 flex-col gap-3 border-[#D6C9B2]/60 border-r p-5">
 				<div className="font-bold text-[15px]">Daily Task</div>
 				{dailyItems.length === 0 && (
-					<div className="text-[#57534e] text-xs">No daily routines yet.</div>
+					<div className="text-[#5F4F3D] text-xs">No daily routines yet.</div>
 				)}
 				{dailyItems.map((routine) => {
 					const done =
@@ -70,7 +70,7 @@ export function HeroPanel({
 								onCheckedChange={() => {
 									if (!done) onComplete(routine);
 								}}
-								className="size-4 rounded data-checked:border-[#292524] data-checked:bg-[#292524]"
+								className="size-4 rounded data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 							/>
 							<button
 								type="button"
@@ -79,7 +79,7 @@ export function HeroPanel({
 								}}
 								className={cn(
 									"cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
-									done ? "text-[#78716c] line-through" : "text-[#292524]",
+									done ? "text-[#83705A] line-through" : "text-[#2E2318]",
 								)}
 							>
 								{routine.name}
@@ -89,12 +89,12 @@ export function HeroPanel({
 				})}
 			</div>
 
-			<div className="flex min-w-[150px] flex-none items-center justify-center border-[#e7e5e4]/60 border-r p-5">
+			<div className="flex min-w-[150px] flex-none items-center justify-center border-[#D6C9B2]/60 border-r p-5">
 				<NexusAnimation />
 			</div>
 
 			<div className="flex min-w-[170px] flex-[1.2] flex-col justify-center gap-3 p-5">
-				<div className="font-mono text-[#57534e] text-[11px] tracking-[0.08em]">
+				<div className="font-mono text-[#5F4F3D] text-[11px] tracking-[0.08em]">
 					OVERALL PROGRESS
 				</div>
 				<CountUp
@@ -102,7 +102,7 @@ export function HeroPanel({
 					duration={1.2}
 					className="font-extrabold text-[30px]"
 				/>
-				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#f0efed]">
+				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#E0D5C0]">
 					{STATUS_ORDER.map((status) => (
 						<div
 							key={status}
@@ -114,7 +114,7 @@ export function HeroPanel({
 						/>
 					))}
 				</div>
-				<div className="flex flex-wrap gap-3 font-mono text-[#57534e] text-[11px]">
+				<div className="flex flex-wrap gap-3 font-mono text-[#5F4F3D] text-[11px]">
 					{STATUS_ORDER.map((status) => (
 						<div key={status} className="flex items-center gap-1.5">
 							<span

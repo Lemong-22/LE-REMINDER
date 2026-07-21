@@ -58,14 +58,14 @@ function TodoRowContent({
 			<Checkbox
 				checked={todo.done}
 				onCheckedChange={onToggle}
-				className="size-4 rounded data-checked:border-[#292524] data-checked:bg-[#292524]"
+				className="size-4 rounded data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 			/>
 			<button
 				type="button"
 				onClick={onToggle}
 				className={cn(
 					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
-					todo.done ? "text-[#a8a29e] line-through" : "text-[#292524]",
+					todo.done ? "text-[#A8967E] line-through" : "text-[#2E2318]",
 				)}
 			>
 				{todo.text}
@@ -75,7 +75,7 @@ function TodoRowContent({
 					type="button"
 					onClick={onDelete}
 					aria-label={`Remove ${todo.text}`}
-					className="cursor-pointer bg-transparent px-0.5 text-[#a8a29e] text-sm"
+					className="cursor-pointer bg-transparent px-0.5 text-[#A8967E] text-sm"
 				>
 					×
 				</button>
@@ -92,7 +92,7 @@ function GripHandle({
 		<button
 			type="button"
 			aria-label={`Reorder ${label}`}
-			className="cursor-grab touch-none bg-transparent text-[#d6d3d1] active:cursor-grabbing"
+			className="cursor-grab touch-none bg-transparent text-[#C7B79C] active:cursor-grabbing"
 			{...props}
 		>
 			<GripVertical className="size-3.5" />
@@ -297,15 +297,15 @@ export function TodoSidebar() {
 	const activeTodo = todos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#e7e5e4]/70 bg-gradient-to-br from-white to-[#faf9f6]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
 			<div className="flex items-center justify-between">
-				<div className="font-extrabold text-[#292524] text-[18px] tracking-[-0.015em]">
+				<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
 				</div>
 				<button
 					type="button"
 					onClick={() => setEditMode((v) => !v)}
-					className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#78716c] text-[11.5px]"
+					className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px]"
 				>
 					{editMode ? "Done" : "Edit List"}
 				</button>
@@ -313,7 +313,7 @@ export function TodoSidebar() {
 
 			<div className="flex flex-col gap-2.5">
 				{!todosQuery.isLoading && todos.length === 0 && (
-					<div className="text-[#57534e] text-[12.5px]">
+					<div className="text-[#5F4F3D] text-[12.5px]">
 						Nothing on your scratchpad.
 					</div>
 				)}
@@ -352,7 +352,7 @@ export function TodoSidebar() {
 						createPortal(
 							<DragOverlay>
 								{activeTodo && (
-									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#e7e5e4] bg-white px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F3ECDD] px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
 										<TodoRowContent
 											todo={activeTodo}
 											editMode={editMode}
@@ -366,7 +366,7 @@ export function TodoSidebar() {
 				</DndContext>
 			</div>
 
-			<div className="flex gap-1.5 border-[#f0efed] border-t pt-1">
+			<div className="flex gap-1.5 border-[#E0D5C0] border-t pt-1">
 				<input
 					type="text"
 					value={newText}
@@ -375,12 +375,12 @@ export function TodoSidebar() {
 						if (e.key === "Enter") addTodo();
 					}}
 					placeholder="Add a task…"
-					className="min-w-0 flex-1 rounded-lg border border-[#d6d3d1] bg-[#fafaf9] px-2.5 py-1.5 text-[#292524] text-[12.5px] outline-none focus:ring-2 focus:ring-[#292524] focus:ring-offset-1"
+					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#EDE4D4] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none focus:ring-2 focus:ring-[#2E2318] focus:ring-offset-1"
 				/>
 				<button
 					type="button"
 					onClick={addTodo}
-					className="cursor-pointer rounded-lg border border-[#292524] bg-[#292524] px-2.5 py-1.5 font-semibold text-[13px] text-white"
+					className="cursor-pointer rounded-lg border border-[#2E2318] bg-[#2E2318] px-2.5 py-1.5 font-semibold text-[13px] text-white"
 				>
 					+
 				</button>

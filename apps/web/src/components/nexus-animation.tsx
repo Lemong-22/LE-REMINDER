@@ -65,7 +65,7 @@ function Star({
 					top: `${s.top}%`,
 					width: s.size,
 					height: s.size,
-					background: s.accent ? ACCENT : "#a8a29e",
+					background: s.accent ? ACCENT : "#A8967E",
 					boxShadow: s.accent ? "0 0 4px 1px rgba(194,65,12,0.5)" : "none",
 					"--star-duration": `${s.duration}s`,
 					"--star-delay": `${s.delay}s`,
@@ -149,12 +149,12 @@ export function NexusAnimation() {
 				{MERIDIAN_ANGLES.map((angle) => (
 					<div
 						key={angle}
-						className="absolute inset-1 rounded-full border-[#d6d3d1] border-[1.5px]"
+						className="absolute inset-1 rounded-full border-[#C7B79C] border-[1.5px]"
 						style={{ transform: `rotateY(${angle}deg)` }}
 					/>
 				))}
 				<div
-					className="absolute inset-1 rounded-full border-[#a8a29e] border-[1.5px] border-dashed"
+					className="absolute inset-1 rounded-full border-[#A8967E] border-[1.5px] border-dashed"
 					style={{ transform: "rotateX(78deg)" }}
 				/>
 				<Comet

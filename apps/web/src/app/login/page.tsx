@@ -39,7 +39,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#FAF9F6]">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E8DFCF]">
 			<div className="absolute inset-0">
 				<SoftAurora />
 			</div>
@@ -48,13 +48,13 @@ export default function LoginPage() {
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6, ease: "easeOut" }}
-				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/60 bg-white/50 px-8 py-10 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
+				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/60 bg-[#F3ECDD]/50 px-8 py-10 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
 			>
 				<div className="flex flex-col gap-1.5">
-					<div className="font-extrabold text-[#292524] text-[22px] tracking-[-0.02em]">
+					<div className="font-extrabold text-[#2E2318] text-[22px] tracking-[-0.02em]">
 						LE-REMINDER
 					</div>
-					<div className="text-[#78716c] text-[13px]">
+					<div className="text-[#83705A] text-[13px]">
 						Private dashboard. Sign in to continue.
 					</div>
 				</div>
@@ -63,13 +63,13 @@ export default function LoginPage() {
 					type="button"
 					onClick={handleGithubSignIn}
 					disabled={signingIn}
-					className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#292524] bg-[#292524] px-4 py-2.5 font-semibold text-[13.5px] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+					className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#2E2318] bg-[#2E2318] px-4 py-2.5 font-semibold text-[13.5px] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
 				>
 					<Github className="size-4" />
 					{signingIn ? "Redirecting to GitHub…" : "Continue with GitHub"}
 				</button>
 
-				<div className="text-[#a8a29e] text-[11px]">
+				<div className="text-[#A8967E] text-[11px]">
 					Access is restricted to one authorized account.
 				</div>
 			</motion.div>

@@ -145,12 +145,12 @@ function TaskTypeCard({
 				"flex min-w-[150px] flex-1 flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all",
 				selected
 					? "border-[#C2410C] bg-[#C2410C]/[0.08]"
-					: "border-[#d6d3d1] bg-white",
+					: "border-[#C7B79C] bg-[#F3ECDD]",
 			)}
 		>
 			{glyph}
-			<div className="font-semibold text-[#292524] text-[13.5px]">{label}</div>
-			<div className="text-[#57534e] text-[11.5px] leading-[1.4]">
+			<div className="font-semibold text-[#2E2318] text-[13.5px]">{label}</div>
+			<div className="text-[#5F4F3D] text-[11.5px] leading-[1.4]">
 				{description}
 			</div>
 		</button>
@@ -174,7 +174,7 @@ function Pill({
 				"cursor-pointer rounded-full border px-3.5 py-1.5 font-mono text-[12px] transition-all",
 				selected
 					? "border-[#C2410C] bg-[#C2410C]/10 font-semibold text-[#C2410C]"
-					: "border-[#d6d3d1] bg-white font-normal text-[#57534e]",
+					: "border-[#C7B79C] bg-[#F3ECDD] font-normal text-[#5F4F3D]",
 			)}
 		>
 			{children}
@@ -244,7 +244,7 @@ export function RoutineFormDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="border-stone-200 bg-white text-stone-800 sm:max-w-lg">
+			<DialogContent className="border-[#D6C9B2] bg-[#F3ECDD] text-[#2E2318] sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>{routine ? "Edit Routine" : "New Task"}</DialogTitle>
 				</DialogHeader>
@@ -253,7 +253,7 @@ export function RoutineFormDialog({
 					<div className="flex flex-col gap-1.5">
 						<Label
 							htmlFor="routine-name"
-							className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]"
+							className="font-semibold text-[#5F4F3D] text-[11.5px] uppercase tracking-[0.03em]"
 						>
 							Name
 						</Label>
@@ -270,7 +270,7 @@ export function RoutineFormDialog({
 					<div className="flex flex-col gap-1.5">
 						<Label
 							htmlFor="routine-category"
-							className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]"
+							className="font-semibold text-[#5F4F3D] text-[11.5px] uppercase tracking-[0.03em]"
 						>
 							Category
 						</Label>
@@ -298,7 +298,7 @@ export function RoutineFormDialog({
 					</div>
 
 					<div className="flex flex-col gap-2">
-						<Label className="font-semibold text-[#57534e] text-[11.5px] uppercase tracking-[0.03em]">
+						<Label className="font-semibold text-[#5F4F3D] text-[11.5px] uppercase tracking-[0.03em]">
 							Task Type
 						</Label>
 						<div className="flex flex-wrap gap-2.5">
@@ -363,7 +363,7 @@ export function RoutineFormDialog({
 
 					{state.kind === "Recurring" &&
 						state.scheduleType === "FixedCalendar" && (
-							<div className="flex flex-col gap-3 rounded-[10px] bg-[#fafaf9] p-[15px]">
+							<div className="flex flex-col gap-3 rounded-[10px] bg-[#EDE4D4] p-[15px]">
 								<div className="flex gap-2">
 									<Pill
 										selected={state.recurrenceKind === "Daily"}
@@ -413,7 +413,7 @@ export function RoutineFormDialog({
 
 								{state.recurrenceKind === "Monthly" && (
 									<div className="flex items-center gap-2.5">
-										<span className="text-[#57534e] text-[12.5px]">
+										<span className="text-[#5F4F3D] text-[12.5px]">
 											Day of month
 										</span>
 										<Input
@@ -432,12 +432,12 @@ export function RoutineFormDialog({
 									</div>
 								)}
 
-								<div className="flex items-center justify-between border-[#e7e5e4] border-t pt-2.5">
+								<div className="flex items-center justify-between border-[#D6C9B2] border-t pt-2.5">
 									<div className="flex flex-col gap-0.5">
-										<span className="font-semibold text-[#292524] text-[13px]">
+										<span className="font-semibold text-[#2E2318] text-[13px]">
 											Mandatory
 										</span>
-										<span className="text-[#57534e] text-[11.5px]">
+										<span className="text-[#5F4F3D] text-[11.5px]">
 											Missed occurrences stay Overdue until completed.
 										</span>
 									</div>
@@ -454,8 +454,8 @@ export function RoutineFormDialog({
 
 					{state.kind === "Recurring" &&
 						state.scheduleType === "RollingInterval" && (
-							<div className="flex items-center gap-2.5 rounded-[10px] bg-[#fafaf9] p-[15px]">
-								<span className="text-[#44403c] text-[13px]">Every</span>
+							<div className="flex items-center gap-2.5 rounded-[10px] bg-[#EDE4D4] p-[15px]">
+								<span className="text-[#493B2C] text-[13px]">Every</span>
 								<Input
 									type="number"
 									min={1}
@@ -476,7 +476,7 @@ export function RoutineFormDialog({
 											intervalUnit: e.target.value as FormState["intervalUnit"],
 										}))
 									}
-									className="rounded-lg border border-[#d6d3d1] bg-white px-2.5 py-1.5 text-[#292524] text-[13px]"
+									className="rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1.5 text-[#2E2318] text-[13px]"
 								>
 									<option value="days">days</option>
 									<option value="weeks">weeks</option>
@@ -486,9 +486,9 @@ export function RoutineFormDialog({
 						)}
 
 					{state.kind === "OneOff" && (
-						<div className="flex flex-col gap-3 rounded-[10px] bg-[#fafaf9] p-[15px]">
+						<div className="flex flex-col gap-3 rounded-[10px] bg-[#EDE4D4] p-[15px]">
 							<div className="flex items-center justify-between">
-								<span className="text-[#44403c] text-[13px]">
+								<span className="text-[#493B2C] text-[13px]">
 									Has a deadline
 								</span>
 								<Switch

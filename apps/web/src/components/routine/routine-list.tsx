@@ -28,7 +28,7 @@ export function RoutineList({
 
 	if (sorted.length === 0) {
 		return (
-			<div className="px-4 py-16 text-center text-[#57534e] text-sm">
+			<div className="px-4 py-16 text-center text-[#5F4F3D] text-sm">
 				No routines yet.
 			</div>
 		);

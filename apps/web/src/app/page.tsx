@@ -41,7 +41,7 @@ function TabButton({
 			onClick={onClick}
 			className={cn(
 				"cursor-pointer whitespace-nowrap border-transparent border-b-2 bg-transparent py-1.5 font-semibold text-sm transition-all",
-				active ? "border-[#292524] text-[#292524]" : "text-[#a8a29e]",
+				active ? "border-[#2E2318] text-[#2E2318]" : "text-[#A8967E]",
 			)}
 		>
 			{children}
@@ -55,7 +55,7 @@ function RoutinesLoadingState() {
 			{Array.from({ length: 6 }).map((_, i) => (
 				<div
 					key={i}
-					className="h-[140px] animate-pulse rounded-[10px] border border-[#e7e5e4]/70 bg-[#f5f4f0]/60"
+					className="h-[140px] animate-pulse rounded-[10px] border border-[#D6C9B2]/70 bg-[#E3D8C4]/60"
 				/>
 			))}
 		</div>
@@ -64,14 +64,14 @@ function RoutinesLoadingState() {
 
 function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 	return (
-		<div className="flex flex-col items-center gap-3 rounded-xl border border-[#e7e5e4] bg-white px-4 py-16 text-center">
-			<div className="text-[#57534e] text-sm">
+		<div className="flex flex-col items-center gap-3 rounded-xl border border-[#D6C9B2] bg-[#F3ECDD] px-4 py-16 text-center">
+			<div className="text-[#5F4F3D] text-sm">
 				Couldn't load routines from the database.
 			</div>
 			<button
 				type="button"
 				onClick={onRetry}
-				className="cursor-pointer rounded-lg border border-[#d6d3d1] bg-white px-3 py-1.5 font-semibold text-[#292524] text-xs hover:border-[#292524]"
+				className="cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-3 py-1.5 font-semibold text-[#2E2318] text-xs hover:border-[#2E2318]"
 			>
 				Retry
 			</button>
@@ -223,10 +223,10 @@ export default function Home() {
 
 	return (
 		<div
-			className="min-h-screen text-[#292524]"
-			style={{ background: "#FAF9F6" }}
+			className="min-h-screen text-[#2E2318]"
+			style={{ background: "#E8DFCF" }}
 		>
-			<div className="sticky top-0 z-20 flex items-center justify-between border-[#e7e5e4] border-b bg-[#FAF9F6] px-10 py-4">
+			<div className="sticky top-0 z-20 flex items-center justify-between border-[#D6C9B2] border-b bg-[#E8DFCF] px-10 py-4">
 				<div className="w-[180px] font-extrabold text-[19px] tracking-[-0.02em]">
 					LE-REMINDER
 				</div>
@@ -255,7 +255,7 @@ export default function Home() {
 						href="https://github.com/Lemong-22/LE-REMINDER.git"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-[#78716c] text-xs transition-colors hover:bg-[#f5f4f0] hover:text-[#292524]"
+						className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-[#83705A] text-xs transition-colors hover:bg-[#E3D8C4] hover:text-[#2E2318]"
 					>
 						<Github className="size-4" />
 						Lemong-22
@@ -273,13 +273,13 @@ export default function Home() {
 						{activeTab === "home" && (
 							<>
 								<div className="flex items-center justify-between">
-									<div className="font-extrabold text-[#292524] text-[18px] tracking-[-0.015em]">
+									<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
 										Routines
 									</div>
 									<button
 										type="button"
 										onClick={handleOpenCreate}
-										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#d6d3d1] bg-white px-[15px] py-2 font-semibold text-[#292524] text-[13px] transition-colors hover:border-[#292524]"
+										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] transition-colors hover:border-[#2E2318]"
 									>
 										+ New Routine
 									</button>
@@ -301,7 +301,7 @@ export default function Home() {
 						)}
 
 						{activeTab === "all" && (
-							<div className="overflow-hidden rounded-xl border border-[#e7e5e4] bg-white">
+							<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F3ECDD]">
 								{sortedRoutines.map((routine) => (
 									<RoutineListRow key={routine.id} routine={routine} />
 								))}
@@ -309,7 +309,7 @@ export default function Home() {
 						)}
 
 						{activeTab === "analytics" && (
-							<div className="px-0.5 py-2.5 text-[#57534e] text-sm">
+							<div className="px-0.5 py-2.5 text-[#5F4F3D] text-sm">
 								Analytics is not part of this view yet — Phase 0 is state, not
 								history.
 							</div>

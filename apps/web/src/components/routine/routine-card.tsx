@@ -79,7 +79,7 @@ export function RoutineCard({
 			whileHover={{ y: -2 }}
 			transition={{ type: "spring", stiffness: 400, damping: 32 }}
 			onClick={() => setRevealed((v) => !v)}
-			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
+			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
 		>
 			{flipping && (
 				<div
@@ -100,7 +100,7 @@ export function RoutineCard({
 				</div>
 				<Badge
 					variant="secondary"
-					className="rounded-full border border-[#D6C9B2] bg-[#E3D8C4]/60 px-[9px] py-0.5 font-bold font-mono text-[#5F4F3D] text-[10px] uppercase tracking-[0.08em]"
+					className="rounded-full border border-[#C7B79C] bg-[#E4D6BB] px-[9px] py-0.5 font-bold font-mono text-[#54452F] text-[10px] uppercase tracking-[0.08em]"
 				>
 					{routine.category}
 				</Badge>
@@ -159,7 +159,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#EDE4D4]"
+						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#F1EBDE]"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -171,7 +171,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#EDE4D4]"
+					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#F1EBDE]"
 				>
 					Edit
 				</Button>

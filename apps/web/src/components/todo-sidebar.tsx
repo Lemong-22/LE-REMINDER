@@ -58,7 +58,7 @@ function TodoRowContent({
 			<Checkbox
 				checked={todo.done}
 				onCheckedChange={onToggle}
-				className="size-4 rounded data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+				className="size-4 rounded border-[#9A876C] data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 			/>
 			<button
 				type="button"
@@ -297,7 +297,7 @@ export function TodoSidebar() {
 	const activeTodo = todos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
 			<div className="flex items-center justify-between">
 				<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
@@ -352,7 +352,7 @@ export function TodoSidebar() {
 						createPortal(
 							<DragOverlay>
 								{activeTodo && (
-									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F3ECDD] px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F7F2E8] px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
 										<TodoRowContent
 											todo={activeTodo}
 											editMode={editMode}
@@ -366,7 +366,7 @@ export function TodoSidebar() {
 				</DndContext>
 			</div>
 
-			<div className="flex gap-1.5 border-[#E0D5C0] border-t pt-1">
+			<div className="flex gap-1.5 border-[#E6DCCA] border-t pt-1">
 				<input
 					type="text"
 					value={newText}
@@ -375,7 +375,7 @@ export function TodoSidebar() {
 						if (e.key === "Enter") addTodo();
 					}}
 					placeholder="Add a task…"
-					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#EDE4D4] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none focus:ring-2 focus:ring-[#2E2318] focus:ring-offset-1"
+					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#F1EBDE] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none focus:ring-2 focus:ring-[#2E2318] focus:ring-offset-1"
 				/>
 				<button
 					type="button"

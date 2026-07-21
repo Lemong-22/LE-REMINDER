@@ -53,7 +53,7 @@ export function HeroPanel({
 	);
 
 	return (
-		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F3ECDD] to-[#EFE7D8]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
 			<AuroraGlow />
 			<div className="flex min-w-[150px] flex-1 flex-col gap-3 border-[#D6C9B2]/60 border-r p-5">
 				<div className="font-bold text-[15px]">Daily Task</div>
@@ -70,7 +70,7 @@ export function HeroPanel({
 								onCheckedChange={() => {
 									if (!done) onComplete(routine);
 								}}
-								className="size-4 rounded data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+								className="size-4 rounded border-[#9A876C] data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 							/>
 							<button
 								type="button"
@@ -102,7 +102,7 @@ export function HeroPanel({
 					duration={1.2}
 					className="font-extrabold text-[30px]"
 				/>
-				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#E0D5C0]">
+				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#E6DCCA]">
 					{STATUS_ORDER.map((status) => (
 						<div
 							key={status}

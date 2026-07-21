@@ -54,7 +54,7 @@ export default function AuthLoadingPage() {
 	const exiting = phase === "exiting";
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E8DFCF]">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#EEE7D9]">
 			<div className="absolute inset-0">
 				<SoftAurora />
 			</div>
@@ -70,7 +70,7 @@ export default function AuthLoadingPage() {
 					duration: exiting ? EXIT_DURATION_MS / 1000 : 0.5,
 					ease: "easeOut",
 				}}
-				className="relative z-10 flex flex-col items-center gap-4 rounded-2xl border border-white/60 bg-[#F3ECDD]/50 px-10 py-9 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
+				className="relative z-10 flex flex-col items-center gap-4 rounded-2xl border border-white/60 bg-[#F7F2E8]/50 px-10 py-9 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
 			>
 				<Loader2 className="size-6 animate-spin text-[#2E2318]" />
 				<div className="font-extrabold text-[#2E2318] text-[17px] tracking-[-0.015em]">

@@ -39,7 +39,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#E8DFCF]">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#EEE7D9]">
 			<div className="absolute inset-0">
 				<SoftAurora />
 			</div>
@@ -48,7 +48,7 @@ export default function LoginPage() {
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6, ease: "easeOut" }}
-				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/60 bg-[#F3ECDD]/50 px-8 py-10 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
+				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/60 bg-[#F7F2E8]/50 px-8 py-10 text-center shadow-[0_8px_32px_rgba(41,37,36,0.12),inset_0_0_0_1px_rgba(255,255,255,0.4)] backdrop-blur-xl"
 			>
 				<div className="flex flex-col gap-1.5">
 					<div className="font-extrabold text-[#2E2318] text-[22px] tracking-[-0.02em]">

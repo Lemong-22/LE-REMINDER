@@ -55,7 +55,7 @@ function RoutinesLoadingState() {
 			{Array.from({ length: 6 }).map((_, i) => (
 				<div
 					key={i}
-					className="h-[140px] animate-pulse rounded-[10px] border border-[#D6C9B2]/70 bg-[#E3D8C4]/60"
+					className="h-[140px] animate-pulse rounded-[10px] border border-[#D6C9B2]/70 bg-[#E8DFCD]/60"
 				/>
 			))}
 		</div>
@@ -64,14 +64,14 @@ function RoutinesLoadingState() {
 
 function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 	return (
-		<div className="flex flex-col items-center gap-3 rounded-xl border border-[#D6C9B2] bg-[#F3ECDD] px-4 py-16 text-center">
+		<div className="flex flex-col items-center gap-3 rounded-xl border border-[#D6C9B2] bg-[#F7F2E8] px-4 py-16 text-center">
 			<div className="text-[#5F4F3D] text-sm">
 				Couldn't load routines from the database.
 			</div>
 			<button
 				type="button"
 				onClick={onRetry}
-				className="cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-3 py-1.5 font-semibold text-[#2E2318] text-xs hover:border-[#2E2318]"
+				className="cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-semibold text-[#2E2318] text-xs hover:border-[#2E2318]"
 			>
 				Retry
 			</button>
@@ -224,9 +224,9 @@ export default function Home() {
 	return (
 		<div
 			className="min-h-screen text-[#2E2318]"
-			style={{ background: "#E8DFCF" }}
+			style={{ background: "#EEE7D9" }}
 		>
-			<div className="sticky top-0 z-20 flex items-center justify-between border-[#D6C9B2] border-b bg-[#E8DFCF] px-10 py-4">
+			<div className="sticky top-0 z-20 flex items-center justify-between border-[#D6C9B2] border-b bg-[#EEE7D9] px-10 py-4">
 				<div className="w-[180px] font-extrabold text-[19px] tracking-[-0.02em]">
 					LE-REMINDER
 				</div>
@@ -255,7 +255,7 @@ export default function Home() {
 						href="https://github.com/Lemong-22/LE-REMINDER.git"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-[#83705A] text-xs transition-colors hover:bg-[#E3D8C4] hover:text-[#2E2318]"
+						className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-[#83705A] text-xs transition-colors hover:bg-[#E8DFCD] hover:text-[#2E2318]"
 					>
 						<Github className="size-4" />
 						Lemong-22
@@ -279,7 +279,7 @@ export default function Home() {
 									<button
 										type="button"
 										onClick={handleOpenCreate}
-										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] transition-colors hover:border-[#2E2318]"
+										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] transition-colors hover:border-[#2E2318]"
 									>
 										+ New Routine
 									</button>
@@ -301,7 +301,7 @@ export default function Home() {
 						)}
 
 						{activeTab === "all" && (
-							<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F3ECDD]">
+							<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
 								{sortedRoutines.map((routine) => (
 									<RoutineListRow key={routine.id} routine={routine} />
 								))}

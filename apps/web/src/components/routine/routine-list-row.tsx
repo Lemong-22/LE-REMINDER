@@ -8,7 +8,7 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 	const isFinished = routine.status === "Finished";
 
 	return (
-		<div className="flex items-center gap-4 border-[#E0D5C0] border-b p-3.5 px-5 last:border-0">
+		<div className="flex items-center gap-4 border-[#E6DCCA] border-b p-3.5 px-5 last:border-0">
 			<div className="flex w-3 shrink-0 items-center justify-center">
 				<StatusShape status={routine.status} size={11} />
 			</div>

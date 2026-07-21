@@ -14,23 +14,25 @@
    OKLCH to match this file's existing format. No .dark override on
    purpose — this is a single warm light theme, not a dark mode. Rough hex
    anchors are noted so this stays in sync with the components:
-     background #E8DFCF · card #F3ECDD · foreground #2E2318 (espresso)
+     background #EEE7D9 · card #F7F2E8 · foreground #2E2318 (espresso)
      muted-fg #5F4F3D (caramel) · border #D6C9B2 · input #C7B79C
-     ring/accent terracotta #C2410C. */
+     ring/accent terracotta #C2410C. Surfaces were lifted ~4% L from the
+     first sepia pass (it read a touch too dark); text/border kept where
+     they were, which sharpens definition against the lighter paper. */
 :root {
-	--background: oklch(0.895 0.018 80);
+	--background: oklch(0.925 0.016 82);
 	--foreground: oklch(0.26 0.02 65);
-	--card: oklch(0.935 0.016 82);
+	--card: oklch(0.955 0.013 84);
 	--card-foreground: oklch(0.26 0.02 65);
-	--popover: oklch(0.935 0.016 82);
+	--popover: oklch(0.955 0.013 84);
 	--popover-foreground: oklch(0.26 0.02 65);
 	--primary: oklch(0.3 0.022 60);
 	--primary-foreground: oklch(0.95 0.015 85);
-	--secondary: oklch(0.87 0.022 80);
+	--secondary: oklch(0.905 0.018 82);
 	--secondary-foreground: oklch(0.3 0.022 60);
-	--muted: oklch(0.87 0.022 80);
+	--muted: oklch(0.905 0.018 82);
 	--muted-foreground: oklch(0.46 0.03 62);
-	--accent: oklch(0.87 0.03 78);
+	--accent: oklch(0.905 0.024 80);
 	--accent-foreground: oklch(0.3 0.022 60);
 	--destructive: oklch(0.58 0.22 27);
 	--border: oklch(0.82 0.028 82);
@@ -42,11 +44,11 @@
 	--chart-4: oklch(0.488 0.243 264.376);
 	--chart-5: oklch(0.424 0.199 265.638);
 	--radius: 0.625rem;
-	--sidebar: oklch(0.935 0.016 82);
+	--sidebar: oklch(0.955 0.013 84);
 	--sidebar-foreground: oklch(0.26 0.02 65);
 	--sidebar-primary: oklch(0.3 0.022 60);
 	--sidebar-primary-foreground: oklch(0.95 0.015 85);
-	--sidebar-accent: oklch(0.87 0.03 78);
+	--sidebar-accent: oklch(0.905 0.024 80);
 	--sidebar-accent-foreground: oklch(0.3 0.022 60);
 	--sidebar-border: oklch(0.82 0.028 82);
 	--sidebar-ring: oklch(0.55 0.15 45);

@@ -145,7 +145,7 @@ function TaskTypeCard({
 				"flex min-w-[150px] flex-1 flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all",
 				selected
 					? "border-[#C2410C] bg-[#C2410C]/[0.08]"
-					: "border-[#C7B79C] bg-[#F3ECDD]",
+					: "border-[#C7B79C] bg-[#F7F2E8]",
 			)}
 		>
 			{glyph}
@@ -174,7 +174,7 @@ function Pill({
 				"cursor-pointer rounded-full border px-3.5 py-1.5 font-mono text-[12px] transition-all",
 				selected
 					? "border-[#C2410C] bg-[#C2410C]/10 font-semibold text-[#C2410C]"
-					: "border-[#C7B79C] bg-[#F3ECDD] font-normal text-[#5F4F3D]",
+					: "border-[#C7B79C] bg-[#F7F2E8] font-normal text-[#5F4F3D]",
 			)}
 		>
 			{children}
@@ -244,7 +244,7 @@ export function RoutineFormDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="border-[#D6C9B2] bg-[#F3ECDD] text-[#2E2318] sm:max-w-lg">
+			<DialogContent className="border-[#D6C9B2] bg-[#F7F2E8] text-[#2E2318] sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>{routine ? "Edit Routine" : "New Task"}</DialogTitle>
 				</DialogHeader>
@@ -363,7 +363,7 @@ export function RoutineFormDialog({
 
 					{state.kind === "Recurring" &&
 						state.scheduleType === "FixedCalendar" && (
-							<div className="flex flex-col gap-3 rounded-[10px] bg-[#EDE4D4] p-[15px]">
+							<div className="flex flex-col gap-3 rounded-[10px] bg-[#F1EBDE] p-[15px]">
 								<div className="flex gap-2">
 									<Pill
 										selected={state.recurrenceKind === "Daily"}
@@ -454,7 +454,7 @@ export function RoutineFormDialog({
 
 					{state.kind === "Recurring" &&
 						state.scheduleType === "RollingInterval" && (
-							<div className="flex items-center gap-2.5 rounded-[10px] bg-[#EDE4D4] p-[15px]">
+							<div className="flex items-center gap-2.5 rounded-[10px] bg-[#F1EBDE] p-[15px]">
 								<span className="text-[#493B2C] text-[13px]">Every</span>
 								<Input
 									type="number"
@@ -476,7 +476,7 @@ export function RoutineFormDialog({
 											intervalUnit: e.target.value as FormState["intervalUnit"],
 										}))
 									}
-									className="rounded-lg border border-[#C7B79C] bg-[#F3ECDD] px-2.5 py-1.5 text-[#2E2318] text-[13px]"
+									className="rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1.5 text-[#2E2318] text-[13px]"
 								>
 									<option value="days">days</option>
 									<option value="weeks">weeks</option>
@@ -486,7 +486,7 @@ export function RoutineFormDialog({
 						)}
 
 					{state.kind === "OneOff" && (
-						<div className="flex flex-col gap-3 rounded-[10px] bg-[#EDE4D4] p-[15px]">
+						<div className="flex flex-col gap-3 rounded-[10px] bg-[#F1EBDE] p-[15px]">
 							<div className="flex items-center justify-between">
 								<span className="text-[#493B2C] text-[13px]">
 									Has a deadline

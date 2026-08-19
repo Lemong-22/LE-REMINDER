@@ -52,7 +52,13 @@ const scheduleSchema = z.discriminatedUnion("type", [
 
 const taskTypeSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("Recurring"), schedule: scheduleSchema }),
-	z.object({ kind: z.literal("OneOff"), dueDate: z.coerce.date().nullable() }),
+	z.object({
+		kind: z.literal("OneOff"),
+		dueDate: z.coerce
+			.date()
+			.nullish()
+			.transform((v) => v ?? null),
+	}),
 ]);
 
 // Real ids are ~36-char UUIDs (CryptoIdGenerator) — 100 is a generous cap

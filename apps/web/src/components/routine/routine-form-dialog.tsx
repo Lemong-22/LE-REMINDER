@@ -542,8 +542,7 @@ export function RoutineFormDialog({
 										setState((prev) => ({
 											...prev,
 											dueDate: checked
-												? (prev.dueDate ??
-													new Date().toISOString().slice(0, 10))
+												? prev.dueDate || new Date().toISOString().slice(0, 10)
 												: "",
 										}))
 									}

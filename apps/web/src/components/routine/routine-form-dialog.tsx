@@ -32,6 +32,8 @@ interface FormState {
 	isMandatory: boolean;
 	intervalValue: number;
 	intervalUnit: "days" | "weeks" | "months";
+	isTask: boolean;
+	isImportant: boolean;
 }
 
 function toFormState(routine: DashboardRoutine | null): FormState {
@@ -47,6 +49,8 @@ function toFormState(routine: DashboardRoutine | null): FormState {
 		isMandatory: true,
 		intervalValue: 7,
 		intervalUnit: "days",
+		isTask: routine?.isTask ?? false,
+		isImportant: routine?.isImportant ?? false,
 	};
 
 	if (!routine) return base;
@@ -93,7 +97,7 @@ function toTaskType(state: FormState): TaskType {
 	if (state.kind === "OneOff") {
 		return {
 			kind: "OneOff",
-			dueDate: state.dueDate ? new Date(state.dueDate) : null,
+			dueDate: state.dueDate ? new Date(`${state.dueDate}T23:59:59.999`) : null,
 		};
 	}
 
@@ -205,6 +209,8 @@ export function RoutineFormDialog({
 		name: string;
 		category: string;
 		taskType: TaskType;
+		isTask: boolean;
+		isImportant: boolean;
 	}) => void;
 	onDelete?: (routine: DashboardRoutine) => void;
 }) {
@@ -229,6 +235,8 @@ export function RoutineFormDialog({
 			name: state.name.trim(),
 			category: state.category.trim() || "General",
 			taskType: toTaskType(state),
+			isTask: state.isTask,
+			isImportant: state.isImportant,
 		});
 		onOpenChange(false);
 	}
@@ -294,6 +302,43 @@ export function RoutineFormDialog({
 									{chip}
 								</Pill>
 							))}
+						</div>
+					</div>
+
+					<div className="flex flex-col gap-3 border-[#D6C9B2]/60 border-y py-3 sm:flex-row sm:gap-4">
+						<div className="flex flex-1 items-center justify-between gap-2">
+							<div className="flex flex-col gap-0.5">
+								<span className="font-semibold text-[#2E2318] text-[13px]">
+									Is Task
+								</span>
+								<span className="text-[#5F4F3D] text-[11.5px]">
+									Differentiate assignment from habit routine.
+								</span>
+							</div>
+							<Switch
+								checked={state.isTask}
+								onCheckedChange={(checked) =>
+									setState((prev) => ({ ...prev, isTask: checked }))
+								}
+								className="shrink-0 data-checked:bg-[#C2410C]"
+							/>
+						</div>
+						<div className="flex flex-1 items-center justify-between gap-2 border-[#D6C9B2]/60 sm:border-l sm:pl-4">
+							<div className="flex flex-col gap-0.5">
+								<span className="font-semibold text-[#2E2318] text-[13px]">
+									Important
+								</span>
+								<span className="text-[#5F4F3D] text-[11.5px]">
+									Flag as high priority.
+								</span>
+							</div>
+							<Switch
+								checked={state.isImportant}
+								onCheckedChange={(checked) =>
+									setState((prev) => ({ ...prev, isImportant: checked }))
+								}
+								className="shrink-0 data-checked:bg-[#C2410C]"
+							/>
 						</div>
 					</div>
 

@@ -63,6 +63,8 @@ export const createRoutineInputSchema = z.object({
 	name: z.string().min(1).max(255),
 	taskType: taskTypeSchema,
 	category: z.string().min(1).max(100).optional(),
+	isTask: z.boolean().optional(),
+	isImportant: z.boolean().optional(),
 });
 
 export const editRoutineInputSchema = z.object({
@@ -70,6 +72,8 @@ export const editRoutineInputSchema = z.object({
 	name: z.string().min(1).max(255).optional(),
 	taskType: taskTypeSchema.optional(),
 	category: z.string().min(1).max(100).optional(),
+	isTask: z.boolean().optional(),
+	isImportant: z.boolean().optional(),
 });
 
 export const deleteRoutineInputSchema = z.object({
@@ -88,6 +92,7 @@ export const completeRoutineInputSchema = z.object({
 
 export const listRoutinesInputSchema = z.object({
 	category: z.string().min(1).max(100).optional(),
+	searchQuery: z.string().max(255).optional(),
 });
 
 export const getRoutineInputSchema = z.object({

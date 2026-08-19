@@ -32,17 +32,23 @@ describe("CreateRoutine", () => {
 		expect(routine.name).toBe("Take vitamins");
 		expect(routine.category).toBe("Health");
 		expect(routine.isPaused).toBe(false);
+		expect(routine.isTask).toBe(false);
+		expect(routine.isImportant).toBe(false);
 		expect(routine.createdAt).toEqual(new Date(2026, 6, 17, 12, 0, 0));
 		expect(await routineRepository.findById(routine.id)).toEqual(routine);
 	});
 
-	test("category defaults to null when omitted", async () => {
+	test("category defaults to null when omitted, supports isTask and isImportant flags", async () => {
 		const { useCase } = setup();
 		const routine = await useCase.execute({
 			name: "Submit assignment",
 			taskType: { kind: "OneOff", dueDate: null },
+			isTask: true,
+			isImportant: true,
 		});
 		expect(routine.category).toBeNull();
+		expect(routine.isTask).toBe(true);
+		expect(routine.isImportant).toBe(true);
 	});
 
 	test("each created routine gets a distinct id", async () => {

@@ -34,10 +34,14 @@ describe("EditRoutine", () => {
 		const updated = await editRoutine.execute({
 			routineId: routine.id,
 			name: "Take vitamins daily",
+			isTask: true,
+			isImportant: true,
 		});
 
 		expect(updated.name).toBe("Take vitamins daily");
 		expect(updated.category).toBe("Health");
+		expect(updated.isTask).toBe(true);
+		expect(updated.isImportant).toBe(true);
 		expect(updated.taskType).toEqual(routine.taskType);
 	});
 

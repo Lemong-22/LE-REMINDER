@@ -10,6 +10,8 @@ export interface EditRoutineCommand {
 	readonly name?: string;
 	readonly taskType?: TaskType;
 	readonly category?: Category;
+	readonly isTask?: boolean;
+	readonly isImportant?: boolean;
 }
 
 export interface EditRoutineUseCase {
@@ -30,6 +32,8 @@ export class EditRoutine implements EditRoutineUseCase {
 			name: command.name ?? existing.name,
 			taskType: command.taskType ?? existing.taskType,
 			category: command.category ?? existing.category,
+			isTask: command.isTask ?? existing.isTask,
+			isImportant: command.isImportant ?? existing.isImportant,
 		};
 
 		await this.routineRepository.save(updated);

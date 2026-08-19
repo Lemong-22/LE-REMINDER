@@ -15,6 +15,10 @@ export const routines = sqliteTable("routines", {
 	scheduleConfig: text("schedule_config", { mode: "json" }).notNull(),
 	category: text("category"),
 	isPaused: integer("is_paused", { mode: "boolean" }).notNull().default(false),
+	isTask: integer("is_task", { mode: "boolean" }).notNull().default(false),
+	isImportant: integer("is_important", { mode: "boolean" })
+		.notNull()
+		.default(false),
 	createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 

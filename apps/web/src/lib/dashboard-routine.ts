@@ -11,5 +11,7 @@ export interface DashboardRoutine {
 	category: string;
 	status: RoutineStatus;
 	taskType: TaskType;
+	isTask: boolean;
+	isImportant: boolean;
 	lastCompletedAt: Date | null;
 }

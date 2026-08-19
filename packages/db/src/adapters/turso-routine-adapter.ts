@@ -26,6 +26,8 @@ export class TursoRoutineAdapter implements RoutineRepository {
 				scheduleConfig,
 				category: routine.category,
 				isPaused: routine.isPaused,
+				isTask: routine.isTask,
+				isImportant: routine.isImportant,
 				createdAt: routine.createdAt,
 			})
 			.onConflictDoUpdate({
@@ -36,6 +38,8 @@ export class TursoRoutineAdapter implements RoutineRepository {
 					scheduleConfig,
 					category: routine.category,
 					isPaused: routine.isPaused,
+					isTask: routine.isTask,
+					isImportant: routine.isImportant,
 				},
 			});
 	}
@@ -74,6 +78,8 @@ function toDomain(row: RoutineRow): Routine {
 		taskType: deserializeTaskType(row.taskType, row.scheduleConfig),
 		category: row.category,
 		isPaused: row.isPaused,
+		isTask: row.isTask,
+		isImportant: row.isImportant,
 		createdAt: row.createdAt,
 	};
 }

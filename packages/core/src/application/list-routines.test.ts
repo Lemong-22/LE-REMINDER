@@ -107,4 +107,24 @@ describe("ListRoutines", () => {
 
 		expect(await listRoutines.execute({})).toHaveLength(2);
 	});
+
+	test("filters by search query case-insensitively on routine name", async () => {
+		const { createRoutine, listRoutines } = setup();
+		await createRoutine.execute({
+			name: "Submit homework assignment",
+			taskType: { kind: "OneOff", dueDate: null },
+		});
+		await createRoutine.execute({
+			name: "Take daily vitamins",
+			taskType: { kind: "OneOff", dueDate: null },
+		});
+
+		const matched = await listRoutines.execute({ searchQuery: "vitamins" });
+		expect(matched).toHaveLength(1);
+		expect(matched[0]?.routine.name).toBe("Take daily vitamins");
+
+		const matchedCase = await listRoutines.execute({ searchQuery: "SUBMIT" });
+		expect(matchedCase).toHaveLength(1);
+		expect(matchedCase[0]?.routine.name).toBe("Submit homework assignment");
+	});
 });

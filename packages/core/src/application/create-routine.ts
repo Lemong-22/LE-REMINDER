@@ -9,6 +9,8 @@ export interface CreateRoutineCommand {
 	readonly name: string;
 	readonly taskType: TaskType;
 	readonly category?: Category;
+	readonly isTask?: boolean;
+	readonly isImportant?: boolean;
 }
 
 export interface CreateRoutineUseCase {
@@ -29,6 +31,8 @@ export class CreateRoutine implements CreateRoutineUseCase {
 			taskType: command.taskType,
 			category: command.category ?? null,
 			isPaused: false,
+			isTask: command.isTask ?? false,
+			isImportant: command.isImportant ?? false,
 			createdAt: this.clock.now(),
 		};
 

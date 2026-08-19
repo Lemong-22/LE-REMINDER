@@ -85,7 +85,19 @@ function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 // scratchpad by design — see hero-panel.tsx.
 export default function Home() {
 	const router = useRouter();
-	const listQueryOptions = trpc.routine.list.queryOptions({});
+	const [searchInput, setSearchInput] = useState("");
+	const [debouncedSearch, setDebouncedSearch] = useState("");
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearch(searchInput);
+		}, 300);
+		return () => clearTimeout(timer);
+	}, [searchInput]);
+
+	const listQueryOptions = trpc.routine.list.queryOptions({
+		searchQuery: debouncedSearch || undefined,
+	});
 	const routinesQuery = useQuery(listQueryOptions);
 	const routines: DashboardRoutine[] = (routinesQuery.data ?? []).map(
 		toDashboardRoutine,
@@ -210,7 +222,10 @@ export default function Home() {
 	}
 
 	function handleSubmit(
-		values: Pick<DashboardRoutine, "name" | "category" | "taskType">,
+		values: Pick<
+			DashboardRoutine,
+			"name" | "category" | "taskType" | "isTask" | "isImportant"
+		>,
 	) {
 		if (editingRoutine) {
 			editMutation.mutate({ routineId: editingRoutine.id, ...values });
@@ -272,9 +287,18 @@ export default function Home() {
 					<div className="flex min-w-0 flex-1 flex-col gap-6">
 						{activeTab === "home" && (
 							<>
-								<div className="flex items-center justify-between">
-									<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
-										Routines
+								<div className="flex items-center justify-between gap-4">
+									<div className="flex flex-1 items-center gap-4">
+										<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+											Routines
+										</div>
+										<input
+											type="text"
+											placeholder="Search tasks & routines..."
+											value={searchInput}
+											onChange={(e) => setSearchInput(e.target.value)}
+											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none focus:border-[#C2410C] focus:ring-1 focus:ring-[#C2410C]"
+										/>
 									</div>
 									<button
 										type="button"
@@ -301,10 +325,26 @@ export default function Home() {
 						)}
 
 						{activeTab === "all" && (
-							<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
-								{sortedRoutines.map((routine) => (
-									<RoutineListRow key={routine.id} routine={routine} />
-								))}
+							<div className="flex flex-col gap-4">
+								<div className="flex items-center justify-between gap-4">
+									<div className="flex flex-1 items-center gap-4">
+										<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+											All Tasks
+										</div>
+										<input
+											type="text"
+											placeholder="Search tasks & routines..."
+											value={searchInput}
+											onChange={(e) => setSearchInput(e.target.value)}
+											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none focus:border-[#C2410C] focus:ring-1 focus:ring-[#C2410C]"
+										/>
+									</div>
+								</div>
+								<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
+									{sortedRoutines.map((routine) => (
+										<RoutineListRow key={routine.id} routine={routine} />
+									))}
+								</div>
 							</div>
 						)}
 

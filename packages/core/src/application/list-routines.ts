@@ -7,6 +7,7 @@ import type { RoutineView } from "./routine-view";
 
 export interface ListRoutinesQuery {
 	readonly category?: Category;
+	readonly searchQuery?: string;
 }
 
 export interface ListRoutinesUseCase {
@@ -21,16 +22,25 @@ export class ListRoutines implements ListRoutinesUseCase {
 	) {}
 
 	async execute(query: ListRoutinesQuery): Promise<RoutineView[]> {
-		const routines = await this.routineRepository.findAll();
-		const filtered =
-			query.category === undefined
-				? routines
-				: routines.filter((routine) => routine.category === query.category);
+		let routines = await this.routineRepository.findAll();
+
+		if (query.category !== undefined) {
+			routines = routines.filter(
+				(routine) => routine.category === query.category,
+			);
+		}
+
+		if (query.searchQuery !== undefined && query.searchQuery.trim() !== "") {
+			const searchNormalized = query.searchQuery.toLowerCase().trim();
+			routines = routines.filter((routine) =>
+				routine.name.toLowerCase().includes(searchNormalized),
+			);
+		}
 
 		const now = this.clock.now();
 
 		return Promise.all(
-			filtered.map(async (routine): Promise<RoutineView> => {
+			routines.map(async (routine): Promise<RoutineView> => {
 				const latestCompletion =
 					await this.completionEventRepository.findLatestByRoutineId(
 						routine.id,

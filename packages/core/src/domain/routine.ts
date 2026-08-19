@@ -8,5 +8,7 @@ export interface Routine {
 	taskType: TaskType;
 	category: Category | null;
 	isPaused: boolean;
+	isTask: boolean;
+	isImportant: boolean;
 	readonly createdAt: Date;
 }

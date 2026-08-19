@@ -8,6 +8,8 @@ export function toDashboardRoutine(view: RoutineView): DashboardRoutine {
 		category: view.routine.category ?? "General",
 		status: view.status,
 		taskType: view.routine.taskType,
+		isTask: view.routine.isTask,
+		isImportant: view.routine.isImportant,
 		lastCompletedAt: view.lastCompletedAt,
 	};
 }

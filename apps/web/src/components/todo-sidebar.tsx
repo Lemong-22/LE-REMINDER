@@ -29,6 +29,7 @@ import { GripVertical } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import { queryClient, trpc } from "@/utils/trpc";
 
 type Todo = inferRouterOutputs<AppRouter>["todo"]["list"][number];
@@ -49,23 +50,30 @@ function TodoRowContent({
 	todo: Todo;
 	editMode: boolean;
 	grip: React.ReactNode;
-	onToggle?: () => void;
+	onToggle?: (target?: HTMLElement) => void;
 	onDelete?: () => void;
 }) {
 	return (
-		<div className="flex items-center gap-2">
+		<div className="group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-colors duration-200 hover:bg-[#EFE7D8]/60">
 			{grip}
 			<Checkbox
 				checked={todo.done}
-				onCheckedChange={onToggle}
-				className="size-4 rounded border-[#9A876C] data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+				onCheckedChange={() => onToggle?.()}
+				onClick={(e) => {
+					onToggle?.(e.currentTarget);
+				}}
+				className="size-4 cursor-pointer rounded border-[#9A876C] transition-all duration-150 active:scale-90 group-hover/todo:scale-105 data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 			/>
 			<button
 				type="button"
-				onClick={onToggle}
+				onClick={(e) => {
+					onToggle?.(e.currentTarget);
+				}}
 				className={cn(
-					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
-					todo.done ? "text-[#A8967E] line-through" : "text-[#2E2318]",
+					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
+					todo.done
+						? "text-[#A8967E] line-through"
+						: "text-[#2E2318] hover:text-[#C2410C]",
 				)}
 			>
 				{todo.text}
@@ -75,7 +83,7 @@ function TodoRowContent({
 					type="button"
 					onClick={onDelete}
 					aria-label={`Remove ${todo.text}`}
-					className="cursor-pointer bg-transparent px-0.5 text-[#A8967E] text-sm"
+					className="cursor-pointer bg-transparent px-1 text-[#A8967E] text-sm transition-all hover:scale-110 hover:text-[#C2410C] active:scale-90"
 				>
 					×
 				</button>
@@ -120,7 +128,7 @@ function SortableTodoRow({
 	todo: Todo;
 	editMode: boolean;
 	indicator: "above" | "below" | null;
-	onToggle: () => void;
+	onToggle: (target?: HTMLElement) => void;
 	onDelete: () => void;
 }) {
 	const {
@@ -141,7 +149,7 @@ function SortableTodoRow({
 			transition={{ duration: 0.2 }}
 			style={{
 				transform: CSS.Transform.toString(transform),
-				transition,
+				transition: transition || "transform 250ms cubic-bezier(0.2, 0, 0, 1)",
 				position: "relative",
 			}}
 		>
@@ -305,7 +313,7 @@ export function TodoSidebar() {
 				<button
 					type="button"
 					onClick={() => setEditMode((v) => !v)}
-					className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px]"
+					className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#2E2318] active:scale-95"
 				>
 					{editMode ? "Done" : "Edit List"}
 				</button>
@@ -337,7 +345,12 @@ export function TodoSidebar() {
 										todo={todo}
 										editMode={editMode}
 										indicator={indicatorFor(todo.id)}
-										onToggle={() => toggleMutation.mutate({ todoId: todo.id })}
+										onToggle={(target) => {
+											if (!todo.done && target) {
+												triggerCyberExplosion(target);
+											}
+											toggleMutation.mutate({ todoId: todo.id });
+										}}
 										onDelete={() => deleteMutation.mutate({ todoId: todo.id })}
 									/>
 								))}
@@ -352,7 +365,7 @@ export function TodoSidebar() {
 						createPortal(
 							<DragOverlay>
 								{activeTodo && (
-									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F7F2E8] px-2 py-1.5 shadow-[0_8px_24px_-4px_rgba(41,37,36,0.28)]">
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F7F2E8] px-2 py-1.5 shadow-[0_12px_28px_-4px_rgba(41,37,36,0.28)] transition-transform duration-150">
 										<TodoRowContent
 											todo={activeTodo}
 											editMode={editMode}
@@ -380,7 +393,7 @@ export function TodoSidebar() {
 				<button
 					type="button"
 					onClick={addTodo}
-					className="cursor-pointer rounded-lg border border-[#2E2318] bg-[#2E2318] px-2.5 py-1.5 font-semibold text-[13px] text-white"
+					className="cursor-pointer rounded-lg border border-[#2E2318] bg-[#2E2318] px-2.5 py-1.5 font-semibold text-[13px] text-white transition-all duration-150 hover:scale-105 hover:bg-[#493B2C] active:scale-95"
 				>
 					+
 				</button>

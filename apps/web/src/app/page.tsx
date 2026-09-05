@@ -40,8 +40,10 @@ function TabButton({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"cursor-pointer whitespace-nowrap border-transparent border-b-2 bg-transparent py-1.5 font-semibold text-sm transition-all",
-				active ? "border-[#2E2318] text-[#2E2318]" : "text-[#A8967E]",
+				"cursor-pointer whitespace-nowrap border-transparent border-b-2 bg-transparent py-1.5 font-semibold text-sm transition-all duration-200 hover:text-[#2E2318] active:scale-95",
+				active
+					? "border-[#2E2318] text-[#2E2318]"
+					: "text-[#A8967E] hover:border-[#D6C9B2]",
 			)}
 		>
 			{children}
@@ -297,13 +299,13 @@ export default function Home() {
 											placeholder="Search tasks & routines..."
 											value={searchInput}
 											onChange={(e) => setSearchInput(e.target.value)}
-											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none focus:border-[#C2410C] focus:ring-1 focus:ring-[#C2410C]"
+											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
 										/>
 									</div>
 									<button
 										type="button"
 										onClick={handleOpenCreate}
-										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] transition-colors hover:border-[#2E2318]"
+										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] shadow-[0_1px_2px_rgba(41,37,36,0.04)] transition-all duration-200 hover:scale-[1.02] hover:border-[#2E2318] hover:bg-[#F3EDE1] active:scale-95"
 									>
 										+ New Routine
 									</button>
@@ -336,7 +338,7 @@ export default function Home() {
 											placeholder="Search tasks & routines..."
 											value={searchInput}
 											onChange={(e) => setSearchInput(e.target.value)}
-											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none focus:border-[#C2410C] focus:ring-1 focus:ring-[#C2410C]"
+											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
 										/>
 									</div>
 								</div>

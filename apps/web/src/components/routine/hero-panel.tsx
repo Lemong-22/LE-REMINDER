@@ -6,6 +6,7 @@ import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { AuroraGlow } from "@/components/aurora-glow";
 import { NexusAnimation } from "@/components/nexus-animation";
 import { CountUp } from "@/components/ui/count-up";
+import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { STATUS_FILL } from "@/lib/status-visual";
 
@@ -64,22 +65,35 @@ export function HeroPanel({
 					const done =
 						routine.status === "Done" || routine.status === "Finished";
 					return (
-						<div key={routine.id} className="flex items-center gap-2.5">
+						<div
+							key={routine.id}
+							className="group/item -mx-1.5 flex items-center gap-2.5 rounded-md px-1.5 py-1 transition-colors duration-200 hover:bg-[#EFE7D8]/70"
+						>
 							<Checkbox
 								checked={done}
 								onCheckedChange={() => {
 									if (!done) onComplete(routine);
 								}}
-								className="size-4 rounded border-[#9A876C] data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+								onClick={(e) => {
+									if (!done) {
+										triggerCyberExplosion(e.currentTarget);
+									}
+								}}
+								className="size-4 cursor-pointer rounded border-[#9A876C] transition-all duration-150 active:scale-90 group-hover/item:scale-105 data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
 							/>
 							<button
 								type="button"
-								onClick={() => {
-									if (!done) onComplete(routine);
+								onClick={(e) => {
+									if (!done) {
+										triggerCyberExplosion(e.currentTarget);
+										onComplete(routine);
+									}
 								}}
 								className={cn(
-									"cursor-pointer bg-transparent text-left text-[13.5px] transition-all",
-									done ? "text-[#83705A] line-through" : "text-[#2E2318]",
+									"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
+									done
+										? "text-[#83705A] line-through"
+										: "text-[#2E2318] hover:text-[#C2410C]",
 								)}
 							>
 								{routine.name}

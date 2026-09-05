@@ -6,6 +6,7 @@ import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { describeTaskType } from "@/lib/describe-task-type";
 import { formatLastCompleted } from "@/lib/format-last-completed";
@@ -64,7 +65,10 @@ export function RoutineCard({
 		routine.taskType.kind === "Recurring" &&
 		routine.taskType.schedule.type === "FixedCalendar";
 
-	function handleComplete() {
+	function handleComplete(target?: HTMLElement) {
+		if (target) {
+			triggerCyberExplosion(target);
+		}
 		onComplete();
 		setFlipping(true);
 		setTimeout(() => setFlipping(false), 400);
@@ -75,10 +79,10 @@ export function RoutineCard({
 			ref={cardRef}
 			layout
 			variants={CARD_ENTRANCE}
-			whileHover={{ y: -2 }}
-			transition={{ type: "spring", stiffness: 400, damping: 32 }}
+			whileHover={{ y: -3, scale: 1.01 }}
+			transition={{ type: "spring", stiffness: 400, damping: 30 }}
 			onClick={() => setRevealed((v) => !v)}
-			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_8px_20px_-4px_rgba(41,37,36,0.15),inset_0_0_0_1px_rgba(255,255,255,0.6)]"
+			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] transition-all duration-300 hover:shadow-[0_10px_24px_-4px_rgba(46,35,24,0.12),inset_0_0_0_1px_rgba(255,255,255,0.7)]"
 		>
 			{flipping && (
 				<div
@@ -161,9 +165,9 @@ export function RoutineCard({
 						size="sm"
 						onClick={(e) => {
 							e.stopPropagation();
-							handleComplete();
+							handleComplete(e.currentTarget);
 						}}
-						className="h-auto rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-[11px] text-emerald-700 shadow-none hover:bg-emerald-100"
+						className="h-auto rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-[11px] text-emerald-700 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-100 active:scale-95"
 					>
 						Complete
 					</Button>
@@ -176,7 +180,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#F1EBDE]"
+						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] active:scale-95"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -188,7 +192,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none hover:bg-[#F1EBDE]"
+					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] active:scale-95"
 				>
 					Edit
 				</Button>

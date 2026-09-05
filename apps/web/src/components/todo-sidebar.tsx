@@ -54,7 +54,12 @@ function TodoRowContent({
 	onDelete?: () => void;
 }) {
 	return (
-		<div className="group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-colors duration-200 hover:bg-[#EFE7D8]/60">
+		<div
+			className={cn(
+				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#EFE7D8]/60",
+				todo.done && "opacity-60 hover:opacity-100",
+			)}
+		>
 			{grip}
 			<Checkbox
 				checked={todo.done}
@@ -111,13 +116,8 @@ function GripHandle({
 // One sortable, animated row. dnd-kit's transform/transition make the
 // non-dragged rows slide out of the way smoothly; the dragged row itself
 // stays in the list as a low-opacity ghost while the fully-opaque
-// DragOverlay copy follows the cursor. framer-motion owns opacity/y purely
-// for mount/unmount (deliberately no `layout` prop: framer-motion's own
-// FLIP-based position animation would fight with dnd-kit's transform on
-// the same node during a drag). `indicator` draws an accent line in the
-// gap above/below the row currently hovered as the drop target — absolutely
-// positioned into the list's 10px gap rather than a conditional border, so
-// it never shifts layout by its own height.
+// DragOverlay copy follows the cursor. framer-motion owns opacity/scale/height
+// for mount/unmount and position layout when not dragging.
 function SortableTodoRow({
 	todo,
 	editMode,
@@ -143,10 +143,21 @@ function SortableTodoRow({
 	return (
 		<motion.div
 			ref={setNodeRef}
-			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: isDragging ? 0.3 : 1, y: 0 }}
-			exit={{ opacity: 0, scale: 0.9 }}
-			transition={{ duration: 0.2 }}
+			layout={!isDragging ? "position" : false}
+			initial={{ opacity: 0, y: -16, scale: 0.95 }}
+			animate={{ opacity: isDragging ? 0.3 : 1, y: 0, scale: 1 }}
+			exit={{
+				opacity: 0,
+				scale: 0.8,
+				height: 0,
+				overflow: "hidden",
+				transition: { duration: 0.2 },
+			}}
+			whileTap={{ scale: 0.98 }}
+			transition={{
+				layout: { duration: 0.28, ease: [0.25, 1, 0.5, 1] },
+				duration: 0.2,
+			}}
 			style={{
 				transform: CSS.Transform.toString(transform),
 				transition: transition || "transform 250ms cubic-bezier(0.2, 0, 0, 1)",
@@ -190,6 +201,9 @@ export function TodoSidebar() {
 	const listQueryOptions = trpc.todo.list.queryOptions();
 	const todosQuery = useQuery(listQueryOptions);
 	const todos = todosQuery.data ?? [];
+	const sortedTodos = [...todos].sort((a, b) =>
+		a.done === b.done ? 0 : a.done ? 1 : -1,
+	);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -280,11 +294,11 @@ export function TodoSidebar() {
 		const { active, over } = event;
 		if (!over || active.id === over.id) return;
 
-		const oldIndex = todos.findIndex((todo) => todo.id === active.id);
-		const newIndex = todos.findIndex((todo) => todo.id === over.id);
+		const oldIndex = sortedTodos.findIndex((todo) => todo.id === active.id);
+		const newIndex = sortedTodos.findIndex((todo) => todo.id === over.id);
 		if (oldIndex === -1 || newIndex === -1) return;
 
-		const reordered = arrayMove(todos, oldIndex, newIndex);
+		const reordered = arrayMove(sortedTodos, oldIndex, newIndex);
 		reorderMutation.mutate({ todoIds: reordered.map((todo) => todo.id) });
 	}
 
@@ -300,12 +314,12 @@ export function TodoSidebar() {
 		if (!activeId || !overId || overId === activeId || todoId !== overId) {
 			return null;
 		}
-		const activeIndex = todos.findIndex((todo) => todo.id === activeId);
-		const overIndex = todos.findIndex((todo) => todo.id === overId);
+		const activeIndex = sortedTodos.findIndex((todo) => todo.id === activeId);
+		const overIndex = sortedTodos.findIndex((todo) => todo.id === overId);
 		return overIndex > activeIndex ? "below" : "above";
 	}
 
-	const activeTodo = todos.find((todo) => todo.id === activeId) ?? null;
+	const activeTodo = sortedTodos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
 		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
@@ -314,11 +328,11 @@ export function TodoSidebar() {
 					Today's To-Do
 				</div>
 				<div className="flex items-center gap-2">
-					{editMode && todos.some((t) => t.done) && (
+					{editMode && sortedTodos.some((t) => t.done) && (
 						<button
 							type="button"
 							onClick={() => {
-								for (const t of todos.filter((item) => item.done)) {
+								for (const t of sortedTodos.filter((item) => item.done)) {
 									deleteMutation.mutate({ todoId: t.id });
 								}
 							}}
@@ -338,7 +352,7 @@ export function TodoSidebar() {
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				{!todosQuery.isLoading && todos.length === 0 && (
+				{!todosQuery.isLoading && sortedTodos.length === 0 && (
 					<div className="text-[#5F4F3D] text-[12.5px]">
 						Nothing on your scratchpad.
 					</div>
@@ -352,12 +366,12 @@ export function TodoSidebar() {
 					onDragCancel={handleDragCancel}
 				>
 					<SortableContext
-						items={todos.map((todo) => todo.id)}
+						items={sortedTodos.map((todo) => todo.id)}
 						strategy={verticalListSortingStrategy}
 					>
-						<AnimatePresence>
+						<AnimatePresence mode="popLayout" initial={false}>
 							{!todosQuery.isLoading &&
-								todos.map((todo) => (
+								sortedTodos.map((todo) => (
 									<SortableTodoRow
 										key={todo.id}
 										todo={todo}

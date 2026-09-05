@@ -1,17 +1,10 @@
 "use client";
 
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { sortByStatus } from "@/lib/sort-routines";
 import { RoutineCard } from "./routine-card";
-
-const GRID_VARIANTS = {
-	hidden: {},
-	visible: {
-		transition: { staggerChildren: 0.04 },
-	},
-};
 
 export function RoutineList({
 	routines,
@@ -35,26 +28,40 @@ export function RoutineList({
 	}
 
 	return (
-		<motion.div
-			initial="hidden"
-			animate="visible"
-			variants={GRID_VARIANTS}
-			className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4"
-		>
-			{sorted.map((routine) => (
-				<SpotlightCard
-					key={routine.id}
-					className="rounded-[10px]"
-					spotlightColor="rgba(194, 65, 12, 0.08)"
-				>
-					<RoutineCard
-						routine={routine}
-						onComplete={() => onComplete(routine)}
-						onEdit={() => onEdit(routine)}
-						onTogglePause={() => onTogglePause(routine)}
-					/>
-				</SpotlightCard>
-			))}
-		</motion.div>
+		<div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+			<AnimatePresence mode="popLayout" initial={false}>
+				{sorted.map((routine) => (
+					<motion.div
+						key={routine.id}
+						layout
+						initial={{ opacity: 0, y: -20, scale: 0.95 }}
+						animate={{ opacity: 1, y: 0, scale: 1 }}
+						exit={{
+							opacity: 0,
+							scale: 0.8,
+							transition: { duration: 0.2, ease: "easeOut" },
+						}}
+						transition={{
+							layout: { duration: 0.35, ease: [0.25, 1, 0.5, 1] },
+							opacity: { duration: 0.2 },
+							scale: { duration: 0.2 },
+						}}
+						className="h-full"
+					>
+						<SpotlightCard
+							className="h-full rounded-[10px]"
+							spotlightColor="rgba(194, 65, 12, 0.08)"
+						>
+							<RoutineCard
+								routine={routine}
+								onComplete={() => onComplete(routine)}
+								onEdit={() => onEdit(routine)}
+								onTogglePause={() => onTogglePause(routine)}
+							/>
+						</SpotlightCard>
+					</motion.div>
+				))}
+			</AnimatePresence>
+		</div>
 	);
 }

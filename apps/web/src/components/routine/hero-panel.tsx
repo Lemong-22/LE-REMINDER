@@ -8,6 +8,7 @@ import { NexusAnimation } from "@/components/nexus-animation";
 import { CountUp } from "@/components/ui/count-up";
 import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
+import { sortByStatus } from "@/lib/sort-routines";
 import { STATUS_FILL } from "@/lib/status-visual";
 
 const STATUS_ORDER: RoutineStatus[] = [
@@ -38,7 +39,7 @@ export function HeroPanel({
 	routines: DashboardRoutine[];
 	onComplete: (routine: DashboardRoutine) => void;
 }) {
-	const dailyItems = routines.filter(isDailyRoutine);
+	const dailyItems = sortByStatus(routines.filter(isDailyRoutine));
 
 	const counts: Record<RoutineStatus, number> = {
 		Overdue: 0,
@@ -67,7 +68,10 @@ export function HeroPanel({
 					return (
 						<div
 							key={routine.id}
-							className="group/item -mx-1.5 flex items-center gap-2.5 rounded-md px-1.5 py-1 transition-colors duration-200 hover:bg-[#EFE7D8]/70"
+							className={cn(
+								"group/item -mx-1.5 flex items-center gap-2.5 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#EFE7D8]/70",
+								done && "opacity-60 hover:opacity-100",
+							)}
 						>
 							<Checkbox
 								checked={done}

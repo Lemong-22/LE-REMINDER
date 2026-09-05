@@ -6,7 +6,7 @@ import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import { BarChart2, Github, Search, Sparkles, X } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HeroPanel } from "@/components/routine/hero-panel";
@@ -516,9 +516,28 @@ export default function Home() {
 									</div>
 								) : (
 									<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
-										{sortedRoutines.map((routine) => (
-											<RoutineListRow key={routine.id} routine={routine} />
-										))}
+										<AnimatePresence mode="popLayout" initial={false}>
+											{sortedRoutines.map((routine) => (
+												<motion.div
+													key={routine.id}
+													layout
+													initial={{ opacity: 0, y: -10 }}
+													animate={{ opacity: 1, y: 0 }}
+													exit={{
+														opacity: 0,
+														height: 0,
+														overflow: "hidden",
+														transition: { duration: 0.2 },
+													}}
+													transition={{
+														layout: { duration: 0.28, ease: [0.25, 1, 0.5, 1] },
+														duration: 0.2,
+													}}
+												>
+													<RoutineListRow routine={routine} />
+												</motion.div>
+											))}
+										</AnimatePresence>
 									</div>
 								)}
 							</div>

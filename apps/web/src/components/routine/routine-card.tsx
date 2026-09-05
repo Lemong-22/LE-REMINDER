@@ -21,11 +21,6 @@ function isMandatory(routine: DashboardRoutine): boolean {
 	);
 }
 
-const CARD_ENTRANCE = {
-	hidden: { opacity: 0, y: 10 },
-	visible: { opacity: 1, y: 0 },
-};
-
 export function RoutineCard({
 	routine,
 	onComplete,
@@ -58,6 +53,8 @@ export function RoutineCard({
 	}, [revealed]);
 
 	const isFinished = routine.status === "Finished";
+	const isCompleted = routine.status === "Done" || isFinished;
+	const isDue = routine.status === "Due";
 	const isPaused = routine.status === "Paused";
 	const showComplete = routine.status === "Overdue" || routine.status === "Due";
 	const showPauseResume = !isFinished;
@@ -77,12 +74,17 @@ export function RoutineCard({
 	return (
 		<motion.div
 			ref={cardRef}
-			layout
-			variants={CARD_ENTRANCE}
 			whileHover={{ y: -3, scale: 1.01 }}
+			whileTap={{ scale: 0.98 }}
 			transition={{ type: "spring", stiffness: 400, damping: 30 }}
 			onClick={() => setRevealed((v) => !v)}
-			className="group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-[17px] shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] transition-all duration-300 hover:shadow-[0_10px_24px_-4px_rgba(46,35,24,0.12),inset_0_0_0_1px_rgba(255,255,255,0.7)]"
+			className={cn(
+				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-all duration-300",
+				isDue
+					? "border-[#D97706]/75 bg-gradient-to-br from-[#F7F2E8] via-[#FAF5EC] to-[#F3EDE1] shadow-[0_0_14px_-2px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.18)] hover:shadow-[0_10px_24px_-4px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.25)]"
+					: "border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_10px_24px_-4px_rgba(46,35,24,0.12),inset_0_0_0_1px_rgba(255,255,255,0.7)]",
+				isCompleted && "opacity-65 hover:opacity-100",
+			)}
 		>
 			{flipping && (
 				<div
@@ -93,9 +95,21 @@ export function RoutineCard({
 
 			<div className="flex items-center justify-between gap-2">
 				<div className="flex items-center gap-[7px]">
-					<StatusShape status={routine.status} />
+					<div className="relative flex items-center justify-center">
+						{isDue && (
+							<span
+								aria-hidden
+								className="absolute -inset-1 animate-ping rounded-full bg-[#D97706]/20"
+								style={{ animationDuration: "2.5s" }}
+							/>
+						)}
+						<StatusShape status={routine.status} />
+					</div>
 					<div
-						className="font-mono font-semibold text-[10.5px]"
+						className={cn(
+							"font-mono font-semibold text-[10.5px]",
+							isDue && "animate-pulse",
+						)}
 						style={{ color: STATUS_TEXT[routine.status] }}
 					>
 						{routine.status}
@@ -129,7 +143,7 @@ export function RoutineCard({
 				<div
 					className={cn(
 						"font-bold text-[15px] transition-colors",
-						isFinished ? "text-[#83705A] line-through" : "text-[#2E2318]",
+						isCompleted ? "text-[#83705A] line-through" : "text-[#2E2318]",
 					)}
 				>
 					{routine.name}

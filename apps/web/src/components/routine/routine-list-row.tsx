@@ -8,10 +8,25 @@ import { StatusShape } from "./status-shape";
 
 export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 	const isFinished = routine.status === "Finished";
+	const isCompleted = routine.status === "Done" || isFinished;
+	const isDue = routine.status === "Due";
 
 	return (
-		<div className="group flex items-center gap-4 border-[#E6DCCA] border-b p-3.5 px-5 transition-colors duration-200 last:border-0 hover:bg-[#EFE7D8]/80">
-			<div className="flex w-3 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-110">
+		<div
+			className={cn(
+				"group flex items-center gap-4 border-[#E6DCCA] border-b p-3.5 px-5 transition-all duration-200 last:border-0 hover:bg-[#EFE7D8]/80",
+				isCompleted && "opacity-65 hover:opacity-100",
+				isDue && "bg-[#FAF5EC]/40",
+			)}
+		>
+			<div className="relative flex w-3 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-110">
+				{isDue && (
+					<span
+						aria-hidden
+						className="absolute -inset-1 animate-ping rounded-full bg-[#D97706]/20"
+						style={{ animationDuration: "2.5s" }}
+					/>
+				)}
 				<StatusShape status={routine.status} size={11} />
 			</div>
 			<div className="flex min-w-40 flex-1 items-center gap-1.5 transition-transform duration-200 group-hover:translate-x-0.5">
@@ -21,7 +36,7 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 				<div
 					className={cn(
 						"font-semibold text-sm transition-colors duration-150",
-						isFinished
+						isCompleted
 							? "text-[#83705A] line-through"
 							: "text-[#2E2318] group-hover:text-[#2E2318]",
 					)}

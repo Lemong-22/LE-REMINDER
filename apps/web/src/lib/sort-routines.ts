@@ -1,19 +1,27 @@
 import type { RoutineStatus } from "@LE-REMINDER/core/domain/routine-status";
 
-// Overdue is always forced to the top; everything else keeps its incoming
-// (e.g. name/creation) order.
+// Overdue and Due demand immediate attention at the top.
+// Paused stays in the middle.
+// Completed tasks (Done, Finished) are demoted to the very bottom.
 const STATUS_RANK: Record<RoutineStatus, number> = {
 	Overdue: 0,
 	Due: 1,
-	Done: 2,
-	Paused: 3,
+	Paused: 2,
+	Done: 3,
 	Finished: 4,
 };
 
-export function sortByStatus<T extends { status: RoutineStatus }>(
-	routines: readonly T[],
-): T[] {
-	return [...routines].sort(
-		(a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status],
-	);
+export function sortByStatus<
+	T extends { status: RoutineStatus; isImportant?: boolean },
+>(routines: readonly T[]): T[] {
+	return [...routines].sort((a, b) => {
+		const rankDiff = STATUS_RANK[a.status] - STATUS_RANK[b.status];
+		if (rankDiff !== 0) return rankDiff;
+
+		if (a.isImportant !== b.isImportant) {
+			return a.isImportant ? -1 : 1;
+		}
+
+		return 0;
+	});
 }

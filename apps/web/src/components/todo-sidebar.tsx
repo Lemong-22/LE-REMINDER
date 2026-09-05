@@ -34,7 +34,7 @@ import { queryClient, trpc } from "@/utils/trpc";
 
 type Todo = inferRouterOutputs<AppRouter>["todo"]["list"][number];
 
-const ACCENT = "#C2410C";
+const ACCENT = "#6366F1";
 
 // The row's inner markup, shared by the in-list sortable row and the
 // DragOverlay copy so the picked-up item is pixel-identical to the one it
@@ -56,7 +56,7 @@ function TodoRowContent({
 	return (
 		<div
 			className={cn(
-				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#EFE7D8]/60",
+				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#26282E]/60",
 				todo.done && "opacity-60 hover:opacity-100",
 			)}
 		>
@@ -67,7 +67,7 @@ function TodoRowContent({
 				onClick={(e) => {
 					onToggle?.(e.currentTarget);
 				}}
-				className="size-4 cursor-pointer rounded border-[#9A876C] transition-all duration-150 active:scale-90 group-hover/todo:scale-105 data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+				className="size-4 cursor-pointer rounded border-[#484B56] transition-all duration-150 active:scale-90 group-hover/todo:scale-105 data-checked:border-[#6366F1] data-checked:bg-[#6366F1]"
 			/>
 			<button
 				type="button"
@@ -77,8 +77,8 @@ function TodoRowContent({
 				className={cn(
 					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
 					todo.done
-						? "text-[#A8967E] line-through"
-						: "text-[#2E2318] hover:text-[#C2410C]",
+						? "text-[#6E717E] line-through"
+						: "text-[#EDEDED] hover:text-[#818CF8]",
 				)}
 			>
 				{todo.text}
@@ -88,7 +88,7 @@ function TodoRowContent({
 					type="button"
 					onClick={onDelete}
 					aria-label={`Remove ${todo.text}`}
-					className="cursor-pointer bg-transparent px-1 text-[#A8967E] text-sm transition-all hover:scale-110 hover:text-[#C2410C] active:scale-90"
+					className="cursor-pointer bg-transparent px-1 text-[#636674] text-sm transition-all hover:scale-110 hover:text-[#818CF8] active:scale-90"
 				>
 					×
 				</button>
@@ -105,7 +105,7 @@ function GripHandle({
 		<button
 			type="button"
 			aria-label={`Reorder ${label}`}
-			className="cursor-grab touch-none bg-transparent text-[#C7B79C] active:cursor-grabbing"
+			className="cursor-grab touch-none bg-transparent text-[#636674] active:cursor-grabbing"
 			{...props}
 		>
 			<GripVertical className="size-3.5" />
@@ -173,7 +173,7 @@ function SortableTodoRow({
 					)}
 					style={{
 						background: ACCENT,
-						boxShadow: "0 0 6px rgba(194, 65, 12, 0.6)",
+						boxShadow: "0 0 6px rgba(99, 102, 241, 0.6)",
 					}}
 				/>
 			)}
@@ -322,9 +322,9 @@ export function TodoSidebar() {
 	const activeTodo = sortedTodos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 p-5 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#282A30]/70 bg-gradient-to-br from-[#1C1D21] to-[#1F2126]/80 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
 			<div className="flex items-center justify-between">
-				<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+				<div className="font-extrabold text-[#EDEDED] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
 				</div>
 				<div className="flex items-center gap-2">
@@ -336,7 +336,7 @@ export function TodoSidebar() {
 									deleteMutation.mutate({ todoId: t.id });
 								}
 							}}
-							className="cursor-pointer font-semibold text-[#C2410C] text-[11px] hover:underline active:scale-95"
+							className="cursor-pointer font-semibold text-[#818CF8] text-[11px] hover:underline active:scale-95"
 						>
 							Clear Done
 						</button>
@@ -344,7 +344,7 @@ export function TodoSidebar() {
 					<button
 						type="button"
 						onClick={() => setEditMode((v) => !v)}
-						className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#2E2318] active:scale-95"
+						className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#9496A1] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#EDEDED] active:scale-95"
 					>
 						{editMode ? "Done" : "Edit List"}
 					</button>
@@ -353,7 +353,7 @@ export function TodoSidebar() {
 
 			<div className="flex flex-col gap-2.5">
 				{!todosQuery.isLoading && sortedTodos.length === 0 && (
-					<div className="text-[#5F4F3D] text-[12.5px]">
+					<div className="text-[#9496A1] text-[12.5px]">
 						Nothing on your scratchpad.
 					</div>
 				)}
@@ -397,7 +397,7 @@ export function TodoSidebar() {
 						createPortal(
 							<DragOverlay>
 								{activeTodo && (
-									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#D6C9B2] bg-[#F7F2E8] px-2 py-1.5 shadow-[0_12px_28px_-4px_rgba(41,37,36,0.28)] transition-transform duration-150">
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#282A30] bg-[#1C1D21] px-2 py-1.5 shadow-[0_12px_28px_-4px_rgba(0,0,0,0.6)] transition-transform duration-150">
 										<TodoRowContent
 											todo={activeTodo}
 											editMode={editMode}
@@ -411,7 +411,7 @@ export function TodoSidebar() {
 				</DndContext>
 			</div>
 
-			<div className="flex gap-1.5 border-[#E6DCCA] border-t pt-1">
+			<div className="flex gap-1.5 border-[#22242A] border-t pt-1">
 				<input
 					type="text"
 					value={newText}
@@ -420,12 +420,12 @@ export function TodoSidebar() {
 						if (e.key === "Enter") addTodo();
 					}}
 					placeholder="Add a task…"
-					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#F1EBDE] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none transition-all duration-150 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
+					className="min-w-0 flex-1 rounded-lg border border-[#32353E] bg-[#18191E] px-2.5 py-1.5 text-[#EDEDED] text-[12.5px] outline-none transition-all duration-150 focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/20"
 				/>
 				<button
 					type="button"
 					onClick={addTodo}
-					className="cursor-pointer rounded-lg border border-[#2E2318] bg-[#2E2318] px-2.5 py-1.5 font-semibold text-[13px] text-white transition-all duration-150 hover:scale-105 hover:bg-[#493B2C] active:scale-95"
+					className="cursor-pointer rounded-lg border border-[#6366F1] bg-[#6366F1] px-2.5 py-1.5 font-semibold text-[13px] text-white transition-all duration-150 hover:scale-105 hover:bg-[#4F46E5] active:scale-95"
 				>
 					+
 				</button>

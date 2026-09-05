@@ -38,8 +38,8 @@ export function StatusShape({
 		return (
 			<div
 				aria-hidden
-				className="shrink-0 rounded-full border border-[#A8967E]"
-				style={{ ...style, background: "#D6C9B2" }}
+				className="shrink-0 rounded-full border border-[#636674]"
+				style={{ ...style, background: "#282A30" }}
 			/>
 		);
 	}

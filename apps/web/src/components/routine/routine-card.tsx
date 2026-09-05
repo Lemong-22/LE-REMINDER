@@ -82,8 +82,8 @@ export function RoutineCard({
 			className={cn(
 				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-[box-shadow,opacity,border-color] duration-200",
 				isDue
-					? "border-[#D97706]/75 bg-gradient-to-br from-[#F7F2E8] via-[#FAF5EC] to-[#F3EDE1] shadow-[0_0_14px_-2px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.18)] hover:shadow-[0_10px_24px_-4px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.25)]"
-					: "border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_10px_24px_-4px_rgba(46,35,24,0.12),inset_0_0_0_1px_rgba(255,255,255,0.7)]",
+					? "border-[#F59E0B]/75 bg-gradient-to-br from-[#1C1D21] via-[#252730] to-[#1F2126] shadow-[0_0_16px_-2px_rgba(245,158,11,0.25),inset_0_0_0_1px_rgba(245,158,11,0.2)] hover:shadow-[0_10px_24px_-4px_rgba(245,158,11,0.28),inset_0_0_0_1px_rgba(245,158,11,0.25)]"
+					: "border-[#282A30]/70 bg-gradient-to-br from-[#1C1D21] to-[#1F2126]/80 shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.08)]",
 				isCompleted && "opacity-65 hover:opacity-100",
 			)}
 		>
@@ -100,7 +100,7 @@ export function RoutineCard({
 						{isDue && (
 							<span
 								aria-hidden
-								className="absolute -inset-1 animate-ping rounded-full bg-[#D97706]/20"
+								className="absolute -inset-1 animate-ping rounded-full bg-[#F59E0B]/20"
 								style={{ animationDuration: "2.5s" }}
 							/>
 						)}
@@ -122,15 +122,15 @@ export function RoutineCard({
 						className={cn(
 							"rounded-full px-[8px] py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.05em]",
 							routine.isTask
-								? "border-[#C2410C]/60 bg-[#C2410C]/10 text-[#C2410C]"
-								: "border-[#493B2C]/40 bg-[#493B2C]/5 text-[#493B2C]",
+								? "border-[#6366F1]/60 bg-[#6366F1]/15 text-[#818CF8]"
+								: "border-[#32353E] bg-[#22242A]/60 text-[#9496A1]",
 						)}
 					>
 						{routine.isTask ? "Task" : "Routine"}
 					</Badge>
 					<Badge
 						variant="secondary"
-						className="rounded-full border border-[#C7B79C] bg-[#E4D6BB] px-[9px] py-0.5 font-bold font-mono text-[#54452F] text-[10px] uppercase tracking-[0.08em]"
+						className="rounded-full border border-[#32353E] bg-[#262830] px-[9px] py-0.5 font-bold font-mono text-[#C3C5D0] text-[10px] uppercase tracking-[0.08em]"
 					>
 						{routine.category}
 					</Badge>
@@ -139,33 +139,33 @@ export function RoutineCard({
 
 			<div className="flex items-center gap-1.5">
 				{routine.isImportant && (
-					<Star className="size-4 shrink-0 fill-[#D97706] text-[#D97706]" />
+					<Star className="size-4 shrink-0 fill-[#F59E0B] text-[#F59E0B]" />
 				)}
 				<div
 					className={cn(
 						"font-bold text-[15px] transition-colors",
-						isCompleted ? "text-[#83705A] line-through" : "text-[#2E2318]",
+						isCompleted ? "text-[#6E717E] line-through" : "text-[#EDEDED]",
 					)}
 				>
 					{routine.name}
 				</div>
 			</div>
 
-			<div className="flex items-center gap-1.5 font-mono text-[#5F4F3D] text-[11.5px]">
+			<div className="flex items-center gap-1.5 font-mono text-[#9496A1] text-[11.5px]">
 				{showMandatoryDot && (
 					<span
 						aria-hidden
 						className={cn(
 							"size-1.5 shrink-0 rounded-full",
 							isMandatory(routine)
-								? "bg-[#493B2C]"
-								: "border border-[#A8967E] bg-transparent",
+								? "bg-[#EDEDED]"
+								: "border border-[#636674] bg-transparent",
 						)}
 					/>
 				)}
 				<span>{describeTaskType(routine.taskType, routine.status)}</span>
 			</div>
-			<div className="font-mono text-[#5F4F3D] text-[11px]">
+			<div className="font-mono text-[#9496A1] text-[11px]">
 				Last done · {formatLastCompleted(routine.lastCompletedAt)}
 			</div>
 
@@ -182,7 +182,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							handleComplete(e.currentTarget);
 						}}
-						className="h-auto rounded-md border border-emerald-300/80 bg-emerald-50/90 px-2.5 py-1 font-semibold text-[11px] text-emerald-800 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 active:scale-95"
+						className="h-auto rounded-md border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 font-semibold text-[11px] text-emerald-300 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40 active:scale-95"
 					>
 						Complete
 					</Button>
@@ -195,7 +195,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C]/40 active:scale-95"
+						className="h-auto rounded-md border-[#32353E] bg-[#1C1D21] px-2.5 py-1 font-normal text-[#EDEDED] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#26282E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/40 active:scale-95"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -207,7 +207,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C]/40 active:scale-95"
+					className="h-auto rounded-md border-[#32353E] bg-[#1C1D21] px-2.5 py-1 font-normal text-[#EDEDED] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#26282E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/40 active:scale-95"
 				>
 					Edit
 				</Button>

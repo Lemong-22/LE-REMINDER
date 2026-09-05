@@ -55,12 +55,12 @@ export function HeroPanel({
 	);
 
 	return (
-		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)]">
+		<div className="relative flex flex-wrap overflow-hidden rounded-xl border border-[#282A30]/70 bg-gradient-to-br from-[#1C1D21] to-[#1F2126]/80 shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
 			<AuroraGlow />
-			<div className="flex min-w-[150px] flex-1 flex-col gap-3 border-[#D6C9B2]/60 border-r p-5">
+			<div className="flex min-w-[150px] flex-1 flex-col gap-3 border-[#282A30]/60 border-r p-5">
 				<div className="font-bold text-[15px]">Daily Task</div>
 				{dailyItems.length === 0 && (
-					<div className="text-[#5F4F3D] text-xs">No daily routines yet.</div>
+					<div className="text-[#9496A1] text-xs">No daily routines yet.</div>
 				)}
 				{dailyItems.map((routine) => {
 					const done =
@@ -69,7 +69,7 @@ export function HeroPanel({
 						<div
 							key={routine.id}
 							className={cn(
-								"group/item -mx-1.5 flex items-center gap-2.5 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#EFE7D8]/70",
+								"group/item -mx-1.5 flex items-center gap-2.5 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#26282E]/70",
 								done && "opacity-60 hover:opacity-100",
 							)}
 						>
@@ -83,7 +83,7 @@ export function HeroPanel({
 										triggerCyberExplosion(e.currentTarget);
 									}
 								}}
-								className="size-4 cursor-pointer rounded border-[#9A876C] transition-all duration-150 active:scale-90 group-hover/item:scale-105 data-checked:border-[#2E2318] data-checked:bg-[#2E2318]"
+								className="size-4 cursor-pointer rounded border-[#484B56] transition-all duration-150 active:scale-90 group-hover/item:scale-105 data-checked:border-[#6366F1] data-checked:bg-[#6366F1]"
 							/>
 							<button
 								type="button"
@@ -96,8 +96,8 @@ export function HeroPanel({
 								className={cn(
 									"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
 									done
-										? "text-[#83705A] line-through"
-										: "text-[#2E2318] hover:text-[#C2410C]",
+										? "text-[#6E717E] line-through"
+										: "text-[#EDEDED] hover:text-[#818CF8]",
 								)}
 							>
 								{routine.name}
@@ -107,12 +107,12 @@ export function HeroPanel({
 				})}
 			</div>
 
-			<div className="flex min-w-[150px] flex-none items-center justify-center border-[#D6C9B2]/60 border-r p-5">
+			<div className="flex min-w-[150px] flex-none items-center justify-center border-[#282A30]/60 border-r p-5">
 				<NexusAnimation />
 			</div>
 
 			<div className="flex min-w-[170px] flex-[1.2] flex-col justify-center gap-3 p-5">
-				<div className="font-mono text-[#5F4F3D] text-[11px] tracking-[0.08em]">
+				<div className="font-mono text-[#9496A1] text-[11px] tracking-[0.08em]">
 					OVERALL PROGRESS
 				</div>
 				<CountUp
@@ -120,7 +120,7 @@ export function HeroPanel({
 					duration={1.2}
 					className="font-extrabold text-[30px]"
 				/>
-				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#E6DCCA]">
+				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#22242A]">
 					{STATUS_ORDER.map((status) => (
 						<div
 							key={status}
@@ -132,7 +132,7 @@ export function HeroPanel({
 						/>
 					))}
 				</div>
-				<div className="flex flex-wrap gap-3 font-mono text-[#5F4F3D] text-[11px]">
+				<div className="flex flex-wrap gap-3 font-mono text-[#9496A1] text-[11px]">
 					{STATUS_ORDER.map((status) => (
 						<div key={status} className="flex items-center gap-1.5">
 							<span

@@ -49,7 +49,7 @@ export function SpotlightCard({
 					style={
 						{
 							background:
-								"radial-gradient(550px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-color, rgba(194, 65, 12, 0.08)), transparent 40%)",
+								"radial-gradient(550px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-color, rgba(99, 102, 241, 0.15)), transparent 40%)",
 							zIndex: 10,
 						} as CSSProperties
 					}

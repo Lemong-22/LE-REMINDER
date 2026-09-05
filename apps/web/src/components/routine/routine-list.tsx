@@ -21,7 +21,7 @@ export function RoutineList({
 
 	if (sorted.length === 0) {
 		return (
-			<div className="px-4 py-16 text-center font-serif text-[#83705A] text-sm italic">
+			<div className="px-4 py-16 text-center font-serif text-[#6E717E] text-sm italic">
 				No routines yet.
 			</div>
 		);
@@ -50,7 +50,7 @@ export function RoutineList({
 					>
 						<SpotlightCard
 							className="h-full rounded-[10px]"
-							spotlightColor="rgba(194, 65, 12, 0.08)"
+							spotlightColor="rgba(99, 102, 241, 0.15)"
 						>
 							<RoutineCard
 								routine={routine}

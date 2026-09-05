@@ -27,7 +27,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${inter.variable} ${ibmPlexMono.variable} min-h-screen w-full bg-[#121316] text-[#EDEDED] antialiased`}
+				className={`${inter.variable} ${ibmPlexMono.variable} min-h-screen w-full bg-[#131722] text-[#F1F5F9] antialiased`}
 			>
 				<Providers>{children}</Providers>
 			</body>

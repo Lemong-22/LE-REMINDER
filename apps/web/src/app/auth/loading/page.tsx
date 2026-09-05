@@ -54,7 +54,7 @@ export default function AuthLoadingPage() {
 	const exiting = phase === "exiting";
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#121316]">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#131722]">
 			<div className="absolute inset-0">
 				<SoftAurora />
 			</div>
@@ -70,13 +70,13 @@ export default function AuthLoadingPage() {
 					duration: exiting ? EXIT_DURATION_MS / 1000 : 0.5,
 					ease: "easeOut",
 				}}
-				className="relative z-10 flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-[#1C1D21]/60 px-10 py-9 text-center shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-xl"
+				className="relative z-10 flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-[#1E2433]/70 px-10 py-9 text-center shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-xl"
 			>
-				<Loader2 className="size-6 animate-spin text-[#6366F1]" />
-				<div className="font-extrabold text-[#EDEDED] text-[17px] tracking-[-0.015em]">
+				<Loader2 className="size-6 animate-spin text-[#3B82F6]" />
+				<div className="font-extrabold text-[#F1F5F9] text-[17px] tracking-[-0.015em]">
 					{isPending ? "Verifying your session…" : "Welcome back"}
 				</div>
-				<div className="text-[#9496A1] text-[12px]">
+				<div className="text-[#94A3B8] text-[12px]">
 					Taking you to your dashboard…
 				</div>
 			</motion.div>

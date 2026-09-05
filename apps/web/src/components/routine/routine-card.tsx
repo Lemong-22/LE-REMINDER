@@ -82,8 +82,8 @@ export function RoutineCard({
 			className={cn(
 				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-[box-shadow,opacity,border-color] duration-200",
 				isDue
-					? "border-[#F59E0B]/75 bg-gradient-to-br from-[#1C1D21] via-[#252730] to-[#1F2126] shadow-[0_0_16px_-2px_rgba(245,158,11,0.25),inset_0_0_0_1px_rgba(245,158,11,0.2)] hover:shadow-[0_10px_24px_-4px_rgba(245,158,11,0.28),inset_0_0_0_1px_rgba(245,158,11,0.25)]"
-					: "border-[#282A30]/70 bg-gradient-to-br from-[#1C1D21] to-[#1F2126]/80 shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.6),inset_0_0_0_1px_rgba(255,255,255,0.08)]",
+					? "border-[#F59E0B]/75 bg-gradient-to-br from-[#1E2433] via-[#2A3346] to-[#242C3E] shadow-[0_0_16px_-2px_rgba(245,158,11,0.25),inset_0_0_0_1px_rgba(245,158,11,0.2)] hover:shadow-[0_10px_24px_-4px_rgba(245,158,11,0.28),inset_0_0_0_1px_rgba(245,158,11,0.25)]"
+					: "border-[#2E384D] bg-gradient-to-br from-[#1E2433] to-[#242C3E]/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.06)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.08)]",
 				isCompleted && "opacity-65 hover:opacity-100",
 			)}
 		>
@@ -122,15 +122,15 @@ export function RoutineCard({
 						className={cn(
 							"rounded-full px-[8px] py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.05em]",
 							routine.isTask
-								? "border-[#6366F1]/60 bg-[#6366F1]/15 text-[#818CF8]"
-								: "border-[#32353E] bg-[#22242A]/60 text-[#9496A1]",
+								? "border-[#3B82F6]/60 bg-[#3B82F6]/15 text-[#60A5FA]"
+								: "border-[#38445C] bg-[#181E2B]/60 text-[#94A3B8]",
 						)}
 					>
 						{routine.isTask ? "Task" : "Routine"}
 					</Badge>
 					<Badge
 						variant="secondary"
-						className="rounded-full border border-[#32353E] bg-[#262830] px-[9px] py-0.5 font-bold font-mono text-[#C3C5D0] text-[10px] uppercase tracking-[0.08em]"
+						className="rounded-full border border-[#38445C] bg-[#181E2B] px-[9px] py-0.5 font-bold font-mono text-[#CBD5E1] text-[10px] uppercase tracking-[0.08em]"
 					>
 						{routine.category}
 					</Badge>
@@ -144,28 +144,28 @@ export function RoutineCard({
 				<div
 					className={cn(
 						"font-bold text-[15px] transition-colors",
-						isCompleted ? "text-[#6E717E] line-through" : "text-[#EDEDED]",
+						isCompleted ? "text-[#64748B] line-through" : "text-[#F1F5F9]",
 					)}
 				>
 					{routine.name}
 				</div>
 			</div>
 
-			<div className="flex items-center gap-1.5 font-mono text-[#9496A1] text-[11.5px]">
+			<div className="flex items-center gap-1.5 font-mono text-[#94A3B8] text-[11.5px]">
 				{showMandatoryDot && (
 					<span
 						aria-hidden
 						className={cn(
 							"size-1.5 shrink-0 rounded-full",
 							isMandatory(routine)
-								? "bg-[#EDEDED]"
-								: "border border-[#636674] bg-transparent",
+								? "bg-[#F1F5F9]"
+								: "border border-[#64748B] bg-transparent",
 						)}
 					/>
 				)}
 				<span>{describeTaskType(routine.taskType, routine.status)}</span>
 			</div>
-			<div className="font-mono text-[#9496A1] text-[11px]">
+			<div className="font-mono text-[#94A3B8] text-[11px]">
 				Last done · {formatLastCompleted(routine.lastCompletedAt)}
 			</div>
 
@@ -195,7 +195,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#32353E] bg-[#1C1D21] px-2.5 py-1 font-normal text-[#EDEDED] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#26282E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/40 active:scale-95"
+						className="h-auto rounded-md border-[#38445C] bg-[#1E2433] px-2.5 py-1 font-normal text-[#F1F5F9] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40 active:scale-95"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -207,7 +207,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#32353E] bg-[#1C1D21] px-2.5 py-1 font-normal text-[#EDEDED] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#26282E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/40 active:scale-95"
+					className="h-auto rounded-md border-[#38445C] bg-[#1E2433] px-2.5 py-1 font-normal text-[#F1F5F9] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40 active:scale-95"
 				>
 					Edit
 				</Button>

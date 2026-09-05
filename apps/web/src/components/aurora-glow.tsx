@@ -13,7 +13,7 @@ export function AuroraGlow() {
 		>
 			<motion.div
 				className="absolute top-[-40%] left-[-10%] size-[380px] rounded-full blur-[90px] motion-reduce:transform-none"
-				style={{ background: "#6366F133", willChange: "transform" }}
+				style={{ background: "#3B82F633", willChange: "transform" }}
 				animate={{
 					x: [0, 40, -20, 0],
 					y: [0, 20, -10, 0],
@@ -26,7 +26,7 @@ export function AuroraGlow() {
 			/>
 			<motion.div
 				className="absolute right-[-10%] bottom-[-50%] size-[320px] rounded-full blur-[90px] motion-reduce:transform-none"
-				style={{ background: "#2DD4BF26", willChange: "transform" }}
+				style={{ background: "#06B6D426", willChange: "transform" }}
 				animate={{
 					x: [0, -30, 20, 0],
 					y: [0, -20, 10, 0],

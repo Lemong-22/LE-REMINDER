@@ -164,14 +164,14 @@ interface SoftAuroraProps {
 
 // Ported from the reactbits.dev-style SoftAurora snippet (ogl-based WebGL
 // shader, not the framer-motion blob in aurora-glow.tsx). Defaults are
-// tuned to modern indigo and soft teal to sit on top of the
-// #121316 dim slate background.
+// tuned to modern electric blue and luminous cyan to sit on top of the
+// #131722 midnight blue background.
 export function SoftAurora({
 	speed = 0.4,
 	scale = 1.4,
 	brightness = 0.55,
-	color1 = "#6366F1",
-	color2 = "#2DD4BF",
+	color1 = "#3B82F6",
+	color2 = "#06B6D4",
 	noiseFrequency = 2.2,
 	noiseAmplitude = 0.7,
 	bandHeight = 0.5,

@@ -22,11 +22,11 @@ export function RoutineList({
 
 	if (sorted.length === 0) {
 		return (
-			<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-14 text-center">
-				<div className="flex size-11 items-center justify-center rounded-full border border-[#282A30] bg-[#18191E]/80 text-[#636674] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]">
+			<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-[#2E384D]/70 border-dashed bg-[#1E2433]/40 px-6 py-14 text-center">
+				<div className="flex size-11 items-center justify-center rounded-full border border-[#2E384D] bg-[#181E2B]/80 text-[#64748B] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]">
 					<Inbox className="size-5 stroke-[1.5]" />
 				</div>
-				<p className="font-serif text-[#6E717E] text-sm italic">
+				<p className="font-serif text-[#7888A0] text-sm italic">
 					No routines yet.
 				</p>
 			</div>
@@ -56,7 +56,7 @@ export function RoutineList({
 					>
 						<SpotlightCard
 							className="h-full rounded-[10px]"
-							spotlightColor="rgba(99, 102, 241, 0.15)"
+							spotlightColor="rgba(59, 130, 246, 0.15)"
 						>
 							<RoutineCard
 								routine={routine}

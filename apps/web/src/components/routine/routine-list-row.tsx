@@ -15,9 +15,9 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 	return (
 		<div
 			className={cn(
-				"group flex items-center gap-4 border-[#22242A] border-b p-3.5 px-5 transition-all duration-200 last:border-0 hover:bg-[#26282E]/80",
+				"group flex items-center gap-4 border-[#263044] border-b p-3.5 px-5 transition-all duration-200 last:border-0 hover:bg-white/5",
 				isCompleted && "opacity-65 hover:opacity-100",
-				isDue && "bg-[#252730]/40",
+				isDue && "bg-[#252D3E]/40",
 			)}
 		>
 			<div className="relative flex w-3 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-110">
@@ -38,8 +38,8 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 					className={cn(
 						"font-semibold text-sm transition-colors duration-150",
 						isCompleted
-							? "text-[#6E717E] line-through"
-							: "text-[#EDEDED] group-hover:text-[#EDEDED]",
+							? "text-[#64748B] line-through"
+							: "text-[#F1F5F9] group-hover:text-white",
 					)}
 				>
 					{routine.name}
@@ -51,20 +51,20 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 					className={cn(
 						"rounded-full px-2 py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.05em]",
 						routine.isTask
-							? "border-[#6366F1]/60 bg-[#6366F1]/15 text-[#818CF8]"
-							: "border-[#32353E] bg-[#22242A]/60 text-[#9496A1]",
+							? "border-[#3B82F6]/60 bg-[#3B82F6]/15 text-[#60A5FA]"
+							: "border-[#38445C] bg-[#181E2B]/60 text-[#94A3B8]",
 					)}
 				>
 					{routine.isTask ? "Task" : "Routine"}
 				</Badge>
 			</div>
-			<div className="w-[100px] shrink-0 font-mono text-[#9496A1] text-[10.5px] uppercase">
+			<div className="w-[100px] shrink-0 font-mono text-[#94A3B8] text-[10.5px] uppercase">
 				{routine.category}
 			</div>
-			<div className="w-[180px] shrink-0 font-mono text-[#9496A1] text-[11.5px]">
+			<div className="w-[180px] shrink-0 font-mono text-[#94A3B8] text-[11.5px]">
 				{describeTaskType(routine.taskType, routine.status)}
 			</div>
-			<div className="w-[100px] shrink-0 font-mono text-[#9496A1] text-[11.5px]">
+			<div className="w-[100px] shrink-0 font-mono text-[#94A3B8] text-[11.5px]">
 				{formatLastCompleted(routine.lastCompletedAt)}
 			</div>
 		</div>

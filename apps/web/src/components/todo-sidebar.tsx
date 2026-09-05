@@ -34,7 +34,7 @@ import { queryClient, trpc } from "@/utils/trpc";
 
 type Todo = inferRouterOutputs<AppRouter>["todo"]["list"][number];
 
-const ACCENT = "#6366F1";
+const ACCENT = "#3B82F6";
 
 // The row's inner markup, shared by the in-list sortable row and the
 // DragOverlay copy so the picked-up item is pixel-identical to the one it
@@ -56,11 +56,8 @@ function TodoRowContent({
 	return (
 		<div
 			className={cn(
-				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#26282E]/60",
-				"hover:!opacity-100 group-hover/todolist:opacity-70",
-				todo.done
-					? "hover:!opacity-100 opacity-55 group-hover/todolist:opacity-40"
-					: "opacity-100",
+				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-colors duration-200 hover:bg-white/5",
+				todo.done && "opacity-60",
 			)}
 		>
 			{grip}
@@ -70,7 +67,7 @@ function TodoRowContent({
 				onClick={(e) => {
 					onToggle?.(e.currentTarget);
 				}}
-				className="size-4 cursor-pointer rounded border-[#484B56] transition-all duration-150 active:scale-90 group-hover/todo:scale-105 data-checked:border-[#6366F1] data-checked:bg-[#6366F1]"
+				className="size-4 cursor-pointer rounded border-[#38445C] transition-all duration-150 active:scale-90 group-hover/todo:scale-105 data-checked:border-[#3B82F6] data-checked:bg-[#3B82F6]"
 			/>
 			<button
 				type="button"
@@ -78,10 +75,10 @@ function TodoRowContent({
 					onToggle?.(e.currentTarget);
 				}}
 				className={cn(
-					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
+					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-colors duration-200 active:scale-[0.99]",
 					todo.done
-						? "text-[#6E717E] line-through"
-						: "hover:!text-white text-[#EDEDED] group-hover/todo:text-white group-hover/todolist:text-[#9496A1]",
+						? "text-[#64748B] line-through"
+						: "text-[#F1F5F9] group-hover/todo:text-[#38BDF8]",
 				)}
 			>
 				{todo.text}
@@ -91,7 +88,7 @@ function TodoRowContent({
 					type="button"
 					onClick={onDelete}
 					aria-label={`Remove ${todo.text}`}
-					className="cursor-pointer bg-transparent px-1 text-[#636674] text-sm transition-all hover:scale-110 hover:text-[#818CF8] active:scale-90"
+					className="cursor-pointer bg-transparent px-1 text-[#64748B] text-sm transition-all hover:scale-110 hover:text-[#60A5FA] active:scale-90"
 				>
 					×
 				</button>
@@ -108,7 +105,7 @@ function GripHandle({
 		<button
 			type="button"
 			aria-label={`Reorder ${label}`}
-			className="cursor-grab touch-none bg-transparent text-[#636674] active:cursor-grabbing"
+			className="cursor-grab touch-none bg-transparent text-[#64748B] active:cursor-grabbing"
 			{...props}
 		>
 			<GripVertical className="size-3.5" />
@@ -176,7 +173,7 @@ function SortableTodoRow({
 					)}
 					style={{
 						background: ACCENT,
-						boxShadow: "0 0 6px rgba(99, 102, 241, 0.6)",
+						boxShadow: "0 0 6px rgba(59, 130, 246, 0.6)",
 					}}
 				/>
 			)}
@@ -325,9 +322,9 @@ export function TodoSidebar() {
 	const activeTodo = sortedTodos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#282A30] bg-gradient-to-br from-[#1C1D21] to-[#18191E]/95 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05),inset_0_0_20px_rgba(0,0,0,0.2)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#2E384D] bg-gradient-to-br from-[#1E2433] to-[#181E2B]/95 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.06),inset_0_0_20px_rgba(0,0,0,0.2)]">
 			<div className="flex items-center justify-between">
-				<div className="font-extrabold text-[#EDEDED] text-[18px] tracking-[-0.015em]">
+				<div className="font-extrabold text-[#F1F5F9] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
 				</div>
 				<div className="flex items-center gap-2">
@@ -339,7 +336,7 @@ export function TodoSidebar() {
 									deleteMutation.mutate({ todoId: t.id });
 								}
 							}}
-							className="cursor-pointer font-semibold text-[#818CF8] text-[11px] hover:underline active:scale-95"
+							className="cursor-pointer font-semibold text-[#60A5FA] text-[11px] hover:underline active:scale-95"
 						>
 							Clear Done
 						</button>
@@ -347,7 +344,7 @@ export function TodoSidebar() {
 					<button
 						type="button"
 						onClick={() => setEditMode((v) => !v)}
-						className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#9496A1] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#EDEDED] active:scale-95"
+						className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#94A3B8] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#F1F5F9] active:scale-95"
 					>
 						{editMode ? "Done" : "Edit List"}
 					</button>
@@ -356,11 +353,11 @@ export function TodoSidebar() {
 
 			<div className="flex flex-col gap-2.5">
 				{!todosQuery.isLoading && sortedTodos.length === 0 && (
-					<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#282A30]/60 border-dashed bg-[#18191E]/40 px-4 py-7 text-center">
-						<div className="flex size-9 items-center justify-center rounded-full border border-[#282A30] bg-[#141518] text-[#636674]">
+					<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#2E384D]/60 border-dashed bg-[#181E2B]/40 px-4 py-7 text-center">
+						<div className="flex size-9 items-center justify-center rounded-full border border-[#2E384D] bg-[#151A26] text-[#64748B]">
 							<Inbox className="size-4 stroke-[1.5]" />
 						</div>
-						<span className="font-serif text-[#6E717E] text-xs italic">
+						<span className="font-serif text-[#7888A0] text-xs italic">
 							Nothing on your scratchpad.
 						</span>
 					</div>
@@ -377,7 +374,7 @@ export function TodoSidebar() {
 						items={sortedTodos.map((todo) => todo.id)}
 						strategy={verticalListSortingStrategy}
 					>
-						<div className="group/todolist flex flex-col gap-1">
+						<div className="flex flex-col gap-1">
 							<AnimatePresence mode="popLayout" initial={false}>
 								{!todosQuery.isLoading &&
 									sortedTodos.map((todo) => (
@@ -409,7 +406,7 @@ export function TodoSidebar() {
 						createPortal(
 							<DragOverlay>
 								{activeTodo && (
-									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#282A30] bg-[#1C1D21] px-2 py-1.5 shadow-[0_12px_28px_-4px_rgba(0,0,0,0.6)] transition-transform duration-150">
+									<div className="w-[240px] scale-[1.03] rounded-lg border border-[#2E384D] bg-[#1E2433] px-2 py-1.5 shadow-[0_12px_28px_-4px_rgba(0,0,0,0.6)] transition-transform duration-150">
 										<TodoRowContent
 											todo={activeTodo}
 											editMode={editMode}
@@ -423,7 +420,7 @@ export function TodoSidebar() {
 				</DndContext>
 			</div>
 
-			<div className="flex gap-1.5 border-[#22242A] border-t pt-1">
+			<div className="flex gap-1.5 border-[#263044] border-t pt-1">
 				<input
 					type="text"
 					value={newText}
@@ -432,12 +429,12 @@ export function TodoSidebar() {
 						if (e.key === "Enter") addTodo();
 					}}
 					placeholder="Add a task…"
-					className="min-w-0 flex-1 rounded-lg border border-[#32353E] bg-[#18191E] px-2.5 py-1.5 text-[#EDEDED] text-[12.5px] outline-none transition-all duration-150 focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/20"
+					className="min-w-0 flex-1 rounded-lg border border-[#38445C] bg-[#181E2B] px-2.5 py-1.5 text-[#F1F5F9] text-[12.5px] outline-none transition-all duration-150 focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/25"
 				/>
 				<button
 					type="button"
 					onClick={addTodo}
-					className="cursor-pointer rounded-lg border border-[#6366F1] bg-[#6366F1] px-2.5 py-1.5 font-semibold text-[13px] text-white transition-all duration-150 hover:scale-105 hover:bg-[#4F46E5] active:scale-95"
+					className="cursor-pointer rounded-lg border border-[#3B82F6] bg-[#3B82F6] px-2.5 py-1.5 font-semibold text-[13px] text-white transition-all duration-150 hover:scale-105 hover:bg-[#2563EB] active:scale-95"
 				>
 					+
 				</button>

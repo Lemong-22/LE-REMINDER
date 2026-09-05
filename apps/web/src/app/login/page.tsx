@@ -39,7 +39,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#121316]">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#131722]">
 			<div className="absolute inset-0">
 				<SoftAurora />
 			</div>
@@ -48,13 +48,13 @@ export default function LoginPage() {
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6, ease: "easeOut" }}
-				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/10 bg-[#1C1D21]/60 px-8 py-10 text-center shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-xl"
+				className="relative z-10 flex w-[340px] flex-col items-center gap-6 rounded-2xl border border-white/10 bg-[#1E2433]/70 px-8 py-10 text-center shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-xl"
 			>
 				<div className="flex flex-col gap-1.5">
-					<div className="font-extrabold text-[#EDEDED] text-[22px] tracking-[-0.02em]">
+					<div className="font-extrabold text-[#F1F5F9] text-[22px] tracking-[-0.02em]">
 						LE-REMINDER
 					</div>
-					<div className="text-[#9496A1] text-[13px]">
+					<div className="text-[#94A3B8] text-[13px]">
 						Private dashboard. Sign in to continue.
 					</div>
 				</div>
@@ -63,13 +63,13 @@ export default function LoginPage() {
 					type="button"
 					onClick={handleGithubSignIn}
 					disabled={signingIn}
-					className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#6366F1] bg-[#6366F1] px-4 py-2.5 font-semibold text-[13.5px] text-white shadow-[0_0_20px_-4px_rgba(99,102,241,0.5)] transition-all hover:bg-[#4F46E5] hover:shadow-[0_0_24px_-2px_rgba(99,102,241,0.65)] disabled:cursor-not-allowed disabled:opacity-60"
+					className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl border border-[#3B82F6] bg-[#3B82F6] px-4 py-2.5 font-semibold text-[13.5px] text-white shadow-[0_0_20px_-4px_rgba(59,130,246,0.5)] transition-all hover:bg-[#2563EB] hover:shadow-[0_0_24px_-2px_rgba(59,130,246,0.65)] disabled:cursor-not-allowed disabled:opacity-60"
 				>
 					<Github className="size-4" />
 					{signingIn ? "Redirecting to GitHub…" : "Continue with GitHub"}
 				</button>
 
-				<div className="text-[#636674] text-[11px]">
+				<div className="text-[#64748B] text-[11px]">
 					Access is restricted to one authorized account.
 				</div>
 			</motion.div>

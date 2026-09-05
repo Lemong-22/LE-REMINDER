@@ -1,6 +1,6 @@
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 
-const ACCENT = "#6366F1";
+const ACCENT = "#3B82F6";
 
 const MERIDIAN_ANGLES = [0, 60, 120];
 
@@ -9,13 +9,13 @@ const COMET_TRAIL = [
 		size: 5.5,
 		opacity: 1,
 		delay: "0s",
-		glow: "0 0 8px 2px rgba(99,102,241,0.7)",
+		glow: "0 0 8px 2px rgba(59,130,246,0.7)",
 	},
 	{
 		size: 4,
 		opacity: 0.55,
 		delay: "-0.24s",
-		glow: "0 0 4px 1px rgba(99,102,241,0.4)",
+		glow: "0 0 4px 1px rgba(59,130,246,0.4)",
 	},
 	{ size: 2.6, opacity: 0.28, delay: "-0.48s", glow: "none" },
 ];
@@ -62,8 +62,8 @@ function Star({
 					top: `${s.top}%`,
 					width: s.size,
 					height: s.size,
-					background: s.accent ? ACCENT : "#636674",
-					boxShadow: s.accent ? "0 0 4px 1px rgba(99,102,241,0.5)" : "none",
+					background: s.accent ? ACCENT : "#64748B",
+					boxShadow: s.accent ? "0 0 4px 1px rgba(59,130,246,0.5)" : "none",
 					"--star-duration": `${s.duration}s`,
 					"--star-delay": `${s.delay}s`,
 				} as React.CSSProperties
@@ -136,7 +136,7 @@ export function NexusAnimation() {
 				className="absolute inset-2 animate-[nexus-glow_3.4s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
 				style={{
 					background:
-						"radial-gradient(circle, rgba(99,102,241,0.16), transparent 65%)",
+						"radial-gradient(circle, rgba(59,130,246,0.2), transparent 65%)",
 				}}
 			/>
 			<div
@@ -146,12 +146,12 @@ export function NexusAnimation() {
 				{MERIDIAN_ANGLES.map((angle) => (
 					<div
 						key={angle}
-						className="absolute inset-1 rounded-full border-[#32353E] border-[1.5px]"
+						className="absolute inset-1 rounded-full border-[#38445C] border-[1.5px]"
 						style={{ transform: `rotateY(${angle}deg)` }}
 					/>
 				))}
 				<div
-					className="absolute inset-1 rounded-full border-[#636674] border-[1.5px] border-dashed"
+					className="absolute inset-1 rounded-full border-[#64748B] border-[1.5px] border-dashed"
 					style={{ transform: "rotateX(78deg)" }}
 				/>
 				<Comet
@@ -172,7 +172,7 @@ export function NexusAnimation() {
 				className="absolute top-1/2 left-1/2 -m-[5px] size-2.5 animate-[core-pulse_2.6s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
 				style={{
 					background: ACCENT,
-					boxShadow: "0 0 12px 3px rgba(99,102,241,0.5)",
+					boxShadow: "0 0 12px 3px rgba(59,130,246,0.5)",
 				}}
 			/>
 		</div>

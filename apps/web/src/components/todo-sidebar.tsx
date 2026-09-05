@@ -25,7 +25,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { inferRouterOutputs } from "@trpc/server";
-import { GripVertical } from "lucide-react";
+import { GripVertical, Inbox } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -57,7 +57,10 @@ function TodoRowContent({
 		<div
 			className={cn(
 				"group/todo -mx-1.5 flex items-center gap-2 rounded-md px-1.5 py-1 transition-all duration-200 hover:bg-[#26282E]/60",
-				todo.done && "opacity-60 hover:opacity-100",
+				"hover:!opacity-100 group-hover/todolist:opacity-70",
+				todo.done
+					? "hover:!opacity-100 opacity-55 group-hover/todolist:opacity-40"
+					: "opacity-100",
 			)}
 		>
 			{grip}
@@ -78,7 +81,7 @@ function TodoRowContent({
 					"flex-1 cursor-pointer bg-transparent text-left text-[13.5px] transition-all duration-200 active:scale-[0.99]",
 					todo.done
 						? "text-[#6E717E] line-through"
-						: "text-[#EDEDED] hover:text-[#818CF8]",
+						: "hover:!text-white text-[#EDEDED] group-hover/todo:text-white group-hover/todolist:text-[#9496A1]",
 				)}
 			>
 				{todo.text}
@@ -322,7 +325,7 @@ export function TodoSidebar() {
 	const activeTodo = sortedTodos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#282A30]/70 bg-gradient-to-br from-[#1C1D21] to-[#1F2126]/80 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#282A30] bg-gradient-to-br from-[#1C1D21] to-[#18191E]/95 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05),inset_0_0_20px_rgba(0,0,0,0.2)]">
 			<div className="flex items-center justify-between">
 				<div className="font-extrabold text-[#EDEDED] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
@@ -353,8 +356,13 @@ export function TodoSidebar() {
 
 			<div className="flex flex-col gap-2.5">
 				{!todosQuery.isLoading && sortedTodos.length === 0 && (
-					<div className="text-[#9496A1] text-[12.5px]">
-						Nothing on your scratchpad.
+					<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#282A30]/60 border-dashed bg-[#18191E]/40 px-4 py-7 text-center">
+						<div className="flex size-9 items-center justify-center rounded-full border border-[#282A30] bg-[#141518] text-[#636674]">
+							<Inbox className="size-4 stroke-[1.5]" />
+						</div>
+						<span className="font-serif text-[#6E717E] text-xs italic">
+							Nothing on your scratchpad.
+						</span>
 					</div>
 				)}
 				<DndContext
@@ -369,24 +377,28 @@ export function TodoSidebar() {
 						items={sortedTodos.map((todo) => todo.id)}
 						strategy={verticalListSortingStrategy}
 					>
-						<AnimatePresence mode="popLayout" initial={false}>
-							{!todosQuery.isLoading &&
-								sortedTodos.map((todo) => (
-									<SortableTodoRow
-										key={todo.id}
-										todo={todo}
-										editMode={editMode}
-										indicator={indicatorFor(todo.id)}
-										onToggle={(target) => {
-											if (!todo.done && target) {
-												triggerCyberExplosion(target);
+						<div className="group/todolist flex flex-col gap-1">
+							<AnimatePresence mode="popLayout" initial={false}>
+								{!todosQuery.isLoading &&
+									sortedTodos.map((todo) => (
+										<SortableTodoRow
+											key={todo.id}
+											todo={todo}
+											editMode={editMode}
+											indicator={indicatorFor(todo.id)}
+											onToggle={(target) => {
+												if (!todo.done && target) {
+													triggerCyberExplosion(target);
+												}
+												toggleMutation.mutate({ todoId: todo.id });
+											}}
+											onDelete={() =>
+												deleteMutation.mutate({ todoId: todo.id })
 											}
-											toggleMutation.mutate({ todoId: todo.id });
-										}}
-										onDelete={() => deleteMutation.mutate({ todoId: todo.id })}
-									/>
-								))}
-						</AnimatePresence>
+										/>
+									))}
+							</AnimatePresence>
+						</div>
 					</SortableContext>
 					{/* Portaled to <body>: the sidebar is overflow-y-auto, which
 					    would clip an in-place overlay the moment the drag leaves

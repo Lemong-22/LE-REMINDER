@@ -5,7 +5,7 @@ import type { RoutineId } from "@LE-REMINDER/core/domain/identity";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
-import { BarChart2, Github, Search, Sparkles, X } from "lucide-react";
+import { BarChart2, Github, Inbox, Search, Sparkles, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -395,7 +395,10 @@ export default function Home() {
 								) : routinesQuery.isError ? (
 									<RoutinesErrorState onRetry={() => routinesQuery.refetch()} />
 								) : sortedRoutines.length === 0 ? (
-									<div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-14 text-center">
+									<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-12 text-center">
+										<div className="flex size-11 items-center justify-center rounded-full border border-[#282A30] bg-[#18191E]/80 text-[#636674] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]">
+											<Inbox className="size-5 stroke-[1.5]" />
+										</div>
 										<p className="font-serif text-[#6E717E] text-sm italic">
 											{selectedCategory
 												? `No tasks for "${selectedCategory}".`
@@ -409,7 +412,7 @@ export default function Home() {
 												setSearchInput("");
 												setSelectedCategory(null);
 											}}
-											className="mt-0.5 cursor-pointer font-medium text-[#818CF8] text-xs underline underline-offset-4 transition-colors hover:text-[#6366F1] active:scale-95"
+											className="cursor-pointer font-medium text-[#818CF8] text-xs underline underline-offset-4 transition-colors hover:text-[#6366F1] active:scale-95"
 										>
 											View all tasks
 										</button>
@@ -499,7 +502,10 @@ export default function Home() {
 								</div>
 
 								{sortedRoutines.length === 0 ? (
-									<div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-14 text-center">
+									<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-12 text-center">
+										<div className="flex size-11 items-center justify-center rounded-full border border-[#282A30] bg-[#18191E]/80 text-[#636674] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]">
+											<Inbox className="size-5 stroke-[1.5]" />
+										</div>
 										<p className="font-serif text-[#6E717E] text-sm italic">
 											{selectedCategory
 												? `No tasks for "${selectedCategory}".`
@@ -513,7 +519,7 @@ export default function Home() {
 												setSearchInput("");
 												setSelectedCategory(null);
 											}}
-											className="mt-0.5 cursor-pointer font-medium text-[#818CF8] text-xs underline underline-offset-4 transition-colors hover:text-[#6366F1] active:scale-95"
+											className="cursor-pointer font-medium text-[#818CF8] text-xs underline underline-offset-4 transition-colors hover:text-[#6366F1] active:scale-95"
 										>
 											View all tasks
 										</button>

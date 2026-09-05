@@ -3,6 +3,7 @@
 import type { RoutineStatus } from "@LE-REMINDER/core/domain/routine-status";
 import { Checkbox } from "@LE-REMINDER/ui/components/checkbox";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
+import { motion } from "motion/react";
 import { AuroraGlow } from "@/components/aurora-glow";
 import { NexusAnimation } from "@/components/nexus-animation";
 import { CountUp } from "@/components/ui/count-up";
@@ -18,6 +19,14 @@ const STATUS_ORDER: RoutineStatus[] = [
 	"Paused",
 	"Finished",
 ];
+
+const STATUS_GRADIENT: Record<RoutineStatus, string> = {
+	Overdue: "linear-gradient(90deg, #DC2626, #EF4444)",
+	Due: "linear-gradient(90deg, #6366F1, #818CF8)",
+	Done: "linear-gradient(90deg, #059669, #34D399)",
+	Paused: "linear-gradient(90deg, #9333EA, #C084FC)",
+	Finished: "linear-gradient(90deg, #4B4D58, #6E717E)",
+};
 
 function isDailyRoutine(routine: DashboardRoutine): boolean {
 	return (
@@ -120,17 +129,41 @@ export function HeroPanel({
 					duration={1.2}
 					className="font-extrabold text-[30px]"
 				/>
-				<div className="flex h-1.5 overflow-hidden rounded-full bg-[#22242A]">
-					{STATUS_ORDER.map((status) => (
+				<div className="relative">
+					{progressPct > 0 && (
 						<div
-							key={status}
-							className="h-full transition-all duration-500 ease-out"
+							aria-hidden="true"
+							className="pointer-events-none absolute -inset-x-0.5 -inset-y-0.5 rounded-full opacity-25 blur-sm transition-opacity duration-500"
 							style={{
-								background: STATUS_FILL[status],
-								width: `${(counts[status] / total) * 100}%`,
+								background: "linear-gradient(90deg, #6366F1, #34D399)",
 							}}
 						/>
-					))}
+					)}
+					<div className="relative flex h-1.5 overflow-hidden rounded-full bg-[#22242A] shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
+						{STATUS_ORDER.map((status) => (
+							<div
+								key={status}
+								className="h-full transition-all duration-500 ease-out"
+								style={{
+									background: STATUS_GRADIENT[status] ?? STATUS_FILL[status],
+									width: `${(counts[status] / total) * 100}%`,
+								}}
+							/>
+						))}
+						{routines.length > 0 && (
+							<motion.div
+								aria-hidden="true"
+								className="pointer-events-none absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+								animate={{ x: ["-100%", "500%"] }}
+								transition={{
+									duration: 2.6,
+									repeat: Number.POSITIVE_INFINITY,
+									ease: "easeInOut",
+									repeatDelay: 0.8,
+								}}
+							/>
+						)}
+					</div>
 				</div>
 				<div className="flex flex-wrap gap-3 font-mono text-[#9496A1] text-[11px]">
 					{STATUS_ORDER.map((status) => (

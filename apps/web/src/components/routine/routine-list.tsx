@@ -1,5 +1,6 @@
 "use client";
 
+import { Inbox } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
@@ -21,8 +22,13 @@ export function RoutineList({
 
 	if (sorted.length === 0) {
 		return (
-			<div className="px-4 py-16 text-center font-serif text-[#6E717E] text-sm italic">
-				No routines yet.
+			<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-[#282A30]/70 border-dashed bg-[#1C1D21]/40 px-6 py-14 text-center">
+				<div className="flex size-11 items-center justify-center rounded-full border border-[#282A30] bg-[#18191E]/80 text-[#636674] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)]">
+					<Inbox className="size-5 stroke-[1.5]" />
+				</div>
+				<p className="font-serif text-[#6E717E] text-sm italic">
+					No routines yet.
+				</p>
 			</div>
 		);
 	}

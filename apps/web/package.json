@@ -47,6 +47,7 @@
 		"tailwindcss": "catalog:",
 		"typescript": "catalog:",
 		"@LE-REMINDER/config": "workspace:*",
-		"@tanstack/react-query-devtools": "^5.91.1"
+		"@tanstack/react-query-devtools": "^5.91.1",
+		"@types/bun": "^1.3.0"
 	}
 }

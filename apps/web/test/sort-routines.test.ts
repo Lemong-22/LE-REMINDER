@@ -1,3 +1,5 @@
+/// <reference types="bun" />
+
 import type { RoutineStatus } from "@LE-REMINDER/core/domain/routine-status";
 import { describe, expect, test } from "bun:test";
 import { sortByStatus } from "../src/lib/sort-routines";

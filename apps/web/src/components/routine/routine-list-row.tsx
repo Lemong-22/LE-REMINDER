@@ -4,12 +4,13 @@ import { Star } from "lucide-react";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { describeTaskType } from "@/lib/describe-task-type";
 import { formatLastCompleted } from "@/lib/format-last-completed";
+import { isStrictlyDueToday } from "@/lib/is-due-today";
 import { StatusShape } from "./status-shape";
 
 export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 	const isFinished = routine.status === "Finished";
 	const isCompleted = routine.status === "Done" || isFinished;
-	const isDue = routine.status === "Due";
+	const isDue = isStrictlyDueToday(routine.taskType, routine.status);
 
 	return (
 		<div

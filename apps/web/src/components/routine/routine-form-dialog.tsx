@@ -146,15 +146,18 @@ function TaskTypeCard({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex min-w-[150px] flex-1 cursor-pointer flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]",
+				"relative flex min-w-[140px] flex-1 cursor-pointer flex-col gap-2 rounded-xl border p-4 text-left transition-all duration-200",
 				selected
-					? "border-[#C2410C] bg-[#C2410C]/[0.08] shadow-xs"
-					: "border-[#C7B79C] bg-[#F7F2E8] hover:border-[#A8967E]",
+					? "border-[#C2410C] bg-gradient-to-b from-[#FAF5EC] to-[#F1EBDE] shadow-[0_2px_8px_-2px_rgba(194,65,12,0.12),inset_0_0_0_1px_rgba(194,65,12,0.3)]"
+					: "border-[#D6C9B2]/80 bg-[#F7F2E8]/90 hover:border-[#A8967E] hover:bg-[#F3EDE1]/80 hover:shadow-xs",
 			)}
 		>
-			{glyph}
+			<div className="flex items-center justify-between">
+				{glyph}
+				{selected && <span className="size-1.5 rounded-full bg-[#C2410C]" />}
+			</div>
 			<div className="font-semibold text-[#2E2318] text-[13.5px]">{label}</div>
-			<div className="text-[#5F4F3D] text-[11.5px] leading-[1.4]">
+			<div className="text-[#5F4F3D] text-[11.5px] leading-[1.45]">
 				{description}
 			</div>
 		</button>
@@ -244,6 +247,18 @@ export function RoutineFormDialog({
 	const saveEnabled = state.name.trim().length > 0;
 	const hasDeadline = state.dueDate !== "";
 
+	useEffect(() => {
+		if (!open) return;
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				e.preventDefault();
+				onOpenChange(false);
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [open, onOpenChange]);
+
 	function handleDelete() {
 		if (!routine) return;
 		onDelete?.(routine);
@@ -278,6 +293,7 @@ export function RoutineFormDialog({
 								}
 							}}
 							placeholder="e.g. Server Data Backup"
+							className="h-9 rounded-lg border-[#C7B79C] bg-[#F1EBDE]/80 text-[#2E2318] text-[13px] placeholder-[#A8967E] transition-colors focus-visible:border-[#C2410C] focus-visible:ring-1 focus-visible:ring-[#C2410C]/30 focus-visible:ring-offset-0"
 						/>
 					</div>
 
@@ -301,6 +317,7 @@ export function RoutineFormDialog({
 								}
 							}}
 							placeholder="e.g. Tech"
+							className="h-9 rounded-lg border-[#C7B79C] bg-[#F1EBDE]/80 text-[#2E2318] text-[13px] placeholder-[#A8967E] transition-colors focus-visible:border-[#C2410C] focus-visible:ring-1 focus-visible:ring-[#C2410C]/30 focus-visible:ring-offset-0"
 						/>
 						<div className="flex flex-wrap gap-1.5">
 							{categorySuggestions.map((chip) => (
@@ -317,8 +334,11 @@ export function RoutineFormDialog({
 						</div>
 					</div>
 
-					<div className="flex flex-col gap-3 border-[#D6C9B2]/60 border-y py-3 sm:flex-row sm:gap-4">
-						<div className="flex flex-1 items-center justify-between gap-2">
+					<div className="flex flex-col gap-3 rounded-xl border border-[#D6C9B2]/75 bg-[#F3EDE1]/60 p-3 sm:flex-row sm:items-center sm:gap-0 sm:divide-x sm:divide-[#D6C9B2]/60">
+						<label
+							htmlFor="is-task-switch"
+							className="flex flex-1 cursor-pointer items-center justify-between gap-3 pr-0 sm:pr-4"
+						>
 							<div className="flex flex-col gap-0.5">
 								<span className="font-semibold text-[#2E2318] text-[13px]">
 									Is Task
@@ -328,30 +348,35 @@ export function RoutineFormDialog({
 								</span>
 							</div>
 							<Switch
+								id="is-task-switch"
 								checked={state.isTask}
 								onCheckedChange={(checked) =>
 									setState((prev) => ({ ...prev, isTask: checked }))
 								}
 								className="shrink-0 data-checked:bg-[#C2410C]"
 							/>
-						</div>
-						<div className="flex flex-1 items-center justify-between gap-2 border-[#D6C9B2]/60 sm:border-l sm:pl-4">
+						</label>
+						<label
+							htmlFor="is-important-switch"
+							className="flex flex-1 cursor-pointer items-center justify-between gap-3 pt-2 sm:pt-0 sm:pl-4"
+						>
 							<div className="flex flex-col gap-0.5">
 								<span className="font-semibold text-[#2E2318] text-[13px]">
 									Important
 								</span>
 								<span className="text-[#5F4F3D] text-[11.5px]">
-									Flag as high priority.
+									Flag as high priority for top ranking.
 								</span>
 							</div>
 							<Switch
+								id="is-important-switch"
 								checked={state.isImportant}
 								onCheckedChange={(checked) =>
 									setState((prev) => ({ ...prev, isImportant: checked }))
 								}
 								className="shrink-0 data-checked:bg-[#C2410C]"
 							/>
-						</div>
+						</label>
 					</div>
 
 					<div className="flex flex-col gap-2">
@@ -484,7 +509,7 @@ export function RoutineFormDialog({
 													dayOfMonth: Number(e.target.value) || 1,
 												}))
 											}
-											className="w-16 font-mono"
+											className="w-16 rounded-lg border-[#C7B79C] bg-[#F7F2E8] text-center font-mono text-[#2E2318] text-[13px] transition-colors focus-visible:border-[#C2410C] focus-visible:ring-1 focus-visible:ring-[#C2410C]/30 focus-visible:ring-offset-0"
 										/>
 									</div>
 								)}
@@ -523,7 +548,7 @@ export function RoutineFormDialog({
 											intervalValue: Number(e.target.value) || 1,
 										}))
 									}
-									className="w-16 font-mono"
+									className="w-16 rounded-lg border-[#C7B79C] bg-[#F7F2E8] text-center font-mono text-[#2E2318] text-[13px] transition-colors focus-visible:border-[#C2410C] focus-visible:ring-1 focus-visible:ring-[#C2410C]/30 focus-visible:ring-offset-0"
 								/>
 								<select
 									value={state.intervalUnit}
@@ -533,7 +558,7 @@ export function RoutineFormDialog({
 											intervalUnit: e.target.value as FormState["intervalUnit"],
 										}))
 									}
-									className="rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1.5 text-[#2E2318] text-[13px]"
+									className="rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1.5 text-[#2E2318] text-[13px] transition-colors focus:border-[#C2410C] focus:outline-none focus:ring-1 focus:ring-[#C2410C]/30"
 								>
 									<option value="days">days</option>
 									<option value="weeks">weeks</option>
@@ -568,7 +593,7 @@ export function RoutineFormDialog({
 									onChange={(e) =>
 										setState((prev) => ({ ...prev, dueDate: e.target.value }))
 									}
-									className="w-fit font-mono"
+									className="w-fit rounded-lg border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1.5 font-mono text-[#2E2318] text-[12.5px] transition-colors focus-visible:border-[#C2410C] focus-visible:ring-1 focus-visible:ring-[#C2410C]/30 focus-visible:ring-offset-0"
 								/>
 							)}
 						</div>

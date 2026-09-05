@@ -10,6 +10,7 @@ import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
 import { describeTaskType } from "@/lib/describe-task-type";
 import { formatLastCompleted } from "@/lib/format-last-completed";
+import { isStrictlyDueToday } from "@/lib/is-due-today";
 import { STATUS_TEXT } from "@/lib/status-visual";
 import { StatusShape } from "./status-shape";
 
@@ -54,7 +55,7 @@ export function RoutineCard({
 
 	const isFinished = routine.status === "Finished";
 	const isCompleted = routine.status === "Done" || isFinished;
-	const isDue = routine.status === "Due";
+	const isDue = isStrictlyDueToday(routine.taskType, routine.status);
 	const isPaused = routine.status === "Paused";
 	const showComplete = routine.status === "Overdue" || routine.status === "Due";
 	const showPauseResume = !isFinished;
@@ -74,12 +75,12 @@ export function RoutineCard({
 	return (
 		<motion.div
 			ref={cardRef}
-			whileHover={{ y: -3, scale: 1.01 }}
+			whileHover={{ scale: 1.02, y: -2 }}
 			whileTap={{ scale: 0.98 }}
-			transition={{ type: "spring", stiffness: 400, damping: 30 }}
+			transition={{ type: "spring", stiffness: 400, damping: 25 }}
 			onClick={() => setRevealed((v) => !v)}
 			className={cn(
-				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-all duration-300",
+				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-[box-shadow,opacity,border-color] duration-200",
 				isDue
 					? "border-[#D97706]/75 bg-gradient-to-br from-[#F7F2E8] via-[#FAF5EC] to-[#F3EDE1] shadow-[0_0_14px_-2px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.18)] hover:shadow-[0_10px_24px_-4px_rgba(217,119,6,0.22),inset_0_0_0_1px_rgba(217,119,6,0.25)]"
 					: "border-[#D6C9B2]/70 bg-gradient-to-br from-[#F7F2E8] to-[#F3EDE1]/80 shadow-[0_1px_2px_rgba(41,37,36,0.05),inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:shadow-[0_10px_24px_-4px_rgba(46,35,24,0.12),inset_0_0_0_1px_rgba(255,255,255,0.7)]",

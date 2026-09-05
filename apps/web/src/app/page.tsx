@@ -395,23 +395,23 @@ export default function Home() {
 								) : routinesQuery.isError ? (
 									<RoutinesErrorState onRetry={() => routinesQuery.refetch()} />
 								) : sortedRoutines.length === 0 ? (
-									<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#D6C9B2] border-dashed bg-[#F7F2E8]/60 px-4 py-12 text-center">
-										<div className="font-semibold text-[#2E2318] text-sm">
-											No routines match your current filters
-										</div>
-										<div className="text-[#83705A] text-xs">
-											Try clearing your search query or selecting a different
-											category.
-										</div>
+									<div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-[#D6C9B2]/70 border-dashed bg-[#F7F2E8]/40 px-6 py-14 text-center">
+										<p className="font-serif text-[#83705A] text-sm italic">
+											{selectedCategory
+												? `No tasks for "${selectedCategory}".`
+												: searchInput
+													? `No tasks matching "${searchInput}".`
+													: "No tasks for this category."}
+										</p>
 										<button
 											type="button"
 											onClick={() => {
 												setSearchInput("");
 												setSelectedCategory(null);
 											}}
-											className="mt-1.5 cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1 font-semibold text-[#2E2318] text-xs transition-colors hover:border-[#2E2318] active:scale-95"
+											className="mt-0.5 cursor-pointer font-medium text-[#C2410C] text-xs underline underline-offset-4 transition-colors hover:text-[#9A3412] active:scale-95"
 										>
-											Reset filters
+											View all tasks
 										</button>
 									</div>
 								) : (
@@ -499,19 +499,23 @@ export default function Home() {
 								</div>
 
 								{sortedRoutines.length === 0 ? (
-									<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#D6C9B2] border-dashed bg-[#F7F2E8]/60 px-4 py-12 text-center">
-										<div className="font-semibold text-[#2E2318] text-sm">
-											No routines match your current filters
-										</div>
+									<div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-[#D6C9B2]/70 border-dashed bg-[#F7F2E8]/40 px-6 py-14 text-center">
+										<p className="font-serif text-[#83705A] text-sm italic">
+											{selectedCategory
+												? `No tasks for "${selectedCategory}".`
+												: searchInput
+													? `No tasks matching "${searchInput}".`
+													: "No tasks for this category."}
+										</p>
 										<button
 											type="button"
 											onClick={() => {
 												setSearchInput("");
 												setSelectedCategory(null);
 											}}
-											className="mt-1.5 cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1 font-semibold text-[#2E2318] text-xs transition-colors hover:border-[#2E2318] active:scale-95"
+											className="mt-0.5 cursor-pointer font-medium text-[#C2410C] text-xs underline underline-offset-4 transition-colors hover:text-[#9A3412] active:scale-95"
 										>
-											Reset filters
+											View all tasks
 										</button>
 									</div>
 								) : (

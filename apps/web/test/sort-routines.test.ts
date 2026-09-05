@@ -67,4 +67,48 @@ describe("sortByStatus", () => {
 			"done-b",
 		]);
 	});
+
+	test("prioritizes tasks strictly due today over future weekly tasks within Due status", () => {
+		// e.g. Friday 2026-09-04
+		const friday = new Date(2026, 8, 4);
+
+		const items = [
+			{
+				id: "future-weekly-wed",
+				status: "Due" as const,
+				taskType: {
+					kind: "Recurring" as const,
+					schedule: {
+						type: "FixedCalendar" as const,
+						recurrence: {
+							kind: "Weekly" as const,
+							daysOfWeek: ["Wed" as const],
+						},
+						isMandatory: true,
+					},
+				},
+			},
+			{
+				id: "today-weekly-fri",
+				status: "Due" as const,
+				taskType: {
+					kind: "Recurring" as const,
+					schedule: {
+						type: "FixedCalendar" as const,
+						recurrence: {
+							kind: "Weekly" as const,
+							daysOfWeek: ["Fri" as const],
+						},
+						isMandatory: true,
+					},
+				},
+			},
+		];
+
+		const sorted = sortByStatus(items, friday);
+		expect(sorted.map((i) => i.id)).toEqual([
+			"today-weekly-fri",
+			"future-weekly-wed",
+		]);
+	});
 });

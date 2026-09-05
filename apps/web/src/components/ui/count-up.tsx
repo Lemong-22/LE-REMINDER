@@ -32,5 +32,9 @@ export function CountUp({
 		});
 	}, [springValue]);
 
-	return <span className={className} ref={ref} />;
+	return (
+		<span className={className} ref={ref}>
+			{Math.round(from)}%
+		</span>
+	);
 }

@@ -120,7 +120,7 @@ export function HeroPanel({
 					{STATUS_ORDER.map((status) => (
 						<div
 							key={status}
-							className="h-full transition-[width]"
+							className="h-full transition-all duration-500 ease-out"
 							style={{
 								background: STATUS_FILL[status],
 								width: `${(counts[status] / total) * 100}%`,

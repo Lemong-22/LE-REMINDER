@@ -5,15 +5,19 @@ const ACCENT = "#C2410C";
 const MERIDIAN_ANGLES = [0, 60, 120];
 
 const COMET_TRAIL = [
-	{ size: 6, opacity: 1, delay: "0s", glow: "0 0 8px 2px rgba(194,65,12,0.7)" },
 	{
-		size: 4.5,
-		opacity: 0.55,
-		delay: "-0.22s",
-		glow: "0 0 5px 1px rgba(194,65,12,0.4)",
+		size: 5.5,
+		opacity: 1,
+		delay: "0s",
+		glow: "0 0 8px 2px rgba(194,65,12,0.7)",
 	},
-	{ size: 3.2, opacity: 0.32, delay: "-0.44s", glow: "none" },
-	{ size: 2.2, opacity: 0.16, delay: "-0.66s", glow: "none" },
+	{
+		size: 4,
+		opacity: 0.55,
+		delay: "-0.24s",
+		glow: "0 0 4px 1px rgba(194,65,12,0.4)",
+	},
+	{ size: 2.6, opacity: 0.28, delay: "-0.48s", glow: "none" },
 ];
 
 // Deterministic PRNG so the starfield is identical between server render and
@@ -30,24 +34,17 @@ function mulberry32(seed: number): () => number {
 }
 
 const rand = mulberry32(20260718);
-const STARS = Array.from({ length: 30 }, (_, i) => ({
+const STARS = Array.from({ length: 18 }, (_, i) => ({
 	left: rand() * 100,
 	top: rand() * 100,
-	size: 1 + rand() * 1.6,
-	duration: 1.8 + rand() * 2.8,
+	size: 1 + rand() * 1.5,
+	duration: 2.0 + rand() * 2.5,
 	delay: rand() * 3,
-	accent: i % 5 === 0,
+	accent: i % 4 === 0,
 }));
 
-// Below the sm breakpoint the first 14 stars render unconditionally; the
-// remaining 16 (plus the third Comet below) get `hidden sm:block` on their
-// own root — mobile GPUs get roughly half the independently animated
-// layers of desktop, since every star/comet-trail dot is its own
-// compositor layer regardless of how small it is. This hides via CSS on
-// each element's own node rather than an extra `display:contents`
-// wrapper, since Safari has had bugs combining `display:contents` with a
-// `transform-style:preserve-3d` ancestor (relevant for the comets).
-const CORE_STAR_COUNT = 14;
+// 10 core stars render on mobile; the remaining 8 render on desktop.
+const CORE_STAR_COUNT = 10;
 
 function Star({
 	s,
@@ -144,7 +141,7 @@ export function NexusAnimation() {
 			/>
 			<div
 				className="absolute inset-0 animate-[nexus-tumble_16s_linear_infinite] motion-reduce:animate-none"
-				style={{ transformStyle: "preserve-3d" }}
+				style={{ transformStyle: "preserve-3d", willChange: "transform" }}
 			>
 				{MERIDIAN_ANGLES.map((angle) => (
 					<div

@@ -3,8 +3,8 @@
 import { Badge } from "@LE-REMINDER/ui/components/badge";
 import { Button } from "@LE-REMINDER/ui/components/button";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
-import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { triggerCyberExplosion } from "@/lib/cyber-explosion";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
@@ -156,7 +156,7 @@ export function RoutineCard({
 
 			<div
 				className={cn(
-					"pointer-events-none flex gap-1.5 opacity-0 transition-opacity group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100",
+					"pointer-events-none flex gap-1.5 opacity-0 transition-all duration-200 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100",
 					revealed && "pointer-events-auto opacity-100",
 				)}
 			>
@@ -167,7 +167,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							handleComplete(e.currentTarget);
 						}}
-						className="h-auto rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-[11px] text-emerald-700 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-100 active:scale-95"
+						className="h-auto rounded-md border border-emerald-300/80 bg-emerald-50/90 px-2.5 py-1 font-semibold text-[11px] text-emerald-800 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 active:scale-95"
 					>
 						Complete
 					</Button>
@@ -180,7 +180,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] active:scale-95"
+						className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C]/40 active:scale-95"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -192,7 +192,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] active:scale-95"
+					className="h-auto rounded-md border-[#C7B79C] bg-[#F7F2E8] px-2.5 py-1 font-normal text-[#493B2C] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-[#F1EBDE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C]/40 active:scale-95"
 				>
 					Edit
 				</Button>

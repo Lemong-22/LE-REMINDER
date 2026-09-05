@@ -50,16 +50,16 @@ function ensureCanvas(): {
 		activeCanvas = canvas;
 	}
 
-	const dpr = window.devicePixelRatio || 1;
+	const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 	const width = window.innerWidth;
 	const height = window.innerHeight;
 
-	if (
-		activeCanvas.width !== width * dpr ||
-		activeCanvas.height !== height * dpr
-	) {
-		activeCanvas.width = width * dpr;
-		activeCanvas.height = height * dpr;
+	const targetW = Math.round(width * dpr);
+	const targetH = Math.round(height * dpr);
+
+	if (activeCanvas.width !== targetW || activeCanvas.height !== targetH) {
+		activeCanvas.width = targetW;
+		activeCanvas.height = targetH;
 	}
 
 	if (!activeCtx) {
@@ -72,7 +72,7 @@ function ensureCanvas(): {
 function renderFrame() {
 	if (!activeCtx || !activeCanvas) return;
 
-	const dpr = window.devicePixelRatio || 1;
+	const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 	activeCtx.save();
 	activeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	activeCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -110,7 +110,6 @@ function renderFrame() {
 				break;
 			}
 			case "shard": {
-				// Cyber angular shard
 				activeCtx.beginPath();
 				activeCtx.moveTo(-p.size * 0.4, -p.size * 1.8);
 				activeCtx.lineTo(p.size * 0.6, -p.size * 0.4);
@@ -121,7 +120,6 @@ function renderFrame() {
 				break;
 			}
 			case "spark": {
-				// Tiny high-velocity square ember
 				activeCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
 				break;
 			}
@@ -139,7 +137,6 @@ function renderFrame() {
 	if (particles.length > 0) {
 		animFrameId = requestAnimationFrame(renderFrame);
 	} else {
-		// Clean up canvas when done to save memory
 		if (animFrameId) {
 			cancelAnimationFrame(animFrameId);
 			animFrameId = null;
@@ -152,6 +149,8 @@ function renderFrame() {
 	}
 }
 
+const MAX_PARTICLES = 64;
+
 /**
  * Triggers a snappy, high-tech cyber explosion originating from the given
  * DOM element or mouse/pointer event.
@@ -159,6 +158,13 @@ function renderFrame() {
 export function triggerCyberExplosion(
 	target: HTMLElement | { clientX: number; clientY: number },
 ) {
+	if (typeof window === "undefined") return;
+
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	).matches;
+	if (prefersReducedMotion) return;
+
 	const surface = ensureCanvas();
 	if (!surface) return;
 
@@ -174,12 +180,17 @@ export function triggerCyberExplosion(
 		originY = target.clientY;
 	}
 
+	// Evict oldest particles if approaching upper threshold during rapid clicks
+	if (particles.length > MAX_PARTICLES - 28) {
+		particles.splice(0, particles.length - (MAX_PARTICLES - 28));
+	}
+
 	// 1. Core High-Velocity Radial Shockwave Shards (fast, snappy cyber blast)
-	const coreParticleCount = 28;
+	const coreParticleCount = 18;
 	for (let i = 0; i < coreParticleCount; i++) {
 		const angle =
 			(i / coreParticleCount) * (Math.PI * 2) + (Math.random() * 0.2 - 0.1);
-		const speed = 7 + Math.random() * 9; // Explosive initial burst
+		const speed = 7 + Math.random() * 8;
 		const color =
 			SEPIA_CYBER_PALETTE[
 				Math.floor(Math.random() * SEPIA_CYBER_PALETTE.length)
@@ -191,24 +202,24 @@ export function triggerCyberExplosion(
 			y: originY,
 			vx: Math.cos(angle) * speed,
 			vy: Math.sin(angle) * speed,
-			size: 2.5 + Math.random() * 3.5,
+			size: 2.2 + Math.random() * 3,
 			color,
 			alpha: 1,
 			rotation: Math.random() * Math.PI * 2,
 			rotationSpeed: (Math.random() - 0.5) * 0.35,
 			shape: shapes[Math.floor(Math.random() * shapes.length)],
-			drag: 0.91, // Snappy air drag (cyber feel)
-			gravity: 0.12,
+			drag: 0.91,
+			gravity: 0.14,
 			life: 0,
-			maxLife: 35 + Math.floor(Math.random() * 20),
+			maxLife: 30 + Math.floor(Math.random() * 15),
 		});
 	}
 
 	// 2. Micro Spark Embers (faster, smaller spark discharge)
-	const sparkCount = 20;
+	const sparkCount = 12;
 	for (let i = 0; i < sparkCount; i++) {
 		const angle = Math.random() * Math.PI * 2;
-		const speed = 4 + Math.random() * 8;
+		const speed = 4 + Math.random() * 7;
 		const color = Math.random() > 0.4 ? "#C2410C" : "#D97706";
 
 		particles.push({
@@ -225,7 +236,7 @@ export function triggerCyberExplosion(
 			drag: 0.93,
 			gravity: 0.08,
 			life: 0,
-			maxLife: 25 + Math.floor(Math.random() * 20),
+			maxLife: 22 + Math.floor(Math.random() * 15),
 		});
 	}
 

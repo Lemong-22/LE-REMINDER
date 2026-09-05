@@ -13,14 +13,24 @@ export function SpotlightCard({
 	spotlightColor?: string;
 }) {
 	const divRef = useRef<HTMLDivElement>(null);
+	const rafRef = useRef<number | null>(null);
 
 	function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
 		const el = divRef.current;
 		if (!el) return;
 		const rect = el.getBoundingClientRect();
-		el.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-		el.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-		el.style.setProperty("--spotlight-color", spotlightColor);
+		const x = e.clientX - rect.left;
+		const y = e.clientY - rect.top;
+
+		if (rafRef.current !== null) {
+			cancelAnimationFrame(rafRef.current);
+		}
+		rafRef.current = requestAnimationFrame(() => {
+			if (!el) return;
+			el.style.setProperty("--mouse-x", `${x}px`);
+			el.style.setProperty("--mouse-y", `${y}px`);
+			el.style.setProperty("--spotlight-color", spotlightColor);
+		});
 	}
 
 	return (
@@ -28,18 +38,23 @@ export function SpotlightCard({
 		<div
 			ref={divRef}
 			onMouseMove={handleMouseMove}
-			className={`group relative overflow-hidden ${className}`}
+			className={`group relative ${className}`}
 		>
 			<div
-				className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
-				style={
-					{
-						background:
-							"radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 40%)",
-						zIndex: 10,
-					} as CSSProperties
-				}
-			/>
+				aria-hidden
+				className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+			>
+				<div
+					className="absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+					style={
+						{
+							background:
+								"radial-gradient(550px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-color, rgba(194, 65, 12, 0.08)), transparent 40%)",
+							zIndex: 10,
+						} as CSSProperties
+					}
+				/>
+			</div>
 			{children}
 		</div>
 	);

@@ -160,7 +160,10 @@ function SortableTodoRow({
 						"absolute inset-x-0 h-[2px] rounded-full",
 						indicator === "above" ? "-top-[6px]" : "-bottom-[6px]",
 					)}
-					style={{ background: ACCENT }}
+					style={{
+						background: ACCENT,
+						boxShadow: "0 0 6px rgba(194, 65, 12, 0.6)",
+					}}
 				/>
 			)}
 			<TodoRowContent
@@ -310,13 +313,28 @@ export function TodoSidebar() {
 				<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
 					Today's To-Do
 				</div>
-				<button
-					type="button"
-					onClick={() => setEditMode((v) => !v)}
-					className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#2E2318] active:scale-95"
-				>
-					{editMode ? "Done" : "Edit List"}
-				</button>
+				<div className="flex items-center gap-2">
+					{editMode && todos.some((t) => t.done) && (
+						<button
+							type="button"
+							onClick={() => {
+								for (const t of todos.filter((item) => item.done)) {
+									deleteMutation.mutate({ todoId: t.id });
+								}
+							}}
+							className="cursor-pointer font-semibold text-[#C2410C] text-[11px] hover:underline active:scale-95"
+						>
+							Clear Done
+						</button>
+					)}
+					<button
+						type="button"
+						onClick={() => setEditMode((v) => !v)}
+						className="cursor-pointer bg-transparent p-0.5 font-semibold text-[#83705A] text-[11.5px] transition-all duration-150 hover:scale-105 hover:text-[#2E2318] active:scale-95"
+					>
+						{editMode ? "Done" : "Edit List"}
+					</button>
+				</div>
 			</div>
 
 			<div className="flex flex-col gap-2.5">
@@ -388,7 +406,7 @@ export function TodoSidebar() {
 						if (e.key === "Enter") addTodo();
 					}}
 					placeholder="Add a task…"
-					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#F1EBDE] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none focus:ring-2 focus:ring-[#2E2318] focus:ring-offset-1"
+					className="min-w-0 flex-1 rounded-lg border border-[#C7B79C] bg-[#F1EBDE] px-2.5 py-1.5 text-[#2E2318] text-[12.5px] outline-none transition-all duration-150 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
 				/>
 				<button
 					type="button"

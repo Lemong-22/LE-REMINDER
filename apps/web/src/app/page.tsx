@@ -5,7 +5,8 @@ import type { RoutineId } from "@LE-REMINDER/core/domain/identity";
 import { cn } from "@LE-REMINDER/ui/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
-import { Github } from "lucide-react";
+import { BarChart2, Github, Search, Sparkles, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HeroPanel } from "@/components/routine/hero-panel";
@@ -40,13 +41,18 @@ function TabButton({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"cursor-pointer whitespace-nowrap border-transparent border-b-2 bg-transparent py-1.5 font-semibold text-sm transition-all duration-200 hover:text-[#2E2318] active:scale-95",
-				active
-					? "border-[#2E2318] text-[#2E2318]"
-					: "text-[#A8967E] hover:border-[#D6C9B2]",
+				"relative cursor-pointer whitespace-nowrap rounded-sm px-1 py-1.5 font-semibold text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2410C]/40",
+				active ? "text-[#2E2318]" : "text-[#83705A] hover:text-[#2E2318]",
 			)}
 		>
 			{children}
+			{active && (
+				<motion.div
+					layoutId="activeTabUnderline"
+					transition={{ type: "spring", stiffness: 450, damping: 35 }}
+					className="absolute inset-x-0 -bottom-[17px] h-[2px] rounded-full bg-[#2E2318]"
+				/>
+			)}
 		</button>
 	);
 }
@@ -57,8 +63,16 @@ function RoutinesLoadingState() {
 			{Array.from({ length: 6 }).map((_, i) => (
 				<div
 					key={i}
-					className="h-[140px] animate-pulse rounded-[10px] border border-[#D6C9B2]/70 bg-[#E8DFCD]/60"
-				/>
+					className="flex flex-col gap-3 rounded-[10px] border border-[#D6C9B2]/60 bg-[#F7F2E8]/60 p-[17px]"
+				>
+					<div className="flex items-center justify-between">
+						<div className="size-3 animate-pulse rounded-full bg-[#D6C9B2]/80" />
+						<div className="h-4 w-16 animate-pulse rounded-full bg-[#D6C9B2]/70" />
+					</div>
+					<div className="h-5 w-3/4 animate-pulse rounded bg-[#D6C9B2]/80" />
+					<div className="h-3.5 w-1/2 animate-pulse rounded bg-[#D6C9B2]/60" />
+					<div className="h-3 w-1/3 animate-pulse rounded bg-[#D6C9B2]/40" />
+				</div>
 			))}
 		</div>
 	);
@@ -73,7 +87,7 @@ function RoutinesErrorState({ onRetry }: { onRetry: () => void }) {
 			<button
 				type="button"
 				onClick={onRetry}
-				className="cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-semibold text-[#2E2318] text-xs hover:border-[#2E2318]"
+				className="cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-semibold text-[#2E2318] text-xs transition-colors hover:border-[#2E2318] active:scale-95"
 			>
 				Retry
 			</button>
@@ -122,6 +136,7 @@ export default function Home() {
 	}, [routinesQuery.error, router]);
 
 	const [activeTab, setActiveTab] = useState<Tab>("home");
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editingRoutine, setEditingRoutine] = useState<DashboardRoutine | null>(
 		null,
@@ -236,7 +251,15 @@ export default function Home() {
 		createMutation.mutate(values);
 	}
 
-	const sortedRoutines = sortByStatus(routines);
+	const allCategories = Array.from(
+		new Set(routines.map((r) => r.category).filter(Boolean)),
+	);
+
+	const filteredRoutines = selectedCategory
+		? routines.filter((r) => r.category === selectedCategory)
+		: routines;
+
+	const sortedRoutines = sortByStatus(filteredRoutines);
 
 	return (
 		<div
@@ -289,35 +312,111 @@ export default function Home() {
 					<div className="flex min-w-0 flex-1 flex-col gap-6">
 						{activeTab === "home" && (
 							<>
-								<div className="flex items-center justify-between gap-4">
-									<div className="flex flex-1 items-center gap-4">
-										<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
-											Routines
+								<div className="flex flex-col gap-2.5">
+									<div className="flex items-center justify-between gap-4">
+										<div className="flex flex-1 items-center gap-4">
+											<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+												Routines
+											</div>
+											<div className="relative flex w-full max-w-xs items-center">
+												<Search className="pointer-events-none absolute left-3 size-3.5 text-[#A8967E]" />
+												<input
+													type="text"
+													placeholder="Search tasks & routines..."
+													value={searchInput}
+													onChange={(e) => setSearchInput(e.target.value)}
+													className="w-full rounded-lg border border-[#C7B79C] bg-[#F7F2E8] py-1.5 pr-8 pl-8.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
+												/>
+												{searchInput && (
+													<button
+														type="button"
+														onClick={() => setSearchInput("")}
+														className="absolute right-2.5 cursor-pointer text-[#A8967E] transition-colors hover:text-[#2E2318]"
+														aria-label="Clear search"
+													>
+														<X className="size-3.5" />
+													</button>
+												)}
+											</div>
 										</div>
-										<input
-											type="text"
-											placeholder="Search tasks & routines..."
-											value={searchInput}
-											onChange={(e) => setSearchInput(e.target.value)}
-											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
-										/>
+										<button
+											type="button"
+											onClick={handleOpenCreate}
+											className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] shadow-[0_1px_2px_rgba(41,37,36,0.04)] transition-all duration-200 hover:scale-[1.02] hover:border-[#2E2318] hover:bg-[#F3EDE1] active:scale-95"
+										>
+											+ New Routine
+										</button>
 									</div>
-									<button
-										type="button"
-										onClick={handleOpenCreate}
-										className="shrink-0 cursor-pointer whitespace-nowrap rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-[15px] py-2 font-semibold text-[#2E2318] text-[13px] shadow-[0_1px_2px_rgba(41,37,36,0.04)] transition-all duration-200 hover:scale-[1.02] hover:border-[#2E2318] hover:bg-[#F3EDE1] active:scale-95"
-									>
-										+ New Routine
-									</button>
+
+									{allCategories.length > 0 && (
+										<div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+											<button
+												type="button"
+												onClick={() => setSelectedCategory(null)}
+												className={cn(
+													"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
+													selectedCategory === null
+														? "border-[#2E2318] bg-[#2E2318] font-semibold text-white"
+														: "border-[#D6C9B2] bg-[#F7F2E8] text-[#5F4F3D] hover:border-[#2E2318]",
+												)}
+											>
+												All
+											</button>
+											{allCategories.map((cat) => (
+												<button
+													key={cat}
+													type="button"
+													onClick={() =>
+														setSelectedCategory(
+															selectedCategory === cat ? null : cat,
+														)
+													}
+													className={cn(
+														"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
+														selectedCategory === cat
+															? "border-[#C2410C] bg-[#C2410C] font-semibold text-white"
+															: "border-[#D6C9B2] bg-[#F7F2E8] text-[#5F4F3D] hover:border-[#C2410C]",
+													)}
+												>
+													{cat}
+												</button>
+											))}
+											{(searchInput || selectedCategory) && (
+												<span className="ml-2 font-mono text-[#83705A] text-[11px]">
+													Showing {sortedRoutines.length} of {routines.length}
+												</span>
+											)}
+										</div>
+									)}
 								</div>
 
 								{routinesQuery.isLoading ? (
 									<RoutinesLoadingState />
 								) : routinesQuery.isError ? (
 									<RoutinesErrorState onRetry={() => routinesQuery.refetch()} />
+								) : sortedRoutines.length === 0 ? (
+									<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#D6C9B2] border-dashed bg-[#F7F2E8]/60 px-4 py-12 text-center">
+										<div className="font-semibold text-[#2E2318] text-sm">
+											No routines match your current filters
+										</div>
+										<div className="text-[#83705A] text-xs">
+											Try clearing your search query or selecting a different
+											category.
+										</div>
+										<button
+											type="button"
+											onClick={() => {
+												setSearchInput("");
+												setSelectedCategory(null);
+											}}
+											className="mt-1.5 cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1 font-semibold text-[#2E2318] text-xs transition-colors hover:border-[#2E2318] active:scale-95"
+										>
+											Reset filters
+										</button>
+									</div>
 								) : (
 									<RoutineList
-										routines={routines}
+										routines={sortedRoutines}
 										onComplete={handleComplete}
 										onEdit={handleOpenEdit}
 										onTogglePause={handleTogglePause}
@@ -328,32 +427,171 @@ export default function Home() {
 
 						{activeTab === "all" && (
 							<div className="flex flex-col gap-4">
-								<div className="flex items-center justify-between gap-4">
-									<div className="flex flex-1 items-center gap-4">
-										<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
-											All Tasks
+								<div className="flex flex-col gap-2.5">
+									<div className="flex items-center justify-between gap-4">
+										<div className="flex flex-1 items-center gap-4">
+											<div className="shrink-0 font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+												All Tasks
+											</div>
+											<div className="relative flex w-full max-w-xs items-center">
+												<Search className="pointer-events-none absolute left-3 size-3.5 text-[#A8967E]" />
+												<input
+													type="text"
+													placeholder="Search tasks & routines..."
+													value={searchInput}
+													onChange={(e) => setSearchInput(e.target.value)}
+													className="w-full rounded-lg border border-[#C7B79C] bg-[#F7F2E8] py-1.5 pr-8 pl-8.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
+												/>
+												{searchInput && (
+													<button
+														type="button"
+														onClick={() => setSearchInput("")}
+														className="absolute right-2.5 cursor-pointer text-[#A8967E] transition-colors hover:text-[#2E2318]"
+														aria-label="Clear search"
+													>
+														<X className="size-3.5" />
+													</button>
+												)}
+											</div>
 										</div>
-										<input
-											type="text"
-											placeholder="Search tasks & routines..."
-											value={searchInput}
-											onChange={(e) => setSearchInput(e.target.value)}
-											className="w-full max-w-xs rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1.5 font-sans text-[#2E2318] text-[12.5px] placeholder-[#A8967E] outline-none transition-all duration-200 focus:border-[#C2410C] focus:ring-2 focus:ring-[#C2410C]/20"
-										/>
 									</div>
+
+									{allCategories.length > 0 && (
+										<div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+											<button
+												type="button"
+												onClick={() => setSelectedCategory(null)}
+												className={cn(
+													"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
+													selectedCategory === null
+														? "border-[#2E2318] bg-[#2E2318] font-semibold text-white"
+														: "border-[#D6C9B2] bg-[#F7F2E8] text-[#5F4F3D] hover:border-[#2E2318]",
+												)}
+											>
+												All
+											</button>
+											{allCategories.map((cat) => (
+												<button
+													key={cat}
+													type="button"
+													onClick={() =>
+														setSelectedCategory(
+															selectedCategory === cat ? null : cat,
+														)
+													}
+													className={cn(
+														"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
+														selectedCategory === cat
+															? "border-[#C2410C] bg-[#C2410C] font-semibold text-white"
+															: "border-[#D6C9B2] bg-[#F7F2E8] text-[#5F4F3D] hover:border-[#C2410C]",
+													)}
+												>
+													{cat}
+												</button>
+											))}
+											{(searchInput || selectedCategory) && (
+												<span className="ml-2 font-mono text-[#83705A] text-[11px]">
+													Showing {sortedRoutines.length} of {routines.length}
+												</span>
+											)}
+										</div>
+									)}
 								</div>
-								<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
-									{sortedRoutines.map((routine) => (
-										<RoutineListRow key={routine.id} routine={routine} />
-									))}
-								</div>
+
+								{sortedRoutines.length === 0 ? (
+									<div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-[#D6C9B2] border-dashed bg-[#F7F2E8]/60 px-4 py-12 text-center">
+										<div className="font-semibold text-[#2E2318] text-sm">
+											No routines match your current filters
+										</div>
+										<button
+											type="button"
+											onClick={() => {
+												setSearchInput("");
+												setSelectedCategory(null);
+											}}
+											className="mt-1.5 cursor-pointer rounded-lg border border-[#C7B79C] bg-[#F7F2E8] px-3 py-1 font-semibold text-[#2E2318] text-xs transition-colors hover:border-[#2E2318] active:scale-95"
+										>
+											Reset filters
+										</button>
+									</div>
+								) : (
+									<div className="overflow-hidden rounded-xl border border-[#D6C9B2] bg-[#F7F2E8]">
+										{sortedRoutines.map((routine) => (
+											<RoutineListRow key={routine.id} routine={routine} />
+										))}
+									</div>
+								)}
 							</div>
 						)}
 
 						{activeTab === "analytics" && (
-							<div className="px-0.5 py-2.5 text-[#5F4F3D] text-sm">
-								Analytics is not part of this view yet — Phase 0 is state, not
-								history.
+							<div className="flex flex-col gap-5">
+								<div className="flex items-center gap-2">
+									<BarChart2 className="size-5 text-[#C2410C]" />
+									<div className="font-extrabold text-[#2E2318] text-[18px] tracking-[-0.015em]">
+										System Analytics
+									</div>
+								</div>
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+									<div className="flex flex-col gap-1 rounded-xl border border-[#D6C9B2]/70 bg-[#F7F2E8] p-4 shadow-xs">
+										<div className="font-mono text-[#83705A] text-[11px] uppercase tracking-wider">
+											Total Routines
+										</div>
+										<div className="font-extrabold text-2xl text-[#2E2318]">
+											{routines.length}
+										</div>
+										<div className="text-[#5F4F3D] text-[11.5px]">
+											Configured in your dashboard
+										</div>
+									</div>
+									<div className="flex flex-col gap-1 rounded-xl border border-[#D6C9B2]/70 bg-[#F7F2E8] p-4 shadow-xs">
+										<div className="font-mono text-[#83705A] text-[11px] uppercase tracking-wider">
+											Cycle Completion
+										</div>
+										<div className="font-extrabold text-2xl text-[#2E2318]">
+											{routines.length > 0
+												? Math.round(
+														(routines.filter(
+															(r) =>
+																r.status === "Done" || r.status === "Finished",
+														).length /
+															routines.length) *
+															100,
+													)
+												: 0}
+											%
+										</div>
+										<div className="text-[#5F4F3D] text-[11.5px]">
+											Current period completion
+										</div>
+									</div>
+									<div className="flex flex-col gap-1 rounded-xl border border-[#D6C9B2]/70 bg-[#F7F2E8] p-4 shadow-xs">
+										<div className="font-mono text-[#83705A] text-[11px] uppercase tracking-wider">
+											Active Categories
+										</div>
+										<div className="font-extrabold text-2xl text-[#2E2318]">
+											{allCategories.length}
+										</div>
+										<div className="text-[#5F4F3D] text-[11.5px]">
+											Distinct routine categories
+										</div>
+									</div>
+								</div>
+								<div className="flex items-start gap-3 rounded-xl border border-[#D6C9B2]/60 bg-[#F1EBDE]/80 p-4 text-[#5F4F3D] text-[12.5px]">
+									<Sparkles className="mt-0.5 size-4 shrink-0 text-[#C2410C]" />
+									<div className="leading-relaxed">
+										<strong className="text-[#2E2318]">
+											Phase 0 Architecture:
+										</strong>{" "}
+										LE-REMINDER records every{" "}
+										<code className="font-mono text-[#2E2318]">
+											CompletionEvent
+										</code>{" "}
+										directly in your database. Historical charts, consistency
+										velocity, and habit streaks will activate in future roadmap
+										phases.
+									</div>
+								</div>
 							</div>
 						)}
 					</div>

@@ -146,10 +146,10 @@ function TaskTypeCard({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex min-w-[150px] flex-1 flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all",
+				"flex min-w-[150px] flex-1 cursor-pointer flex-col gap-1.5 rounded-[10px] border p-[15px] text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]",
 				selected
-					? "border-[#C2410C] bg-[#C2410C]/[0.08]"
-					: "border-[#C7B79C] bg-[#F7F2E8]",
+					? "border-[#C2410C] bg-[#C2410C]/[0.08] shadow-xs"
+					: "border-[#C7B79C] bg-[#F7F2E8] hover:border-[#A8967E]",
 			)}
 		>
 			{glyph}
@@ -175,10 +175,10 @@ function Pill({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"cursor-pointer rounded-full border px-3.5 py-1.5 font-mono text-[12px] transition-all",
+				"cursor-pointer rounded-full border px-3 py-1 font-mono text-[11.5px] transition-all duration-150 active:scale-95",
 				selected
-					? "border-[#C2410C] bg-[#C2410C]/10 font-semibold text-[#C2410C]"
-					: "border-[#C7B79C] bg-[#F7F2E8] font-normal text-[#5F4F3D]",
+					? "border-[#C2410C] bg-[#C2410C]/12 font-semibold text-[#C2410C] shadow-xs"
+					: "border-[#C7B79C] bg-[#F7F2E8] font-normal text-[#5F4F3D] hover:border-[#2E2318] hover:text-[#2E2318]",
 			)}
 		>
 			{children}
@@ -271,6 +271,12 @@ export function RoutineFormDialog({
 							onChange={(e) =>
 								setState((prev) => ({ ...prev, name: e.target.value }))
 							}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && saveEnabled) {
+									e.preventDefault();
+									handleSubmit();
+								}
+							}}
 							placeholder="e.g. Server Data Backup"
 						/>
 					</div>
@@ -288,6 +294,12 @@ export function RoutineFormDialog({
 							onChange={(e) =>
 								setState((prev) => ({ ...prev, category: e.target.value }))
 							}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && saveEnabled) {
+									e.preventDefault();
+									handleSubmit();
+								}
+							}}
 							placeholder="e.g. Tech"
 						/>
 						<div className="flex flex-wrap gap-1.5">

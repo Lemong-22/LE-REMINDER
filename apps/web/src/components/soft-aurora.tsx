@@ -191,7 +191,14 @@ export function SoftAurora({
 		// synchronous block — still see it as non-nullable.
 		const container: HTMLDivElement = containerRef.current;
 
-		const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+		const dpr = Math.min(
+			typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1,
+			1.25,
+		);
+		const renderer = new Renderer({
+			alpha: true,
+			premultipliedAlpha: false,
+		});
 		const gl = renderer.gl;
 		gl.clearColor(0, 0, 0, 0);
 
@@ -212,7 +219,11 @@ export function SoftAurora({
 		}
 
 		function resize() {
-			renderer.setSize(container.offsetWidth, container.offsetHeight);
+			const width = container.offsetWidth;
+			const height = container.offsetHeight;
+			renderer.setSize(Math.round(width * dpr), Math.round(height * dpr));
+			gl.canvas.style.width = `${width}px`;
+			gl.canvas.style.height = `${height}px`;
 			if (program) {
 				program.uniforms.uResolution.value = [
 					gl.canvas.width,
@@ -263,10 +274,14 @@ export function SoftAurora({
 			gl.canvas.addEventListener("mouseleave", handleMouseLeave);
 		}
 
-		let animationFrameId: number;
+		const prefersReducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches;
 
-		function update(time: number) {
-			animationFrameId = requestAnimationFrame(update);
+		let animationFrameId: number | null = null;
+		let isDestroyed = false;
+
+		function render(time: number) {
 			if (!program) return;
 			program.uniforms.uTime.value = time * 0.001;
 
@@ -282,11 +297,41 @@ export function SoftAurora({
 
 			renderer.render({ scene: mesh });
 		}
-		animationFrameId = requestAnimationFrame(update);
+
+		function update(time: number) {
+			if (isDestroyed || document.hidden) return;
+			render(time);
+			animationFrameId = requestAnimationFrame(update);
+		}
+
+		if (prefersReducedMotion) {
+			// Single static frame for reduced motion users
+			render(1000);
+		} else {
+			animationFrameId = requestAnimationFrame(update);
+		}
+
+		function handleVisibilityChange() {
+			if (prefersReducedMotion || isDestroyed) return;
+			if (document.hidden) {
+				if (animationFrameId !== null) {
+					cancelAnimationFrame(animationFrameId);
+					animationFrameId = null;
+				}
+			} else if (animationFrameId === null) {
+				animationFrameId = requestAnimationFrame(update);
+			}
+		}
+
+		document.addEventListener("visibilitychange", handleVisibilityChange);
 
 		return () => {
-			cancelAnimationFrame(animationFrameId);
+			isDestroyed = true;
+			if (animationFrameId !== null) {
+				cancelAnimationFrame(animationFrameId);
+			}
 			window.removeEventListener("resize", resize);
+			document.removeEventListener("visibilitychange", handleVisibilityChange);
 			if (enableMouseInteraction) {
 				gl.canvas.removeEventListener("mousemove", handleMouseMove);
 				gl.canvas.removeEventListener("mouseleave", handleMouseLeave);

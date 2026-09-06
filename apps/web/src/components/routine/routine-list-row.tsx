@@ -15,31 +15,32 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 	return (
 		<div
 			className={cn(
-				"group flex items-center gap-4 border-[#263044] border-b p-3.5 px-5 transition-all duration-200 last:border-0 hover:bg-white/5",
+				"group flex items-center gap-4 border-white/5 border-b p-3.5 px-5 transition-all duration-200 last:border-0 hover:bg-white/[0.04]",
 				isCompleted && "opacity-65 hover:opacity-100",
-				isDue && "bg-[#252D3E]/40",
+				isDue &&
+					"border-cyan-500/20 bg-cyan-950/25 shadow-[inset_0_0_16px_rgba(6,182,212,0.12)]",
 			)}
 		>
 			<div className="relative flex w-3 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-110">
 				{isDue && (
 					<span
 						aria-hidden
-						className="absolute -inset-1 animate-ping rounded-full bg-[#F59E0B]/20"
-						style={{ animationDuration: "2.5s" }}
+						className="absolute -inset-1 animate-ping rounded-full bg-cyan-400/35"
+						style={{ animationDuration: "2.2s" }}
 					/>
 				)}
 				<StatusShape status={routine.status} size={11} />
 			</div>
 			<div className="flex min-w-40 flex-1 items-center gap-1.5 transition-transform duration-200 group-hover:translate-x-0.5">
 				{routine.isImportant && (
-					<Star className="size-3.5 shrink-0 fill-[#F59E0B] text-[#F59E0B]" />
+					<Star className="size-3.5 shrink-0 fill-[#F59E0B] text-[#F59E0B] drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
 				)}
 				<div
 					className={cn(
 						"font-semibold text-sm transition-colors duration-150",
 						isCompleted
 							? "text-[#64748B] line-through"
-							: "text-[#F1F5F9] group-hover:text-white",
+							: "text-[#FFFFFF] group-hover:text-cyan-200",
 					)}
 				>
 					{routine.name}
@@ -49,17 +50,22 @@ export function RoutineListRow({ routine }: { routine: DashboardRoutine }) {
 				<Badge
 					variant="outline"
 					className={cn(
-						"rounded-full px-2 py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.05em]",
+						"rounded-full px-2 py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.06em] transition-all",
 						routine.isTask
-							? "border-[#3B82F6]/60 bg-[#3B82F6]/15 text-[#60A5FA]"
-							: "border-[#38445C] bg-[#181E2B]/60 text-[#94A3B8]",
+							? "border-cyan-400/40 bg-[#091528]/90 text-cyan-300 shadow-[0_0_10px_-2px_rgba(6,182,212,0.3)]"
+							: "border-blue-500/35 bg-[#080E1C]/90 text-sky-300 shadow-[0_0_10px_-2px_rgba(59,130,246,0.25)]",
 					)}
 				>
 					{routine.isTask ? "Task" : "Routine"}
 				</Badge>
 			</div>
-			<div className="w-[100px] shrink-0 font-mono text-[#94A3B8] text-[10.5px] uppercase">
-				{routine.category}
+			<div className="w-[100px] shrink-0">
+				<Badge
+					variant="secondary"
+					className="rounded-full border border-cyan-500/25 bg-[#091322]/90 px-2 py-0.5 font-bold font-mono text-[9.5px] text-cyan-200 uppercase tracking-[0.08em] shadow-[0_0_10px_-3px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.06)]"
+				>
+					{routine.category}
+				</Badge>
 			</div>
 			<div className="w-[180px] shrink-0 font-mono text-[#94A3B8] text-[11.5px]">
 				{describeTaskType(routine.taskType, routine.status)}

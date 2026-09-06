@@ -24,8 +24,9 @@ function isSameCalendarDay(a: Date, b: Date): boolean {
  * Checks whether a routine is strictly due TODAY.
  *
  * For FixedCalendar Weekly routines, this verifies that today's day of the week
- * matches one of the scheduled target days, preventing premature priority glow
- * on days leading up to the target day.
+ * matches one of the scheduled target days in the user's local timezone (NOT UTC),
+ * preventing premature priority glow on days leading up to the target day and
+ * avoiding UTC midnight boundary shifts.
  */
 export function isStrictlyDueToday(
 	taskType: TaskType,
@@ -56,9 +57,22 @@ export function isStrictlyDueToday(
 	}
 
 	if (recurrence.kind === "Weekly") {
-		const todayDayOfWeek = DAYS_OF_WEEK[now.getDay()];
-		if (!todayDayOfWeek) return false;
-		return recurrence.daysOfWeek.includes(todayDayOfWeek);
+		// Date#getDay() returns 0 (Sun) - 6 (Sat) strictly in the local environment's timezone.
+		// Never use getUTCDay() here to avoid day-shift discrepancy for non-UTC locales.
+		const localDayIndex = now.getDay();
+		const currentDayOfWeek = DAYS_OF_WEEK[localDayIndex];
+		if (!currentDayOfWeek) return false;
+
+		const targetLower = currentDayOfWeek.toLowerCase();
+		return recurrence.daysOfWeek.some((day) => {
+			if (!day || typeof day !== "string") return false;
+			const trimmedLower = day.trim().toLowerCase();
+			return (
+				trimmedLower === targetLower ||
+				trimmedLower.startsWith(targetLower) ||
+				targetLower.startsWith(trimmedLower)
+			);
+		});
 	}
 
 	if (recurrence.kind === "Monthly") {

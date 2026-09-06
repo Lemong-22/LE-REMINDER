@@ -80,17 +80,31 @@ export function RoutineCard({
 			transition={{ type: "spring", stiffness: 400, damping: 25 }}
 			onClick={() => setRevealed((v) => !v)}
 			className={cn(
-				"group relative flex flex-col gap-2.5 overflow-hidden rounded-[10px] border p-[17px] transition-[box-shadow,opacity,border-color] duration-200",
+				"group relative flex flex-col gap-2.5 rounded-[12px] p-[17px] backdrop-blur-md transition-[box-shadow,opacity,border-color] duration-200",
 				isDue
-					? "border-[#F59E0B]/75 bg-gradient-to-br from-[#1E2433] via-[#2A3346] to-[#242C3E] shadow-[0_0_16px_-2px_rgba(245,158,11,0.25),inset_0_0_0_1px_rgba(245,158,11,0.2)] hover:shadow-[0_10px_24px_-4px_rgba(245,158,11,0.28),inset_0_0_0_1px_rgba(245,158,11,0.25)]"
-					: "border-[#2E384D] bg-gradient-to-br from-[#1E2433] to-[#242C3E]/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.06)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.08)]",
+					? "border border-cyan-400/70 bg-[#1A1F2C]/80 shadow-[0_0_24px_-2px_rgba(6,182,212,0.45),inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-[0_0_32px_-1px_rgba(6,182,212,0.65),inset_0_1px_1px_rgba(255,255,255,0.25),0_12px_36px_0_rgba(0,0,0,0.45)]"
+					: "border border-white/5 bg-[#1A1F2C]/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-white/10 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),0_12px_36px_0_rgba(0,0,0,0.45)]",
 				isCompleted && "opacity-65 hover:opacity-100",
 			)}
 		>
+			{/* Breathtaking Neon Edge luminous bloom & laser outline for Due Today */}
+			{isDue && (
+				<>
+					<div
+						aria-hidden="true"
+						className="pointer-events-none absolute -inset-[1px] -z-10 rounded-[13px] bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-300 opacity-70 blur-[3px] transition-all duration-300 group-hover:opacity-95 group-hover:blur-[5px]"
+					/>
+					<div
+						aria-hidden="true"
+						className="pointer-events-none absolute -inset-[1px] -z-10 rounded-[13px] bg-gradient-to-r from-cyan-400/90 via-sky-400 to-blue-500/90 opacity-90 transition-opacity duration-300"
+					/>
+				</>
+			)}
+
 			{flipping && (
 				<div
 					aria-hidden
-					className="absolute inset-0 origin-left animate-[sweep-flip_0.4s_ease_forwards] bg-emerald-400/[0.14]"
+					className="absolute inset-0 origin-left animate-[sweep-flip_0.4s_ease_forwards] rounded-[12px] bg-emerald-400/[0.14]"
 				/>
 			)}
 
@@ -100,8 +114,8 @@ export function RoutineCard({
 						{isDue && (
 							<span
 								aria-hidden
-								className="absolute -inset-1 animate-ping rounded-full bg-[#F59E0B]/20"
-								style={{ animationDuration: "2.5s" }}
+								className="absolute -inset-1 animate-ping rounded-full bg-cyan-400/35"
+								style={{ animationDuration: "2.2s" }}
 							/>
 						)}
 						<StatusShape status={routine.status} />
@@ -109,9 +123,9 @@ export function RoutineCard({
 					<div
 						className={cn(
 							"font-mono font-semibold text-[10.5px]",
-							isDue && "animate-pulse",
+							isDue && "animate-pulse text-cyan-300",
 						)}
-						style={{ color: STATUS_TEXT[routine.status] }}
+						style={{ color: isDue ? undefined : STATUS_TEXT[routine.status] }}
 					>
 						{routine.status}
 					</div>
@@ -120,17 +134,17 @@ export function RoutineCard({
 					<Badge
 						variant="outline"
 						className={cn(
-							"rounded-full px-[8px] py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.05em]",
+							"rounded-full px-[8px] py-0.5 font-bold font-mono text-[9px] uppercase tracking-[0.06em] transition-all",
 							routine.isTask
-								? "border-[#3B82F6]/60 bg-[#3B82F6]/15 text-[#60A5FA]"
-								: "border-[#38445C] bg-[#181E2B]/60 text-[#94A3B8]",
+								? "border-cyan-400/40 bg-[#091528]/90 text-cyan-300 shadow-[0_0_10px_-2px_rgba(6,182,212,0.35)]"
+								: "border-blue-500/35 bg-[#080E1C]/90 text-sky-300 shadow-[0_0_10px_-2px_rgba(59,130,246,0.3)]",
 						)}
 					>
 						{routine.isTask ? "Task" : "Routine"}
 					</Badge>
 					<Badge
 						variant="secondary"
-						className="rounded-full border border-[#38445C] bg-[#181E2B] px-[9px] py-0.5 font-bold font-mono text-[#CBD5E1] text-[10px] uppercase tracking-[0.08em]"
+						className="rounded-full border border-cyan-500/25 bg-[#091322]/90 px-[9px] py-0.5 font-bold font-mono text-[9.5px] text-cyan-200 uppercase tracking-[0.08em] shadow-[0_0_10px_-3px_rgba(6,182,212,0.25),inset_0_1px_1px_rgba(255,255,255,0.06)]"
 					>
 						{routine.category}
 					</Badge>
@@ -139,12 +153,12 @@ export function RoutineCard({
 
 			<div className="flex items-center gap-1.5">
 				{routine.isImportant && (
-					<Star className="size-4 shrink-0 fill-[#F59E0B] text-[#F59E0B]" />
+					<Star className="size-4 shrink-0 fill-[#F59E0B] text-[#F59E0B] drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
 				)}
 				<div
 					className={cn(
-						"font-bold text-[15px] transition-colors",
-						isCompleted ? "text-[#64748B] line-through" : "text-[#F1F5F9]",
+						"font-bold text-[15px] tracking-[-0.01em] transition-colors",
+						isCompleted ? "text-[#64748B] line-through" : "text-[#FFFFFF]",
 					)}
 				>
 					{routine.name}
@@ -158,7 +172,7 @@ export function RoutineCard({
 						className={cn(
 							"size-1.5 shrink-0 rounded-full",
 							isMandatory(routine)
-								? "bg-[#F1F5F9]"
+								? "bg-[#FFFFFF] shadow-[0_0_6px_rgba(255,255,255,0.7)]"
 								: "border border-[#64748B] bg-transparent",
 						)}
 					/>
@@ -182,7 +196,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							handleComplete(e.currentTarget);
 						}}
-						className="h-auto rounded-md border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 font-semibold text-[11px] text-emerald-300 shadow-none transition-all duration-200 hover:scale-[1.04] hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40 active:scale-95"
+						className="h-auto rounded-md border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-1 font-semibold text-[11px] text-emerald-300 shadow-[0_0_12px_-2px_rgba(16,185,129,0.3)] backdrop-blur-xs transition-all duration-200 hover:scale-[1.04] hover:border-emerald-400/60 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40 active:scale-95"
 					>
 						Complete
 					</Button>
@@ -195,7 +209,7 @@ export function RoutineCard({
 							e.stopPropagation();
 							onTogglePause();
 						}}
-						className="h-auto rounded-md border-[#38445C] bg-[#1E2433] px-2.5 py-1 font-normal text-[#F1F5F9] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40 active:scale-95"
+						className="h-auto rounded-md border border-white/10 bg-[#161C2C]/70 px-2.5 py-1 font-normal text-[11px] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xs transition-all duration-200 hover:scale-[1.03] hover:border-white/20 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40 active:scale-95"
 					>
 						{isPaused ? "Resume" : "Pause"}
 					</Button>
@@ -207,7 +221,7 @@ export function RoutineCard({
 						e.stopPropagation();
 						onEdit();
 					}}
-					className="h-auto rounded-md border-[#38445C] bg-[#1E2433] px-2.5 py-1 font-normal text-[#F1F5F9] text-[11px] shadow-none transition-all duration-200 hover:scale-[1.03] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/40 active:scale-95"
+					className="h-auto rounded-md border border-white/10 bg-[#161C2C]/70 px-2.5 py-1 font-normal text-[11px] text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xs transition-all duration-200 hover:scale-[1.03] hover:border-white/20 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40 active:scale-95"
 				>
 					Edit
 				</Button>

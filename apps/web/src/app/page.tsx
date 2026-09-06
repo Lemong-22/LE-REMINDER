@@ -266,8 +266,8 @@ export default function Home() {
 			className="min-h-screen text-[#F1F5F9]"
 			style={{ background: "#131722" }}
 		>
-			<div className="sticky top-0 z-20 flex items-center justify-between border-[#2E384D] border-b bg-[#131722] px-10 py-4">
-				<div className="w-[180px] font-extrabold text-[19px] tracking-[-0.02em]">
+			<div className="sticky top-0 z-20 flex items-center justify-between border-white/5 border-b bg-[#131722]/80 px-10 py-4 backdrop-blur-md">
+				<div className="w-[180px] font-extrabold text-[19px] text-white tracking-tight drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]">
 					LE-REMINDER
 				</div>
 				<div className="flex gap-8">
@@ -315,7 +315,7 @@ export default function Home() {
 								<div className="flex flex-col gap-2.5">
 									<div className="flex items-center justify-between gap-4">
 										<div className="flex flex-1 items-center gap-4">
-											<div className="shrink-0 font-extrabold text-[#F1F5F9] text-[18px] tracking-[-0.015em]">
+											<div className="shrink-0 font-extrabold text-[#FFFFFF] text-[18px] tracking-tight">
 												Routines
 											</div>
 											<div className="relative flex w-full max-w-xs items-center">
@@ -356,8 +356,8 @@ export default function Home() {
 												className={cn(
 													"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
 													selectedCategory === null
-														? "border-[#3B82F6] bg-[#3B82F6] font-semibold text-white"
-														: "border-[#2E384D] bg-[#1E2433] text-[#94A3B8] hover:border-[#F1F5F9]",
+														? "border-cyan-400/50 bg-[#0E1A2D] font-semibold text-cyan-300 shadow-[0_0_10px_-2px_rgba(6,182,212,0.35)]"
+														: "border-white/5 bg-[#1A1F2C]/60 text-[#94A3B8] hover:border-white/20 hover:text-white",
 												)}
 											>
 												All
@@ -374,8 +374,8 @@ export default function Home() {
 													className={cn(
 														"cursor-pointer rounded-full border px-2.5 py-0.5 font-mono text-[11px] transition-all duration-150 active:scale-95",
 														selectedCategory === cat
-															? "border-[#3B82F6] bg-[#3B82F6] font-semibold text-white"
-															: "border-[#2E384D] bg-[#1E2433] text-[#94A3B8] hover:border-[#3B82F6]",
+															? "border-cyan-400/50 bg-[#0E1A2D] font-semibold text-cyan-300 shadow-[0_0_10px_-2px_rgba(6,182,212,0.35)]"
+															: "border-white/5 bg-[#1A1F2C]/60 text-[#94A3B8] hover:border-cyan-400/40 hover:text-white",
 													)}
 												>
 													{cat}
@@ -433,7 +433,7 @@ export default function Home() {
 								<div className="flex flex-col gap-2.5">
 									<div className="flex items-center justify-between gap-4">
 										<div className="flex flex-1 items-center gap-4">
-											<div className="shrink-0 font-extrabold text-[#F1F5F9] text-[18px] tracking-[-0.015em]">
+											<div className="shrink-0 font-extrabold text-[#FFFFFF] text-[18px] tracking-tight">
 												All Tasks
 											</div>
 											<div className="relative flex w-full max-w-xs items-center">
@@ -525,7 +525,7 @@ export default function Home() {
 										</button>
 									</div>
 								) : (
-									<div className="overflow-hidden rounded-xl border border-[#2E384D] bg-[#1E2433]">
+									<div className="overflow-hidden rounded-xl border border-white/5 bg-[#1A1F2C]/60 shadow-[0_8px_32px_0_rgba(0,0,0,0.37),inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md">
 										<AnimatePresence mode="popLayout" initial={false}>
 											{sortedRoutines.map((routine) => (
 												<motion.div

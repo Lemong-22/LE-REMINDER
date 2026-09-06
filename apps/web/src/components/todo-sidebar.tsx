@@ -322,9 +322,9 @@ export function TodoSidebar() {
 	const activeTodo = sortedTodos.find((todo) => todo.id === activeId) ?? null;
 
 	return (
-		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-[#2E384D] bg-gradient-to-br from-[#1E2433] to-[#181E2B]/95 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.06),inset_0_0_20px_rgba(0,0,0,0.2)]">
+		<div className="sticky top-[76px] flex max-h-[calc(100vh-96px)] w-[280px] shrink-0 flex-col gap-3.5 overflow-y-auto rounded-xl border border-white/5 bg-[#1A1F2C]/60 p-5 shadow-[0_8px_32px_0_rgba(0,0,0,0.37),inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-md">
 			<div className="flex items-center justify-between">
-				<div className="font-extrabold text-[#F1F5F9] text-[18px] tracking-[-0.015em]">
+				<div className="font-extrabold text-[#FFFFFF] text-[18px] tracking-tight">
 					Today's To-Do
 				</div>
 				<div className="flex items-center gap-2">

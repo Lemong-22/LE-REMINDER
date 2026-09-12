@@ -13,6 +13,7 @@ import { HeroPanel } from "@/components/routine/hero-panel";
 import { RoutineFormDialog } from "@/components/routine/routine-form-dialog";
 import { RoutineList } from "@/components/routine/routine-list";
 import { RoutineListRow } from "@/components/routine/routine-list-row";
+import { ScheduleView } from "@/components/schedule-view";
 import { TodoSidebar } from "@/components/todo-sidebar";
 import { buildCategorySuggestions } from "@/lib/category-suggestions";
 import type { DashboardRoutine } from "@/lib/dashboard-routine";
@@ -25,7 +26,7 @@ import { sortByStatus } from "@/lib/sort-routines";
 import { toDashboardRoutine } from "@/lib/to-dashboard-routine";
 import { queryClient, trpc } from "@/utils/trpc";
 
-type Tab = "home" | "all" | "analytics";
+type Tab = "home" | "schedule" | "all" | "analytics";
 
 function TabButton({
 	active,
@@ -266,16 +267,22 @@ export default function Home() {
 			className="min-h-screen text-[#F1F5F9]"
 			style={{ background: "#131722" }}
 		>
-			<div className="sticky top-0 z-20 flex items-center justify-between border-white/5 border-b bg-[#131722]/80 px-10 py-4 backdrop-blur-md">
-				<div className="w-[180px] font-extrabold text-[19px] text-white tracking-tight drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]">
+			<div className="sticky top-0 z-20 flex items-center justify-between border-white/5 border-b bg-[#131722]/80 px-4 py-4 backdrop-blur-md sm:px-10">
+				<div className="w-auto shrink-0 font-extrabold text-[17px] text-white tracking-tight drop-shadow-[0_0_12px_rgba(6,182,212,0.3)] sm:w-[180px] sm:text-[19px]">
 					LE-REMINDER
 				</div>
-				<div className="flex gap-8">
+				<div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] sm:gap-8">
 					<TabButton
 						active={activeTab === "home"}
 						onClick={() => setActiveTab("home")}
 					>
 						Home
+					</TabButton>
+					<TabButton
+						active={activeTab === "schedule"}
+						onClick={() => setActiveTab("schedule")}
+					>
+						Schedule
 					</TabButton>
 					<TabButton
 						active={activeTab === "all"}
@@ -290,7 +297,7 @@ export default function Home() {
 						Analytics
 					</TabButton>
 				</div>
-				<div className="flex w-[180px] justify-end">
+				<div className="flex w-auto shrink-0 justify-end sm:w-[180px]">
 					<a
 						href="https://github.com/Lemong-22/LE-REMINDER.git"
 						target="_blank"
@@ -298,17 +305,17 @@ export default function Home() {
 						className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-semibold text-[#94A3B8] text-xs transition-colors hover:bg-white/5 hover:text-[#F1F5F9]"
 					>
 						<Github className="size-4" />
-						Lemong-22
+						<span className="hidden sm:inline">Lemong-22</span>
 					</a>
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-6 px-10 pt-[26px] pb-14">
+			<div className="flex flex-col gap-6 px-4 pt-[26px] pb-14 sm:px-10">
 				{activeTab === "home" && (
 					<HeroPanel routines={routines} onComplete={handleComplete} />
 				)}
 
-				<div className="flex items-start gap-[22px]">
+				<div className="flex flex-col items-start gap-[22px] lg:flex-row">
 					<div className="flex min-w-0 flex-1 flex-col gap-6">
 						{activeTab === "home" && (
 							<>
@@ -427,6 +434,8 @@ export default function Home() {
 								)}
 							</>
 						)}
+
+						{activeTab === "schedule" && <ScheduleView />}
 
 						{activeTab === "all" && (
 							<div className="flex flex-col gap-4">

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { startOfDay } from "../domain/fixed-calendar-slot";
 import { CryptoIdGenerator } from "../infrastructure/crypto-id-generator";
 import { FixedClock } from "../infrastructure/fixed-clock";
 import { InMemoryCompletionEventRepository } from "../infrastructure/in-memory-completion-event-repository";
@@ -64,7 +65,7 @@ describe("ListRoutines", () => {
 		const views = await listRoutines.execute({});
 
 		expect(views[0]?.status).toBe("Finished");
-		expect(views[0]?.lastCompletedAt).toEqual(now);
+		expect(views[0]?.lastCompletedAt).toEqual(startOfDay(now));
 	});
 
 	test("filters by category", async () => {

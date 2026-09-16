@@ -120,7 +120,7 @@ export const MASTER_SCHEDULE: readonly DaySchedule[] = [
 			},
 			{
 				time: "17:00 - 17:30",
-				activity: "Review PDD, update SDN",
+				activity: "Review THEO, Update SDN",
 				type: "study",
 			},
 			{

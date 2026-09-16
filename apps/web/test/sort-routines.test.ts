@@ -111,4 +111,42 @@ describe("sortByStatus", () => {
 			"future-weekly-wed",
 		]);
 	});
+
+	test("prioritizes RollingInterval tasks as due today over future weekly tasks within Due status", () => {
+		const friday = new Date(2026, 8, 4);
+		const items = [
+			{
+				id: "future-weekly-wed",
+				status: "Due" as const,
+				taskType: {
+					kind: "Recurring" as const,
+					schedule: {
+						type: "FixedCalendar" as const,
+						recurrence: {
+							kind: "Weekly" as const,
+							daysOfWeek: ["Wed" as const],
+						},
+						isMandatory: true,
+					},
+				},
+			},
+			{
+				id: "rolling-due-now",
+				status: "Due" as const,
+				taskType: {
+					kind: "Recurring" as const,
+					schedule: {
+						type: "RollingInterval" as const,
+						interval: { value: 5, unit: "days" as const },
+					},
+				},
+			},
+		];
+
+		const sorted = sortByStatus(items, friday);
+		expect(sorted.map((i) => i.id)).toEqual([
+			"rolling-due-now",
+			"future-weekly-wed",
+		]);
+	});
 });

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { startOfDay } from "../domain/fixed-calendar-slot";
 import type { RoutineId } from "../domain/identity";
 import { CryptoIdGenerator } from "../infrastructure/crypto-id-generator";
 import { FixedClock } from "../infrastructure/fixed-clock";
@@ -60,7 +61,7 @@ describe("GetRoutine", () => {
 		const view = await getRoutine.execute({ routineId: routine.id });
 
 		expect(view.status).toBe("Finished");
-		expect(view.lastCompletedAt).toEqual(now);
+		expect(view.lastCompletedAt).toEqual(startOfDay(now));
 	});
 
 	test("throws RoutineNotFoundError for a missing routine", async () => {

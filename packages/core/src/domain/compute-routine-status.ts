@@ -93,7 +93,8 @@ function computeRollingIntervalStatus(
 	if (latestCompletion === null) {
 		return "Due";
 	}
-	const dueAt = addDuration(latestCompletion.completedAt, schedule.interval);
+	const completedAt = startOfDay(latestCompletion.completedAt);
+	const dueAt = addDuration(completedAt, schedule.interval);
 	return now.getTime() >= dueAt.getTime() ? "Overdue" : "Done";
 }
 

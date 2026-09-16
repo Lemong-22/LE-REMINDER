@@ -2,6 +2,7 @@ import type { Clock } from "../domain/clock";
 import type { CompletionEvent } from "../domain/completion-event";
 import type { CompletionEventRepository } from "../domain/completion-event-repository";
 import { computeRoutineStatus } from "../domain/compute-routine-status";
+import { startOfDay } from "../domain/fixed-calendar-slot";
 import type { IdGenerator } from "../domain/id-generator";
 import type { RoutineId } from "../domain/identity";
 import type { RoutineRepository } from "../domain/routine-repository";
@@ -51,10 +52,13 @@ export class CompleteRoutine implements CompleteRoutineUseCase {
 			throw new RoutineAlreadyFinishedError(routine.id);
 		}
 
+		const rawCompletedAt = command.completedAt ?? now;
+		const completedAt = startOfDay(rawCompletedAt);
+
 		const event: CompletionEvent = {
 			id: this.idGenerator.newCompletionEventId(),
 			routineId: routine.id,
-			completedAt: command.completedAt ?? now,
+			completedAt,
 		};
 
 		await this.completionEventRepository.append(event);

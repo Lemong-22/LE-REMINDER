@@ -1,6 +1,7 @@
 import type { RoutineView } from "@LE-REMINDER/core/application/routine-view";
 import type { CompletionEvent } from "@LE-REMINDER/core/domain/completion-event";
 import { computeRoutineStatus } from "@LE-REMINDER/core/domain/compute-routine-status";
+import { startOfDay } from "@LE-REMINDER/core/domain/fixed-calendar-slot";
 import type {
 	CompletionEventId,
 	RoutineId,
@@ -26,6 +27,7 @@ export function withCompleted(
 	routineId: RoutineId,
 	now: Date,
 ): RoutineView[] {
+	const completedAt = startOfDay(now);
 	return views.map((view) => {
 		if (view.routine.id !== routineId) return view;
 		return {
@@ -33,11 +35,11 @@ export function withCompleted(
 			status: computeRoutineStatus(
 				view.routine.taskType,
 				view.routine.isPaused,
-				stubCompletion(routineId, now),
+				stubCompletion(routineId, completedAt),
 				now,
 				view.routine.createdAt,
 			),
-			lastCompletedAt: now,
+			lastCompletedAt: completedAt,
 		};
 	});
 }

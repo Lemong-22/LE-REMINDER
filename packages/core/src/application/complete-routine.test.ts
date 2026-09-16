@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { startOfDay } from "../domain/fixed-calendar-slot";
 import type { RoutineId } from "../domain/identity";
 import { CryptoIdGenerator } from "../infrastructure/crypto-id-generator";
 import { FixedClock } from "../infrastructure/fixed-clock";
@@ -53,7 +54,7 @@ describe("CompleteRoutine", () => {
 
 		const event = await completeRoutine.execute({ routineId: routine.id });
 
-		expect(event.completedAt).toEqual(now);
+		expect(event.completedAt).toEqual(startOfDay(now));
 		expect(event.routineId).toBe(routine.id);
 		expect(
 			await completionEventRepository.findLatestByRoutineId(routine.id),
@@ -80,7 +81,7 @@ describe("CompleteRoutine", () => {
 			completedAt: yesterday,
 		});
 
-		expect(event.completedAt).toEqual(yesterday);
+		expect(event.completedAt).toEqual(startOfDay(yesterday));
 	});
 
 	test("throws RoutineNotFoundError for a missing routine", async () => {
@@ -88,6 +89,25 @@ describe("CompleteRoutine", () => {
 		await expect(
 			completeRoutine.execute({ routineId: "does-not-exist" as RoutineId }),
 		).rejects.toBeInstanceOf(RoutineNotFoundError);
+	});
+
+	test("snaps completion timestamp to 00:00:00.000 local time (Midnight Reset Rule)", async () => {
+		const completionInstant = new Date(2026, 8, 15, 20, 0, 0);
+		const { createRoutine, completeRoutine } = setup(completionInstant);
+		const routine = await createRoutine.execute({
+			name: "Water plants every 5 days",
+			taskType: {
+				kind: "Recurring",
+				schedule: {
+					type: "RollingInterval",
+					interval: { value: 5, unit: "days" },
+				},
+			},
+		});
+
+		const event = await completeRoutine.execute({ routineId: routine.id });
+
+		expect(event.completedAt).toEqual(new Date(2026, 8, 15, 0, 0, 0));
 	});
 
 	test("a Recurring routine can be completed repeatedly across cycles without error", async () => {

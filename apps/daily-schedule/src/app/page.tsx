@@ -72,12 +72,39 @@ function DailyRundownView() {
 	const liveEventRef = useRef<HTMLDivElement | null>(null);
 	const hasAutoScrolledRef = useRef(false);
 
-	// Battery-efficient 60-second ticker (0% battery drain, no continuous rAF in scheduling logic)
+	// Battery-efficient visibility-aware ticker: sleeps when phone screen is locked or app is in background
 	useEffect(() => {
-		const interval = setInterval(() => {
+		let timerId: ReturnType<typeof setTimeout>;
+
+		function tick() {
 			setCurrentTime(new Date());
-		}, 60000);
-		return () => clearInterval(interval);
+		}
+
+		function scheduleNextTick() {
+			// Align to the next exact minute boundary for maximum accuracy and battery sleep
+			const now = new Date();
+			const msUntilNextMinute =
+				(60 - now.getSeconds()) * 1000 - now.getMilliseconds() + 50;
+			timerId = setTimeout(() => {
+				tick();
+				scheduleNextTick();
+			}, msUntilNextMinute);
+		}
+
+		scheduleNextTick();
+
+		// Power efficiency: When phone screen is turned off or tab hidden, sleep; upon wake-up sync immediately
+		function handleVisibilityChange() {
+			if (!document.hidden) {
+				tick();
+			}
+		}
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+
+		return () => {
+			clearTimeout(timerId);
+			document.removeEventListener("visibilitychange", handleVisibilityChange);
+		};
 	}, []);
 
 	const todayDayOfWeek = currentTime.getDay();
@@ -187,8 +214,11 @@ function DailyRundownView() {
 						</p>
 					</div>
 
-					{/* Segmented Day Selector */}
-					<nav aria-label="Day Selector" className="overflow-x-auto pb-1">
+					{/* Segmented Day Selector with momentum touch scroll */}
+					<nav
+						aria-label="Day Selector"
+						className="scroll-touch overflow-x-auto pb-1"
+					>
 						<div className="inline-flex items-center gap-1 rounded-2xl border border-white/[0.1] bg-[#121520]/70 p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl">
 							{SCHEDULE_DATA.map((schedule) => {
 								const isSelected = schedule.dayOfWeek === selectedDay;
@@ -289,8 +319,8 @@ function DailyRundownView() {
 										{/* 2. LIVE CARD: CONTINUOUS SPINNING NEON BORDER */}
 										{isLive ? (
 											<div className="relative overflow-hidden rounded-[24px] p-[2px] shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-												{/* The spinning gradient background */}
-												<div className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg,transparent_0%,transparent_70%,#0ea5e9_100%)]" />
+												{/* The spinning gradient background (hardware accelerated on GPU layer) */}
+												<div className="absolute inset-[-100%] transform-gpu animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg,transparent_0%,transparent_70%,#0ea5e9_100%)] will-change-transform" />
 
 												{/* The inner dark card */}
 												<div className="relative z-10 flex h-full w-full flex-col gap-3 rounded-[22px] bg-[#0F1115] p-5">

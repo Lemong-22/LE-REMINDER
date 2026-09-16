@@ -8,17 +8,24 @@ const SpotlightCard = ({
 	className = "",
 	spotlightColor = "rgba(255, 255, 255, 0.05)",
 }) => {
-	const divRef = useRef(null);
+	const rafRef = useRef(null);
 
 	const handleMouseMove = (e) => {
-		if (!divRef.current) return;
-		const rect = divRef.current.getBoundingClientRect();
-		const x = e.clientX - rect.left;
-		const y = e.clientY - rect.top;
+		if (!divRef.current || rafRef.current) return;
+		const clientX = e.clientX;
+		const clientY = e.clientY;
 
-		divRef.current.style.setProperty("--mouse-x", `${x}px`);
-		divRef.current.style.setProperty("--mouse-y", `${y}px`);
-		divRef.current.style.setProperty("--spotlight-color", spotlightColor);
+		rafRef.current = requestAnimationFrame(() => {
+			if (divRef.current) {
+				const rect = divRef.current.getBoundingClientRect();
+				const x = clientX - rect.left;
+				const y = clientY - rect.top;
+				divRef.current.style.setProperty("--mouse-x", `${x}px`);
+				divRef.current.style.setProperty("--mouse-y", `${y}px`);
+				divRef.current.style.setProperty("--spotlight-color", spotlightColor);
+			}
+			rafRef.current = null;
+		});
 	};
 
 	return (

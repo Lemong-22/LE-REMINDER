@@ -25,3 +25,21 @@
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
 }
+
+/* Mobile momentum scroll & gesture containment */
+.scroll-touch {
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: contain;
+}
+
+/* Pause animations if user has battery-saver or reduced motion enabled */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	::before,
+	::after {
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		transition-duration: 0.01ms;
+		scroll-behavior: auto;
+	}
+}

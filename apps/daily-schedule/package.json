@@ -10,7 +10,9 @@
 	},
 	"dependencies": {
 		"lucide-react": "catalog:",
+		"motion": "^13.3.0",
 		"next": "catalog:",
+		"ogl": "^1.0.11",
 		"react": "catalog:",
 		"react-dom": "catalog:"
 	},

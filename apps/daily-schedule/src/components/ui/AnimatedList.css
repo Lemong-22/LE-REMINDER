@@ -1,0 +1,69 @@
+.scroll-list-container {
+	position: relative;
+	width: 100%;
+}
+
+.scroll-list {
+	overflow-y: visible;
+	padding: 0;
+}
+
+.scroll-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.scroll-list::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scroll-list::-webkit-scrollbar-thumb {
+	background: #2f293a;
+	border-radius: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.item {
+	padding: 0;
+	background-color: transparent;
+	border-radius: 24px;
+	margin-bottom: 0.875rem;
+}
+
+.item.selected {
+	background-color: transparent;
+}
+
+.item-text {
+	color: white;
+	margin: 0;
+}
+
+.top-gradient {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	background: linear-gradient(to bottom, rgba(8, 9, 13, 0.9), transparent);
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+.bottom-gradient {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100px;
+	background: linear-gradient(to top, rgba(8, 9, 13, 0.9), transparent);
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}

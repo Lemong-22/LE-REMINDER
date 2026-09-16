@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./SpotlightCard.css";
 
 const SpotlightCard = ({
@@ -8,7 +8,14 @@ const SpotlightCard = ({
 	className = "",
 	spotlightColor = "rgba(255, 255, 255, 0.05)",
 }) => {
+	const divRef = useRef(null);
 	const rafRef = useRef(null);
+
+	useEffect(() => {
+		return () => {
+			if (rafRef.current) cancelAnimationFrame(rafRef.current);
+		};
+	}, []);
 
 	const handleMouseMove = (e) => {
 		if (!divRef.current || rafRef.current) return;

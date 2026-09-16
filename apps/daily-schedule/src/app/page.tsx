@@ -1,6 +1,7 @@
 "use client";
 
 import { BookOpen, Clock, Coffee, GraduationCap } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { AuthGate } from "@/components/auth-gate";
 import AnimatedList from "@/components/ui/AnimatedList";
@@ -316,14 +317,44 @@ function DailyRundownView() {
 										ref={isLive ? liveEventRef : null}
 										className="w-full transition-all duration-300"
 									>
-										{/* 2. LIVE CARD: CONTINUOUS SPINNING NEON BORDER */}
+										{/* 2. LIVE CARD: DYNAMIC ANIMATED LASER BORDER */}
 										{isLive ? (
-											<div className="relative overflow-hidden rounded-[24px] p-[2px] shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-												{/* The spinning gradient background (hardware accelerated on GPU layer) */}
-												<div className="absolute inset-[-100%] transform-gpu animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg,transparent_0%,transparent_70%,#0ea5e9_100%)] will-change-transform" />
+											<div className="relative overflow-hidden rounded-[24px] p-[2px] shadow-[0_0_30px_rgba(6,182,212,0.25)]">
+												{/* Ambient soft glow background */}
+												<div className="pointer-events-none absolute inset-0 rounded-[24px] bg-cyan-500/10 blur-md" />
+
+												{/* Outer blurred laser beam aura */}
+												<motion.div
+													className="pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[320%] -translate-x-1/2 -translate-y-1/2 opacity-80 blur-[8px]"
+													style={{
+														background:
+															"conic-gradient(from 0deg, transparent 0%, transparent 60%, rgba(6, 182, 212, 0.4) 75%, rgba(14, 165, 233, 0.85) 88%, #38bdf8 96%, transparent 100%)",
+													}}
+													animate={{ rotate: 360 }}
+													transition={{
+														repeat: Number.POSITIVE_INFINITY,
+														ease: "linear",
+														duration: 3.5,
+													}}
+												/>
+
+												{/* Inner sharp laser beam comet */}
+												<motion.div
+													className="pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[320%] -translate-x-1/2 -translate-y-1/2"
+													style={{
+														background:
+															"conic-gradient(from 0deg, transparent 0%, transparent 68%, rgba(6, 182, 212, 0.3) 78%, rgba(14, 165, 233, 0.8) 88%, #38bdf8 94%, #ffffff 99%, transparent 100%)",
+													}}
+													animate={{ rotate: 360 }}
+													transition={{
+														repeat: Number.POSITIVE_INFINITY,
+														ease: "linear",
+														duration: 3.5,
+													}}
+												/>
 
 												{/* The inner dark card */}
-												<div className="relative z-10 flex h-full w-full flex-col gap-3 rounded-[22px] bg-[#0F1115] p-5">
+												<div className="relative z-10 flex h-full w-full flex-col gap-3 rounded-[22px] bg-gradient-to-b from-[#111622] to-[#0A0D14] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
 													{/* Card Header: Time & Badges */}
 													<div className="flex flex-wrap items-center justify-between gap-3">
 														<span className="font-bold font-sans text-2xl text-white tabular-nums tracking-tight sm:text-3xl">

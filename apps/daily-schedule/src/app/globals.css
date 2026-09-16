@@ -32,14 +32,12 @@
 	overscroll-behavior-x: contain;
 }
 
-/* Pause animations if user has battery-saver or reduced motion enabled */
-@media (prefers-reduced-motion: reduce) {
-	*,
-	::before,
-	::after {
-		animation-duration: 0.01ms;
-		animation-iteration-count: 1;
-		transition-duration: 0.01ms;
-		scroll-behavior: auto;
+/* Smooth laser border keyframes */
+@keyframes laser-sweep {
+	0% {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }

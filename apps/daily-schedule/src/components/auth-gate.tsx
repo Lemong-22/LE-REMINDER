@@ -1,8 +1,18 @@
 "use client";
 
-import { KeyRound, Lock, LogOut, ShieldAlert } from "lucide-react";
-import { useEffect, useState } from "react";
+import { KeyRound, Lock, ShieldAlert } from "lucide-react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Hyperspeed from "@/components/ui/Hyperspeed";
+
+interface AuthContextType {
+	logout: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
+	logout: async () => {},
+});
+
+export const useAuth = () => useContext(AuthContext);
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -173,20 +183,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 	}
 
 	return (
-		<div className="relative min-h-screen bg-black">
-			{/* Minimalist Logout Button */}
-			<div className="absolute top-4 right-4 z-30 sm:top-6 sm:right-6">
-				<button
-					type="button"
-					onClick={handleLogout}
-					title="Sign Out"
-					className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-[#141414] px-3 py-1.5 font-medium text-[#777777] text-xs transition-colors hover:border-white/20 hover:text-white active:scale-95"
-				>
-					<LogOut className="size-3.5" />
-					<span className="hidden sm:inline">Sign out</span>
-				</button>
-			</div>
+		<AuthContext.Provider value={{ logout: handleLogout }}>
 			{children}
-		</div>
+		</AuthContext.Provider>
 	);
 }

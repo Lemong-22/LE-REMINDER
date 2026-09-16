@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "OJOS // Schedule",
-	description: "Personal 7-Day Live Daily Schedule Tracker",
+	title: "YOSUA // Schedule",
+	description: "Personal 7-Day Live Daily Schedule Tracker for Yosua",
 	icons: {
 		icon: "/icon.svg",
 	},

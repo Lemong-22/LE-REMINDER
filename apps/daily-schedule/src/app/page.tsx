@@ -1,9 +1,9 @@
 "use client";
 
-import { BookOpen, Clock, Coffee, GraduationCap } from "lucide-react";
+import { BookOpen, Clock, Coffee, GraduationCap, LogOut } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { AuthGate } from "@/components/auth-gate";
+import { AuthGate, useAuth } from "@/components/auth-gate";
 import AnimatedList from "@/components/ui/AnimatedList";
 import SoftAurora from "@/components/ui/SoftAurora";
 import SpotlightCard from "@/components/ui/SpotlightCard";
@@ -64,6 +64,9 @@ function formatRemainingTime(end: Date, now: Date): string {
 }
 
 function DailyRundownView() {
+	const { logout } = useAuth();
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
+
 	// Auto-select current real-world day on mount (0 = Sunday, 1 = Monday, etc.)
 	const [selectedDay, setSelectedDay] = useState<number>(() =>
 		new Date().getDay(),
@@ -72,6 +75,15 @@ function DailyRundownView() {
 
 	const liveEventRef = useRef<HTMLDivElement | null>(null);
 	const hasAutoScrolledRef = useRef(false);
+
+	const handleLogout = async () => {
+		setIsLoggingOut(true);
+		try {
+			await logout();
+		} finally {
+			setIsLoggingOut(false);
+		}
+	};
 
 	// Battery-efficient visibility-aware ticker: sleeps when phone screen is locked or app is in background
 	useEffect(() => {
@@ -185,19 +197,36 @@ function DailyRundownView() {
 				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
 					{/* Brand Text Only - Cleaned */}
 					<div className="flex items-center gap-1.5 font-bold text-[15px] text-white tracking-tight">
-						<span>OJOS</span>
+						<span>YOSUA</span>
 						<span className="font-mono font-normal text-amber-500/70">
 							{"//"}
 						</span>
 						<span className="font-medium text-zinc-300">SCHEDULE</span>
 					</div>
 
-					{/* Digital Live Clock */}
-					<div className="flex items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs text-zinc-200 shadow-sm backdrop-blur-md">
-						<span className="size-1.5 animate-pulse rounded-full bg-amber-400" />
-						<span className="font-medium text-zinc-100 tabular-nums">
-							{formattedLiveTime}
-						</span>
+					{/* Right Section: Digital Clock & Logout */}
+					<div className="flex items-center gap-2 sm:gap-3">
+						{/* Digital Live Clock */}
+						<div className="flex items-center gap-2 rounded-xl border border-white/[0.1] bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs text-zinc-200 shadow-sm backdrop-blur-md">
+							<span className="size-1.5 animate-pulse rounded-full bg-amber-400" />
+							<span className="font-medium text-zinc-100 tabular-nums">
+								{formattedLiveTime}
+							</span>
+						</div>
+
+						{/* Logout Button */}
+						<button
+							type="button"
+							onClick={handleLogout}
+							disabled={isLoggingOut}
+							title="Sign Out"
+							className="group flex items-center gap-1.5 rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 font-mono text-xs text-zinc-300 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							<LogOut className="size-3.5 text-zinc-400 transition-colors group-hover:text-red-400" />
+							<span className="hidden sm:inline">
+								{isLoggingOut ? "Exiting..." : "Logout"}
+							</span>
+						</button>
 					</div>
 				</div>
 			</header>
@@ -517,7 +546,7 @@ function DailyRundownView() {
 			{/* MINIMALIST CLEAN FOOTER */}
 			<footer className="mt-16 border-white/[0.06] border-t bg-[#08090d]/80 px-4 py-6 font-mono text-xs text-zinc-500 sm:px-8">
 				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-					<span>OJOS SCHEDULE</span>
+					<span>YOSUA SCHEDULE</span>
 					<span>7-Day Live Tracker</span>
 				</div>
 			</footer>

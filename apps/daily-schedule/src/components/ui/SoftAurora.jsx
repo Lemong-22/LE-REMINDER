@@ -167,6 +167,7 @@ export default function SoftAurora({
 
 	useEffect(() => {
 		if (!containerRef.current) return;
+		const container = containerRef.current;
 		const dpr = Math.min(
 			typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1,
 			1.5,

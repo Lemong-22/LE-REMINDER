@@ -4,7 +4,6 @@ import { BookOpen, Clock, Coffee, GraduationCap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AuthGate } from "@/components/auth-gate";
 import AnimatedList from "@/components/ui/AnimatedList";
-import BorderGlow from "@/components/ui/BorderGlow";
 import SoftAurora from "@/components/ui/SoftAurora";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import {
@@ -156,18 +155,13 @@ function DailyRundownView() {
 			{/* 1. CLEANED MINIMALIST HEADER */}
 			<header className="sticky top-0 z-40 border-white/[0.08] border-b bg-[#08090d]/80 px-4 py-3.5 backdrop-blur-2xl sm:px-8">
 				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-					{/* Logo & Brand */}
-					<div className="flex items-center gap-3">
-						<div className="flex size-8 items-center justify-center rounded-xl border border-amber-500/35 bg-gradient-to-br from-amber-500/25 to-amber-600/10 font-bold font-mono text-amber-300 text-xs shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-							OJ
-						</div>
-						<div className="flex items-center gap-1.5 font-bold text-[15px] text-white tracking-tight">
-							<span>OJOS</span>
-							<span className="font-mono font-normal text-amber-500/70">
-								{"//"}
-							</span>
-							<span className="font-medium text-zinc-300">SCHEDULE</span>
-						</div>
+					{/* Brand Text Only - Cleaned */}
+					<div className="flex items-center gap-1.5 font-bold text-[15px] text-white tracking-tight">
+						<span>OJOS</span>
+						<span className="font-mono font-normal text-amber-500/70">
+							{"//"}
+						</span>
+						<span className="font-medium text-zinc-300">SCHEDULE</span>
 					</div>
 
 					{/* Digital Live Clock */}
@@ -292,21 +286,14 @@ function DailyRundownView() {
 										ref={isLive ? liveEventRef : null}
 										className="w-full transition-all duration-300"
 									>
-										{/* 2. LIVE CARD: PERSISTENT BORDER GLOW + GLASS */}
+										{/* 2. LIVE CARD: CONTINUOUS SPINNING NEON BORDER */}
 										{isLive ? (
-											<BorderGlow
-												glowColor="192 100 64"
-												animated={false}
-												persistentGlow={true}
-												colors={["#06b6d4", "#3b82f6", "#0ea5e9"]}
-												backgroundColor="#0c0e14"
-												borderRadius={24}
-												glowRadius={36}
-												glowIntensity={1.3}
-												edgeSensitivity={35}
-												className="w-full shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.15)]"
-											>
-												<div className="flex w-full flex-col gap-3 rounded-[24px] bg-[#121724]/85 p-5 backdrop-blur-2xl sm:p-5">
+											<div className="relative overflow-hidden rounded-[24px] p-[2px] shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+												{/* The spinning gradient background */}
+												<div className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg,transparent_0%,transparent_70%,#0ea5e9_100%)]" />
+
+												{/* The inner dark card */}
+												<div className="relative z-10 flex h-full w-full flex-col gap-3 rounded-[22px] bg-[#0F1115] p-5">
 													{/* Card Header: Time & Badges */}
 													<div className="flex flex-wrap items-center justify-between gap-3">
 														<span className="font-bold font-sans text-2xl text-white tabular-nums tracking-tight sm:text-3xl">
@@ -348,7 +335,7 @@ function DailyRundownView() {
 														</div>
 													</div>
 												</div>
-											</BorderGlow>
+											</div>
 										) : (
 											/* PAST & UPCOMING: ULTRA-GLASSY SPOTLIGHT CARD */
 											<SpotlightCard

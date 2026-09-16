@@ -2,9 +2,11 @@
 
 import { KeyRound, Lock, LogOut, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
+import Hyperspeed from "@/components/ui/Hyperspeed";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+	const [isWarping, setIsWarping] = useState(false);
 	const [passcode, setPasscode] = useState("");
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +38,12 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
 			const data = await res.json();
 			if (res.ok && data.success) {
-				setIsAuthenticated(true);
-				setPasscode("");
+				setIsWarping(true);
+				setTimeout(() => {
+					setIsAuthenticated(true);
+					setIsWarping(false);
+					setPasscode("");
+				}, 2200);
 			} else {
 				setError(data.error || "Incorrect passcode");
 			}
@@ -64,6 +70,49 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 					<div className="size-6 animate-spin rounded-full border-2 border-white/20 border-t-white" />
 					<span className="font-mono text-[#666666] text-xs">
 						Authenticating...
+					</span>
+				</div>
+			</div>
+		);
+	}
+
+	if (isWarping) {
+		return (
+			<div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-black">
+				<Hyperspeed
+					effectOptions={{
+						distortion: "turbulentDistortion",
+						length: 400,
+						roadWidth: 10,
+						islandWidth: 2,
+						lanesPerRoad: 4,
+						fov: 90,
+						fovSpeedUp: 150,
+						speedUp: 3,
+						carLightsFade: 0.4,
+						totalSideLightSticks: 20,
+						lightPairsPerRoadWay: 40,
+						colors: {
+							roadColor: 0x080808,
+							islandColor: 0x0a0a0a,
+							background: 0x000000,
+							shoulderLines: 0xffffff,
+							brokenLines: 0xffffff,
+							leftCars: [0xd856bf, 0x6750a2, 0xc247ac],
+							rightCars: [0x03b3c3, 0x0e5ea5, 0x324555],
+							sticks: 0x03b3c3,
+						},
+					}}
+				/>
+				<div className="relative z-10 flex flex-col items-center gap-2.5 rounded-2xl border border-white/10 bg-black/75 px-6 py-3.5 shadow-2xl backdrop-blur-xl">
+					<div className="flex items-center gap-2">
+						<span className="size-2 animate-ping rounded-full bg-cyan-400" />
+						<span className="font-mono text-cyan-300 text-xs uppercase tracking-widest">
+							ACCESS GRANTED
+						</span>
+					</div>
+					<span className="font-mono text-[10px] text-zinc-400">
+						Initializing Live Schedule...
 					</span>
 				</div>
 			</div>

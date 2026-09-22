@@ -43,9 +43,14 @@ export const SCHEDULE_DATA: readonly DaySchedule[] = [
 				type: "class",
 			},
 			{
-				time: "17.00 - 19.30",
+				time: "17.00 - 18.30",
 				activity: "Rest",
 				type: "rest",
+			},
+			{
+				time: "18.30 - 19.30",
+				activity: "Study (KTB)",
+				type: "study",
 			},
 			{
 				time: "19.30 - 20.00",
@@ -140,29 +145,19 @@ export const SCHEDULE_DATA: readonly DaySchedule[] = [
 				type: "class",
 			},
 			{
-				time: "15.00 - 18.50",
+				time: "15.00 - 20.00",
 				activity: "Rest",
 				type: "rest",
 			},
 			{
-				time: "18.50 - 19.00",
-				activity: "Rest",
-				type: "rest",
-			},
-			{
-				time: "19.00 - 20.30",
-				activity: "Study (KTB)",
+				time: "20.00 - 21.30",
+				activity: "Study (REVIEW PAP & IDIS + Prep & Review Kalkulus Kamis)",
 				type: "study",
 			},
 			{
-				time: "20.30 - 21.00",
+				time: "21.30 - 23.00",
 				activity: "Rest",
 				type: "rest",
-			},
-			{
-				time: "21.00 - 23.00",
-				activity: "Study (Kalkulus)",
-				type: "study",
 			},
 		],
 	},

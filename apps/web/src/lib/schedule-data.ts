@@ -60,7 +60,12 @@ export const MASTER_SCHEDULE: readonly DaySchedule[] = [
 				type: "meal",
 			},
 			{
-				time: "19:00 - 21:30",
+				time: "18:30 - 19:30",
+				activity: "KTB",
+				type: "study",
+			},
+			{
+				time: "19:30 - 21:30",
 				activity:
 					"Deep Work 2: Tugas/PR + Logbook PJOK + Prep ringan (Fisika, Kalkulus, PDD, THEO)",
 				type: "study",
@@ -187,13 +192,8 @@ export const MASTER_SCHEDULE: readonly DaySchedule[] = [
 				type: "meal",
 			},
 			{
-				time: "18:30 - 19:00",
-				activity: "Review Kalkulus",
-				type: "study",
-			},
-			{
-				time: "19:00 - 20:00",
-				activity: "KTB",
+				time: "18:30 - 20:00",
+				activity: "Waktu Luang / Istirahat",
 				type: "rest",
 			},
 			{

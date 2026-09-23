@@ -22,6 +22,7 @@ describe("Daily Schedule Auth Server Security", () => {
 		// Tampered signature
 		const token = createSessionToken();
 		const [timestamp, sig] = token.split(".");
+		if (!sig) throw new Error("Expected signature in token");
 		const tamperedSig = sig.slice(0, -1) + (sig.endsWith("a") ? "b" : "a");
 		expect(verifySessionToken(`${timestamp}.${tamperedSig}`)).toBe(false);
 

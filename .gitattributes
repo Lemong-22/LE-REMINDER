@@ -1,0 +1,4 @@
+# GitHub Linguist Overrides
+# Mark context and standalone exported mockup HTML files as documentation
+# so they do not count towards repository programming language statistics.
+CONTEXT/** linguist-documentation
